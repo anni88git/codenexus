@@ -92,6 +92,11 @@ export default function AuthPage({ onAuthenticated }) {
   };
 
   const handleOAuth = async (provider) => {
+    if (provider === 'GitHub') {
+      window.location.href = `${BACKEND_URL}/api/auth/github`;
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`${BACKEND_URL}/api/auth/oauth`, {

@@ -13,6 +13,9 @@ dotenv.config();
 const users = [];
 const JWT_SECRET = process.env.JWT_SECRET || 'codenexus-super-secret-key';
 
+import passport from 'passport';
+import { Strategy as GitHubStrategy } from 'passport-github2';
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,6 +24,30 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] }
 });
+
+app.use(passport.initialize());
+
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/github/callback"
+  }, (accessToken, refreshToken, profile, done) => {
+    const email = profile.emails?.[0]?.value || `${profile.username}@github.dev`;
+    let user = users.find(u => u.email === email);
+    if (!user) {
+      user = { 
+        id: Date.now().toString(), 
+        email, 
+        name: profile.displayName || profile.username, 
+        provider: 'GitHub', 
+        avatar: profile.photos?.[0]?.value || `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${profile.username}` 
+      };
+      users.push(user);
+    }
+    return done(null, user);
+  }));
+}
 
 const hasAiKey = !!process.env.GROQ_API_KEY;
 if (!hasAiKey) console.warn('⚠️  No GROQ_API_KEY found — AI patches will use simulated fallback.');
@@ -90,6 +117,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 // ─── POST /api/auth/oauth ──────────────────────────────────────────────────────
 app.post('/api/auth/oauth', (req, res) => {
+  // Mock OAuth for Discord (and GitHub if keys not provided)
   const { provider } = req.body;
   const email = `${provider.toLowerCase()}@oauth.dev`;
   
@@ -101,6 +129,20 @@ app.post('/api/auth/oauth', (req, res) => {
 
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
   res.json({ token, user: { name: user.name, email: user.email, avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${provider}` } });
+});
+
+// ─── REAL GITHUB OAUTH ROUTES ────────────────────────────────────────────────
+app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:email' ], session: false }));
+
+app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+  const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
+  // Redirect to frontend with token and user data in query string so it can instantly log in
+  const userData = encodeURIComponent(JSON.stringify({
+    name: req.user.name,
+    email: req.user.email,
+    avatar: req.user.avatar
+  }));
+  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────

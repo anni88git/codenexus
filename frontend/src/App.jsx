@@ -68,9 +68,30 @@ export default function App() {
     setShowSplash(true);
   }, []);
 
+  useEffect(() => {
+    // Check if we just redirected back from GitHub OAuth
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const userStr = params.get('user');
+
+    if (token && userStr) {
+      try {
+        const userObj = JSON.parse(decodeURIComponent(userStr));
+        localStorage.setItem('token', token);
+        setUser(userObj);
+        setShowSplash(true);
+        // Clear the URL so it looks clean
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (e) {
+        console.error("Failed to parse user from OAuth redirect");
+      }
+    }
+  }, []);
+
   const handleSignOut = useCallback(() => {
     setUser(null);
     setShowSplash(false);
+    localStorage.removeItem('token');
   }, []);
 
   if (!user && !showSplash) {
