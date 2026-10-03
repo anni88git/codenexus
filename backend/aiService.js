@@ -67,7 +67,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const rawText = response.choices[0]?.message?.content || '{}';
     const cleanedJsonText = rawText.replace(/^```[\w]*\n?/gm, '').replace(/```$/gm, '').trim();
-    
+
     let parsedData = {};
     try {
       parsedData = JSON.parse(cleanedJsonText);
@@ -83,19 +83,19 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const tokens = response.usage
       ? {
-          prompt: response.usage.prompt_tokens || 0,
-          completion: response.usage.completion_tokens || 0,
-          total: response.usage.total_tokens || 0,
-        }
+        prompt: response.usage.prompt_tokens || 0,
+        completion: response.usage.completion_tokens || 0,
+        total: response.usage.total_tokens || 0,
+      }
       : { prompt: 0, completion: 0, total: 0 };
 
-    return { 
-      code: parsedData.code || '', 
-      explanation: parsedData.explanation || 'Patch generated.', 
+    return {
+      code: parsedData.code || '',
+      explanation: parsedData.explanation || 'Patch generated.',
       nodes: parsedData.nodes || [],
       securitySuggestions: parsedData.securitySuggestions || [],
       testOutput: parsedData.testOutput || [],
-      tokens 
+      tokens
     };
   } catch (err) {
     console.error('Groq API Call Failed:', err.message);
