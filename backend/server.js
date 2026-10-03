@@ -3,9 +3,15 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { generateCodePatch } from './aiService.js';
 
 dotenv.config();
+
+// In-memory mock database
+const users = [];
+const JWT_SECRET = process.env.JWT_SECRET || 'codenexus-super-secret-key';
 
 const app = express();
 app.use(cors());
@@ -43,6 +49,59 @@ function emitLog(socketId, payload) {
     io.emit('agent-log', payload);
   }
 }
+
+// ─── POST /api/auth/register ───────────────────────────────────────────────────
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+
+    if (users.find(u => u.email === email)) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = { id: Date.now().toString(), email, password: hashedPassword, name: name || email.split('@')[0] };
+    users.push(newUser);
+
+    const token = jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { name: newUser.name, email: newUser.email, avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(email)}` } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── POST /api/auth/login ──────────────────────────────────────────────────────
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = users.find(u => u.email === email);
+    if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { name: user.name, email: user.email, avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(email)}` } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── POST /api/auth/oauth ──────────────────────────────────────────────────────
+app.post('/api/auth/oauth', (req, res) => {
+  const { provider } = req.body;
+  const email = `${provider.toLowerCase()}@oauth.dev`;
+  
+  let user = users.find(u => u.email === email);
+  if (!user) {
+    user = { id: Date.now().toString(), email, name: `${provider} User`, provider };
+    users.push(user);
+  }
+
+  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token, user: { name: user.name, email: user.email, avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${provider}` } });
+});
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────
 app.post('/api/run-agent', async (req, res) => {

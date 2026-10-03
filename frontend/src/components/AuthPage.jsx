@@ -61,32 +61,55 @@ export default function AuthPage({ onAuthenticated }) {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState('');
 
-  const handleSubmit = (e) => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) { setError('Please fill in all fields.'); return; }
     setError('');
     setLoading(true);
-    // Simulate auth round-trip
-    setTimeout(() => {
-      setLoading(false);
-      onAuthenticated({
-        name: name.trim() || email.split('@')[0],
-        email: email.trim(),
-        avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(email)}`,
+    
+    try {
+      const endpoint = tab === 'signin' ? '/api/auth/login' : '/api/auth/register';
+      const body = tab === 'signin' ? { email, password } : { email, password, name };
+      
+      const res = await fetch(`${BACKEND_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       });
-    }, 1400);
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Authentication failed');
+      
+      localStorage.setItem('token', data.token);
+      onAuthenticated(data.user);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOAuth = (provider) => {
+  const handleOAuth = async (provider) => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onAuthenticated({
-        name: `${provider} User`,
-        email: `${provider.toLowerCase()}@oauth.dev`,
-        avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${provider}`,
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/auth/oauth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider }),
       });
-    }, 900);
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'OAuth failed');
+      
+      localStorage.setItem('token', data.token);
+      onAuthenticated(data.user);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
