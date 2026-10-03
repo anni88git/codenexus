@@ -66,7 +66,16 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
-    const cleanedJsonText = rawText.replace(/^```[\w]*\n?/gm, '').replace(/```$/gm, '').trim();
+    
+    // Extract JSON block by finding first { and last }
+    let cleanedJsonText = rawText;
+    const firstBrace = cleanedJsonText.indexOf('{');
+    const lastBrace = cleanedJsonText.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
+      cleanedJsonText = cleanedJsonText.substring(firstBrace, lastBrace + 1);
+    } else {
+      cleanedJsonText = rawText.replace(/^```[\w]*\n?/gm, '').replace(/```$/gm, '').trim();
+    }
 
     let parsedData = {};
     try {
