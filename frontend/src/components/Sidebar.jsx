@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight,
+  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { id: 'home',      icon: LayoutDashboard, label: 'Home',              sub: 'Banner Showcase' },
   { id: 'workspace', icon: Code2,           label: 'Patching Workspace', sub: 'Diff + Graph' },
   { id: 'ast',       icon: Network,         label: 'AST Graph Mesh',    sub: 'Node 02 Visualizer' },
+  { id: 'security',  icon: Shield,          label: 'Security Audit',    sub: 'Vuln Prevention' },
   { id: 'sandbox',   icon: TerminalSquare,  label: 'Sandbox & DevOps',  sub: 'Terminal + Alerts' },
 ];
 

@@ -11,10 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^2.27.0",
     "@mistralai/mistralai": "^2.6.4",
     "@octokit/rest": "^22.0.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "groq-sdk": "^1.6.0",
     "socket.io": "^4.8.3"
   }
 }

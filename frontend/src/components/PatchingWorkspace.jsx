@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Code, FileCode, Columns, AlignJustify, GitPullRequest,
   BookOpen, Bell, RotateCcw, Layers, Activity, CheckCircle2,
-  RefreshCw, Shield, ChevronRight, Terminal, Network, Sparkles
+  RefreshCw, Shield, ChevronRight, Terminal, Network, Sparkles, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -45,7 +45,7 @@ export default function PatchingWorkspace({
   scenario, language, showDiff, pipelineComplete,
   activeNode, isFixing, pipelineSteps,
   logs, rollbackStep, onRollback,
-  onOpenPR, onExplain, showSlack, onSlack,
+  onOpenPR, onExplain, showSlack, onSlack, onReport,
   activeRun,
 }) {
   const [rightTab, setRightTab] = useState('pipeline');
@@ -211,7 +211,7 @@ export default function PatchingWorkspace({
                   className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold py-2.5 rounded-xl border transition-all ${
                     pipelineComplete && scenario?.pr ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/30' : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
                   }`}>
-                  <GitPullRequest className="w-3 h-3" /> Open PR {scenario?.pr ? `#${scenario.pr.number}` : ''}
+                  <GitPullRequest className="w-3 h-3" /> Open PR
                 </button>
                 <button onClick={onSlack}
                   className={`flex items-center gap-1 text-[10px] font-mono px-3 py-2.5 rounded-xl border transition-all ${
@@ -220,6 +220,15 @@ export default function PatchingWorkspace({
                   <Bell className="w-3.5 h-3.5" />
                 </button>
               </div>
+
+              <button onClick={onReport} disabled={!pipelineComplete}
+                className={`shrink-0 flex items-center justify-center gap-2 text-[11px] font-mono font-bold py-3.5 rounded-xl border transition-all ${
+                  pipelineComplete 
+                    ? 'bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border-cyan-500/40 text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:border-cyan-400/60 hover:from-cyan-900 hover:to-blue-900' 
+                    : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
+                }`}>
+                <FileText className={`w-4 h-4 ${pipelineComplete ? 'text-cyan-400' : ''}`} /> Download Post-Mortem Report
+              </button>
 
               {scenario?.rollbackCheckpoints && (
                 <div className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">

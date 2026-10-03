@@ -44,7 +44,7 @@ export default function SandboxView({
   const logRef = useRef(null);
   const animatedRef = useRef(false);
 
-  const testOutput = scenario?.testOutput || [];
+  const testOutput = activeRun?.testOutput?.length ? activeRun.testOutput : scenario?.testOutput || [];
   const passCount  = testOutput.filter(t => t.type === 'pass').length;
   const failCount  = testOutput.filter(t => t.type === 'fail').length;
   const totalCount = passCount + failCount;
@@ -117,7 +117,7 @@ export default function SandboxView({
           </div>
 
           {/* Progress bar */}
-          {(isFixing && activeNode >= 4 || pipelineComplete) && (
+          {(isFixing && activeNode >= 5 || pipelineComplete) && (
             <div className="shrink-0 space-y-1.5">
               <div className="flex items-center justify-between text-[9px] font-mono text-slate-600">
                 <span>Test suite progress</span>
@@ -140,7 +140,7 @@ export default function SandboxView({
               <div className="flex items-center gap-2">
                 <TerminalSquare className="w-3.5 h-3.5 text-pink-400" />
                 <span className="text-[10px] font-mono text-slate-400 font-semibold">SANDBOX RUNNER</span>
-                {isFixing && activeNode >= 4 && (
+                {isFixing && activeNode >= 5 && (
                   <span className="flex items-center gap-1 text-[9px] font-mono text-amber-400">
                     <RefreshCw className="w-2.5 h-2.5 animate-spin" /> Running…
                   </span>

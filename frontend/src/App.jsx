@@ -16,10 +16,12 @@ import Sidebar from './components/Sidebar';
 import FloatingPromptBar from './components/FloatingPromptBar';
 import PatchingWorkspace from './components/PatchingWorkspace';
 import AstMeshView from './components/AstMeshView';
+import SecurityView from './components/SecurityView';
 import SandboxView from './components/SandboxView';
 import HomeView from './components/HomeView';
 import ExplainDrawer from './components/ExplainDrawer';
 import PRModal from './components/PRModal';
+import ReportModal from './components/ReportModal';
 import CustomCodeModal from './components/CustomCodeModal';
 const BACKEND_URL = 'http://localhost:5000';
 const socket = io(BACKEND_URL, { autoConnect: true });
@@ -29,6 +31,7 @@ const LANGUAGES = [
   { id: 'python', label: 'Python',  color: '#3b82f6', testCmd: 'pytest -v' },
   { id: 'golang', label: 'Golang',  color: '#06b6d4', testCmd: 'go test ./...' },
   { id: 'rust',   label: 'Rust',    color: '#f97316', testCmd: 'cargo test' },
+  { id: 'java',   label: 'Java',    color: '#ea580c', testCmd: 'mvn test' },
 ];
 
 function computeDiff(a, b) {
@@ -108,6 +111,7 @@ function Dashboard({ user, onSignOut }) {
   const [showExplainDrawer, setShowExplainDrawer]   = useState(false);
   const [showSlackFeed, setShowSlackFeed]           = useState(false);
   const [showCustomModal, setShowCustomModal]       = useState(false);
+  const [showReportModal, setShowReportModal]       = useState(false);
   const [customCode, setCustomCode]                 = useState('');
   
   const [activeRun, setActiveRun] = useState(null);
@@ -178,7 +182,7 @@ function Dashboard({ user, onSignOut }) {
     setPipelineComplete(true);
     setIsFixing(false);
     setRollbackStep(3);
-    setActiveNode(4);
+    setActiveNode(5);
     setPatchedTokens(342);
     setPatchedLatency(1.2);
     addLog('⚠️ Backend offline — showing demo patch result');
@@ -274,13 +278,15 @@ function Dashboard({ user, onSignOut }) {
           patchedCode:  data.patchedCode,
           explanation:  data.explanation || 'Patch generated successfully.',
           nodes:        liveNodes,
+          testOutput:   data.testOutput || [],
+          securitySuggestions: data.securitySuggestions || [],
         });
 
         setShowDiff(true);
         setPipelineComplete(true);
         setIsFixing(false);
         setRollbackStep(3);
-        setActiveNode(4);
+        setActiveNode(5);
         setPatchedTokens(data.tokens?.total || 342);
         setPatchedLatency(data.latency || 1.2);
         addLog(`✅ Patch complete for ${data.fileName}`);
@@ -340,7 +346,8 @@ function Dashboard({ user, onSignOut }) {
     { node:1, name:'Triage',   desc:'Stack trace' },
     { node:2, name:'GraphRAG', desc:'AST indexing' },
     { node:3, name:'Codestral', desc:'Patch gen' },
-    { node:4, name:'Sandbox',  desc:'Test suite' },
+    { node:4, name:'Security', desc:'Vuln check' },
+    { node:5, name:'Sandbox',  desc:'Test suite' },
   ];
 
   return (
@@ -356,12 +363,12 @@ function Dashboard({ user, onSignOut }) {
         <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-3">
             <div className="text-xs font-semibold text-slate-400 font-mono">
-              {activeTab === 'home'      && '/ Home & Scenarios'}
+              {activeTab === 'home'      && '/ Home'}
               {activeTab === 'workspace' && '/ Patching Workspace'}
               {activeTab === 'ast'       && '/ AST Graph Mesh — Node 02'}
-              {activeTab === 'sandbox'   && '/ Sandbox & DevOps'}
+              {activeTab === 'security'  && '/ Security Audit — Node 04'}
+              {activeTab === 'sandbox'   && '/ Sandbox & DevOps — Node 05'}
             </div>
-            <ScenarioSelector scenario={scenario} onSelect={switchScenario} isFixing={isFixing} />
           </div>
 
           <div className="flex items-center gap-2">
@@ -423,6 +430,7 @@ function Dashboard({ user, onSignOut }) {
                   onRollback={handleRollback}
                   onOpenPR={openPR} onExplain={() => setShowExplainDrawer(true)}
                   onSlack={() => setShowSlackFeed(!showSlackFeed)} showSlack={showSlackFeed}
+                  onReport={() => setShowReportModal(true)}
                   activeRun={activeRun}
                 />
               </motion.div>
@@ -431,6 +439,12 @@ function Dashboard({ user, onSignOut }) {
               <motion.div key="ast" className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 p-6 pb-32"
                 initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
                 <AstMeshView scenario={scenario} activeNode={activeNode} pipelineComplete={pipelineComplete} activeRun={activeRun} />
+              </motion.div>
+            )}
+            {activeTab === 'security' && (
+              <motion.div key="security" className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 p-6 pb-32"
+                initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
+                <SecurityView activeRun={activeRun} isFixing={isFixing} pipelineComplete={pipelineComplete} />
               </motion.div>
             )}
             {activeTab === 'sandbox' && (
@@ -462,6 +476,7 @@ function Dashboard({ user, onSignOut }) {
       <AnimatePresence>
         {showPRModal && <PRModal pr={scenario.pr} onClose={() => setShowPRModal(false)} />}
         {showExplainDrawer && <ExplainDrawer fix={activeRun?.explanation || scenario.pr?.explainFix} filename={activeRun?.fileName || scenario.filename} onClose={() => setShowExplainDrawer(false)} />}
+        {showReportModal && <ReportModal activeRun={activeRun} onClose={() => setShowReportModal(false)} />}
         {showCustomModal && (
           <CustomCodeModal
             value={customCode}
