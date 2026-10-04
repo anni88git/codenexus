@@ -367,9 +367,9 @@ function Dashboard({ user, onSignOut }) {
   }, []);
 
   const telemetry = {
-    confidence: pipelineComplete ? (scenario.telemetry?.confidence || 98.6) : null,
+    confidence: pipelineComplete ? (scenario?.telemetry?.confidence || 98.6) : null,
     latency:    pipelineComplete ? (patchedLatency || 1.2) : null,
-    risk:       pipelineComplete ? (scenario.telemetry?.risk || 'Low') : null,
+    risk:       pipelineComplete ? (scenario?.telemetry?.risk || 'Low') : null,
     tokens:     pipelineComplete ? (patchedTokens || 342) : null,
   };
 

@@ -70,7 +70,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
-    
+
     // Extract JSON block by finding first { and last }
     let cleanedJsonText = rawText;
     const firstBrace = cleanedJsonText.indexOf('{');
@@ -86,7 +86,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
       parsedData = JSON.parse(cleanedJsonText);
     } catch (e) {
       console.error("Failed to parse JSON from LLM (likely truncated). Attempting regex extraction.");
-      
+
       // If JSON is truncated, try to manually extract the "code" field value using Regex
       let extractedCode = cleanedJsonText;
       const codeMatch = cleanedJsonText.match(/"code"\s*:\s*"([\s\S]*?)(?:"|$)/);
