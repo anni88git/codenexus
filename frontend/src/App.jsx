@@ -388,30 +388,22 @@ function Dashboard({ user, onSignOut }) {
 
     const content = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 20px;">
       <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden;">
-        <div style="background: #1e293b; color: white; padding: 20px;">
-          <h1 style="margin: 0; font-size: 22px; font-weight: 700;">🌌 THE WINDOW AI STUDIO</h1>
-          <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px;">Post-Mortem Incident & Patch Report</p>
-        </div>
         
         <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
-          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🚨 Original Vulnerable Code</h2>
+          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">01 What it was</h2>
           <pre style="background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin: 0;">${(activeRun.originalCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>
         </div>
         
         <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
-          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🛠️ AI Patched Secure Code</h2>
+          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">02 What we did</h2>
+          <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; border-radius: 4px; color: #166534; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">
+            ${(activeRun.explanation || '').trim().replace(/\n/g, '<br>')}
+          </div>
           <pre style="background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin: 0;">${(activeRun.patchedCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>
         </div>
         
-        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
-          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🧠 Root Cause Analysis</h2>
-          <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; border-radius: 4px; color: #166534; font-size: 13px; line-height: 1.5;">
-            ${(activeRun.explanation || '').trim().replace(/\\n/g, '<br>')}
-          </div>
-        </div>
-        
         <div style="padding: 20px;">
-          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🛡️ Security Audit Findings</h2>
+          <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">03 What we recommend</h2>
           ${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
             ? activeRun.securitySuggestions.map(s => `
               <div style="background: ${s.severity.toLowerCase() === 'high' ? '#fee2e2' : '#fffbeb'}; border: 1px solid ${s.severity.toLowerCase() === 'high' ? '#fca5a5' : '#fde68a'}; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px;">
@@ -419,7 +411,7 @@ function Dashboard({ user, onSignOut }) {
                 <div style="color: ${s.severity.toLowerCase() === 'high' ? '#7f1d1d' : '#78350f'}; font-size: 12px;">${s.description}</div>
               </div>
             `).join('')
-            : '<div style="background:#f0fdf4;color:#166534;padding:12px;border-radius:6px;font-size:13px;">✅ No critical security vulnerabilities detected.</div>'
+            : '<div style="background:#f0fdf4;color:#166534;padding:12px;border-radius:6px;font-size:13px;">✅ No critical security vulnerabilities detected. Standard best practices apply.</div>'
           }
         </div>
         
