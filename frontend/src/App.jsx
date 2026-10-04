@@ -378,6 +378,34 @@ function Dashboard({ user, onSignOut }) {
     confetti({ particleCount: 130, spread: 80, origin: { y: 0.5 }, colors: ['#06b6d4','#a855f7','#34d399','#f59e0b'] });
   }, []);
 
+  const handleDownloadReport = useCallback(() => {
+    if (!activeRun) return;
+    const content = `THE WINDOW AI STUDIO - POST-MORTEM REPORT
+Date: ${new Date().toLocaleString()}
+File: ${activeRun.fileName || 'custom'}
+Language: ${activeRun.language || 'Auto'}
+
+[ ORIGINAL CODE ]
+${activeRun.originalCode || ''}
+
+[ PATCHED CODE ]
+${activeRun.patchedCode || ''}
+
+[ AI EXPLANATION ]
+${activeRun.explanation || ''}
+
+[ SECURITY SUGGESTIONS ]
+${activeRun.securitySuggestions?.map(s => `- ${s.title} (${s.severity}): ${s.description}`).join('\n') || 'None'}
+`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `post_mortem_${activeRun.fileName || 'report'}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [activeRun]);
+
   const telemetry = {
     confidence: pipelineComplete ? (scenario?.telemetry?.confidence || 98.6) : null,
     latency:    pipelineComplete ? (patchedLatency || 1.2) : null,
@@ -470,7 +498,7 @@ function Dashboard({ user, onSignOut }) {
                   onRollback={handleRollback}
                   onOpenPR={openPR} onExplain={() => setShowExplainDrawer(true)}
                   onSlack={() => setShowSlackFeed(!showSlackFeed)} showSlack={showSlackFeed}
-                  onReport={() => alert("Post-Mortem Report downloaded successfully!")}
+                  onReport={handleDownloadReport}
                   activeRun={activeRun}
                 />
               </motion.div>
