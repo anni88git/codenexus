@@ -66,7 +66,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'qwen/qwen3.8-27b',
-      max_tokens: 2500,
+      max_tokens: 950,
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
