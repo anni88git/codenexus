@@ -15,6 +15,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'codenexus-super-secret-key';
 
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
+import { Strategy as DiscordStrategy } from 'passport-discord';
 
 const app = express();
 app.use(cors());
@@ -42,6 +43,33 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         name: profile.displayName || profile.username, 
         provider: 'GitHub', 
         avatar: profile.photos?.[0]?.value || `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${profile.username}` 
+      };
+      users.push(user);
+    }
+    return done(null, user);
+  }));
+}
+
+if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
+  passport.use(new DiscordStrategy({
+    clientID: process.env.DISCORD_CLIENT_ID,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET,
+    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/discord/callback",
+    scope: ['identify', 'email']
+  }, (accessToken, refreshToken, profile, done) => {
+    const email = profile.email || `${profile.username}@discord.dev`;
+    let user = users.find(u => u.email === email);
+    if (!user) {
+      const avatarUrl = profile.avatar 
+        ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` 
+        : `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${profile.username}`;
+        
+      user = { 
+        id: Date.now().toString(), 
+        email, 
+        name: profile.global_name || profile.username, 
+        provider: 'Discord', 
+        avatar: avatarUrl 
       };
       users.push(user);
     }
@@ -137,6 +165,19 @@ app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:ema
 app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   // Redirect to frontend with token and user data in query string so it can instantly log in
+  const userData = encodeURIComponent(JSON.stringify({
+    name: req.user.name,
+    email: req.user.email,
+    avatar: req.user.avatar
+  }));
+  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
+});
+
+// ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
+app.get('/api/auth/discord', passport.authenticate('discord', { session: false }));
+
+app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+  const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   const userData = encodeURIComponent(JSON.stringify({
     name: req.user.name,
     email: req.user.email,

@@ -96,6 +96,10 @@ export default function AuthPage({ onAuthenticated }) {
       window.location.href = `${BACKEND_URL}/api/auth/github`;
       return;
     }
+    if (provider === 'Discord') {
+      window.location.href = `${BACKEND_URL}/api/auth/discord`;
+      return;
+    }
 
     setLoading(true);
     try {
