@@ -65,7 +65,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'qwen/qwen3.8-27b',
+      model: 'llama-3.1-8b-instant',
       max_tokens: 950,
     });
 
