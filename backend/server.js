@@ -16,7 +16,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'The Window-super-secret-key';
 
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-import { Strategy as DiscordStrategy } from 'passport-discord';
 
 const app = express();
 app.use(cors());
@@ -52,32 +51,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   }));
 }
 
-if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
-  passport.use(new DiscordStrategy({
-    clientID: process.env.DISCORD_CLIENT_ID,
-    clientSecret: process.env.DISCORD_CLIENT_SECRET,
-    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/discord/callback",
-    scope: ['identify', 'email']
-  }, (accessToken, refreshToken, profile, done) => {
-    const email = profile.email || `${profile.username}@discord.dev`;
-    let user = users.find(u => u.email === email);
-    if (!user) {
-      const avatarUrl = profile.avatar 
-        ? `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png` 
-        : `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${profile.username}`;
-        
-      user = { 
-        id: Date.now().toString(), 
-        email, 
-        name: profile.global_name || profile.username, 
-        provider: 'Discord', 
-        avatar: avatarUrl 
-      };
-      users.push(user);
-    }
-    return done(null, user);
-  }));
-}
+
 
 const hasAiKey = !!process.env.GROQ_API_KEY;
 if (!hasAiKey) console.warn('⚠️  No GROQ_API_KEY found — AI patches will use simulated fallback.');
@@ -159,7 +133,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 // ─── POST /api/auth/oauth ──────────────────────────────────────────────────────
 app.post('/api/auth/oauth', (req, res) => {
-  // Mock OAuth for Discord (and GitHub if keys not provided)
+  // Mock OAuth for GitHub if keys not provided
   const { provider } = req.body;
   const email = `${provider.toLowerCase()}@oauth.dev`;
   
@@ -187,29 +161,7 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
   res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
-// ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
-app.get('/api/auth/discord', passport.authenticate('discord', { prompt: 'consent', session: false }));
 
-app.get('/api/auth/discord/callback', (req, res, next) => {
-  passport.authenticate('discord', { session: false }, (err, user, info) => {
-    if (err || !user) {
-      console.error("Discord Auth Error:", err || info);
-      return res.redirect('https://codenexus-phi.vercel.app?error=discord_failed');
-    }
-    try {
-      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-      const userData = encodeURIComponent(JSON.stringify({
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar
-      }));
-      res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
-    } catch (jwtErr) {
-      console.error("JWT Error in Discord Auth:", jwtErr);
-      res.redirect('https://codenexus-phi.vercel.app?error=discord_failed');
-    }
-  })(req, res, next);
-});
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────
 app.post('/api/github/pr', authenticateToken, async (req, res) => {

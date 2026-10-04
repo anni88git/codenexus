@@ -96,10 +96,6 @@ export default function AuthPage({ onAuthenticated }) {
       window.location.href = `${BACKEND_URL}/api/auth/github`;
       return;
     }
-    if (provider === 'Discord') {
-      window.location.href = `${BACKEND_URL}/api/auth/discord`;
-      return;
-    }
 
     setLoading(true);
     try {
@@ -244,14 +240,10 @@ export default function AuthPage({ onAuthenticated }) {
             </div>
 
             {/* OAuth buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <button onClick={() => handleOAuth('GitHub')}
                 className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-700/70 bg-slate-800/50 text-slate-300 text-xs font-mono hover:border-slate-600 hover:bg-slate-800 transition-all active:scale-[0.97]">
                 <GithubIcon className="w-3.5 h-3.5" /> GitHub
-              </button>
-              <button onClick={() => handleOAuth('Discord')}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-700/70 bg-slate-800/50 text-slate-300 text-xs font-mono hover:border-slate-600 hover:bg-slate-800 transition-all active:scale-[0.97]">
-                <MessageSquare className="w-3.5 h-3.5 text-indigo-400" /> Discord
               </button>
             </div>
 
