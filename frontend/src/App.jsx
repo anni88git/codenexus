@@ -190,7 +190,7 @@ function Dashboard({ user, onSignOut }) {
     setCustomCode('');
     setPatchedTokens(0);
     setPatchedLatency(0);
-    setLogs([{ id: Date.now(), text: `Scenario loaded → ${s.shortLabel}: ${s.filename}` }]);
+    setLogs([{ id: Date.now(), text: `Scenario loaded → ${s?.shortLabel || 'Custom'}: ${s?.filename || 'untitled'}` }]);
   }, []);
 
   // ── Offline demo mode (no setTimeout — driven by pre-baked log entries) ─────
@@ -260,7 +260,7 @@ function Dashboard({ user, onSignOut }) {
       nodes: []
     });
 
-    speak(`Initiating fix for ${scenario.shortLabel}`, muted);
+    speak(`Initiating fix for ${scenario?.shortLabel || 'custom code'}`, muted);
     if (activeTab === 'home') setActiveTab('workspace');
 
     try {
@@ -542,8 +542,8 @@ function ScenarioSelector({ scenario, onSelect, isFixing }) {
             : 'border-cyan-500/20 bg-slate-900/50 text-cyan-300 hover:border-cyan-400/40'
         }`}
       >
-        <span>{scenario.icon}</span>
-        <span className="max-w-[120px] truncate">{scenario.shortLabel}</span>
+        <span>{scenario?.icon || '⚙️'}</span>
+        <span className="max-w-[120px] truncate">{scenario?.shortLabel || 'Empty Workspace'}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
