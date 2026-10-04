@@ -25,7 +25,15 @@ import ReportModal from './components/ReportModal';
 import CustomCodeModal from './components/CustomCodeModal';
 import SettingsModal from './components/SettingsModal';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
-const socket = io(BACKEND_URL, { autoConnect: true });
+const socket = io(BACKEND_URL, {
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 2000,
+  reconnectionDelayMax: 10000,
+  timeout: 15000,
+  transports: ['websocket', 'polling'],
+});
 
 const LANGUAGES = [
   { id: 'nodejs', label: 'Node.js', color: '#68a063', testCmd: 'vitest run' },
@@ -154,8 +162,10 @@ function Dashboard({ user, onSignOut }) {
 
   useEffect(() => {
     socket.connect();
-    socket.on('connect',    () => setIsConnected(true));
-    socket.on('disconnect', () => setIsConnected(false));
+    socket.on('connect',    () => { setIsConnected(true); addLog('🟢 Agent connected to backend.'); });
+    socket.on('disconnect', () => { setIsConnected(false); addLog('🔴 Agent disconnected. Reconnecting...'); });
+    socket.on('reconnect',  (attempt) => { setIsConnected(true); addLog(`🟢 Reconnected after ${attempt} attempt(s).`); });
+    socket.on('reconnect_attempt', () => { addLog('⏳ Attempting to reconnect to backend...'); });
     socket.on('agent-log',  (data) => {
       if (data.text) addLog(data.text);
       if (data.node !== undefined && data.node > 0) setActiveNode(data.node);
@@ -170,9 +180,18 @@ function Dashboard({ user, onSignOut }) {
         }
       }
     });
+
+    // Keep-alive: ping backend every 5 min to prevent Render free tier sleep
+    const keepAlive = setInterval(() => {
+      fetch(`${BACKEND_URL}/`).catch(() => {});
+    }, 5 * 60 * 1000);
+
     return () => {
+      clearInterval(keepAlive);
       socket.off('connect');
       socket.off('disconnect');
+      socket.off('reconnect');
+      socket.off('reconnect_attempt');
       socket.off('agent-log');
       socket.disconnect();
     };
