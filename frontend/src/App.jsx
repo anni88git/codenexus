@@ -384,28 +384,44 @@ function Dashboard({ user, onSignOut }) {
 
   const handleDownloadReport = useCallback(() => {
     if (!activeRun) return;
-    const content = `THE WINDOW AI STUDIO - POST-MORTEM REPORT
-Date: ${new Date().toLocaleString()}
-File: ${activeRun.fileName || 'custom'}
-Language: ${activeRun.language || 'Auto'}
+    
+    const lang = (activeRun.language || 'Auto').toLowerCase();
+    
+    const content = `# 🌌 THE WINDOW AI STUDIO
+## Post-Mortem Incident Report
 
-[ ORIGINAL CODE ]
-${activeRun.originalCode || ''}
+**Date:** \`${new Date().toLocaleString()}\`
+**Target File:** \`${activeRun.fileName || 'custom.src'}\`
+**Detected Language:** \`${activeRun.language || 'Auto'}\`
 
-[ PATCHED CODE ]
-${activeRun.patchedCode || ''}
+---
 
-[ AI EXPLANATION ]
-${activeRun.explanation || ''}
+### 🚨 1. Original (Vulnerable) Code
+\`\`\`${lang}
+${(activeRun.originalCode || '').trim()}
+\`\`\`
 
-[ SECURITY SUGGESTIONS ]
-${activeRun.securitySuggestions?.map(s => `- ${s.title} (${s.severity}): ${s.description}`).join('\n') || 'None'}
+### 🛠️ 2. AI Patched (Secure) Code
+\`\`\`${lang}
+${(activeRun.patchedCode || '').trim()}
+\`\`\`
+
+### 🧠 3. AI Root Cause Analysis
+> ${(activeRun.explanation || '').trim().replace(/\n/g, '\n> ')}
+
+### 🛡️ 4. Security Audit Findings
+${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
+  ? activeRun.securitySuggestions.map(s => `- **[${s.severity.toUpperCase()}]** ${s.title}\n  - ${s.description}`).join('\n') 
+  : '✅ *No critical security vulnerabilities detected in the patched code.*'}
+
+---
+*Report generated autonomously by The Window AI Studio v2*
 `;
-    const blob = new Blob([content], { type: 'text/plain' });
+    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `post_mortem_${activeRun.fileName || 'report'}.txt`;
+    a.download = `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }, [activeRun]);
