@@ -442,7 +442,7 @@ function Dashboard({ user, onSignOut }) {
 
     const opt = {
       margin:       0,
-      filename:     `post_mortem_${(activeRun.fileName || 'report').replace(/\\./g, '_')}.pdf`,
+      filename:     `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2 },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
