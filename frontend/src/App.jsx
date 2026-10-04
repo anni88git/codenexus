@@ -495,7 +495,7 @@ function Dashboard({ user, onSignOut }) {
       </div>
 
       <AnimatePresence>
-        {showPRModal && <PRModal pr={scenario.pr} onClose={() => setShowPRModal(false)} />}
+        {showPRModal && <PRModal activeRun={activeRun} onClose={() => setShowPRModal(false)} />}
         {showExplainDrawer && <ExplainDrawer fix={activeRun?.explanation || scenario.pr?.explainFix} filename={activeRun?.fileName || scenario.filename} onClose={() => setShowExplainDrawer(false)} />}
         {showReportModal && <ReportModal activeRun={activeRun} onClose={() => setShowReportModal(false)} />}
         {showCustomModal && (
