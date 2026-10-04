@@ -174,9 +174,9 @@ app.post('/api/auth/oauth', (req, res) => {
 });
 
 // ─── REAL GITHUB OAUTH ROUTES ────────────────────────────────────────────────
-app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:email', 'repo' ], session: false }));
+app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:email', 'repo' ], prompt: 'consent', session: false }));
 
-app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app?error=github_failed', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   // Redirect to frontend with token and user data in query string so it can instantly log in
   const userData = encodeURIComponent(JSON.stringify({
@@ -188,9 +188,9 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
 });
 
 // ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
-app.get('/api/auth/discord', passport.authenticate('discord', { session: false }));
+app.get('/api/auth/discord', passport.authenticate('discord', { prompt: 'consent', session: false }));
 
-app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app?error=discord_failed', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   const userData = encodeURIComponent(JSON.stringify({
     name: req.user.name,

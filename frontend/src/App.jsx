@@ -74,6 +74,12 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const userStr = params.get('user');
+    const err = params.get('error');
+
+    if (err) {
+      alert("OAuth Login Failed: " + err + ". Please try again.");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
     if (token && userStr) {
       try {
