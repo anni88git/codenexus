@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { id: 'sandbox',   icon: TerminalSquare,  label: 'Sandbox & DevOps',  sub: 'Terminal + Alerts' },
 ];
 
-export default function Sidebar({ activeTab, onTabChange, user, onSignOut }) {
+export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSignOut }) {
   return (
     <aside className="shrink-0 w-64 h-full flex flex-col bg-slate-950/90 border-r border-slate-800/80 overflow-hidden">
 
