@@ -393,17 +393,6 @@ function Dashboard({ user, onSignOut }) {
           <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px;">Post-Mortem Incident & Patch Report</p>
         </div>
         
-        <div style="display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid #e5e7eb; background: #f8fafc;">
-          <div style="flex: 1;">
-            <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 4px;">Target File</span>
-            <span style="font-size: 14px; font-weight: 500; color: #0f172a;">${activeRun.fileName || 'custom.src'}</span>
-          </div>
-          <div style="flex: 1;">
-            <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 4px;">Language</span>
-            <span style="font-size: 14px; font-weight: 500; color: #0f172a;">${activeRun.language || 'Auto'}</span>
-          </div>
-        </div>
-        
         <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
           <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🚨 Original Vulnerable Code</h2>
           <pre style="background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin: 0;">${(activeRun.originalCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>

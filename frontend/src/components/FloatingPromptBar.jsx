@@ -114,9 +114,8 @@ export default function FloatingPromptBar({
 
         {/* Input Form Area */}
         <form onSubmit={handleSubmit} className="flex-1 min-w-0 flex items-center gap-2 relative">
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
             value={prompt}
             onChange={(e) => {
               setPrompt(e.target.value);
@@ -127,7 +126,9 @@ export default function FloatingPromptBar({
             onBlur={() => setFocused(false)}
             placeholder="Describe bug, paste stack trace, or press Generate..."
             disabled={isFixing}
-            className="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 py-1 disabled:opacity-50 font-mono"
+            rows={1}
+            className="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 py-1 disabled:opacity-50 font-mono resize-none overflow-hidden"
+            style={{ minHeight: '24px', lineHeight: '24px' }}
           />
 
           {!prompt && !focused && !isFixing && scenario?.stackTrace && (
