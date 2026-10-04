@@ -239,7 +239,7 @@ export default function PatchingWorkspace({
                     )}
                   </div>
                   <div className="space-y-1">
-                    {scenario.rollbackCheckpoints.map((cp, idx) => (
+                    {scenario?.rollbackCheckpoints?.map((cp, idx) => (
                       <div key={cp} className={`text-[10px] font-mono px-2.5 py-2 rounded-lg border flex items-center gap-2 ${
                         idx <= rollbackStep ? 'bg-cyan-950/30 border-cyan-500/20 text-cyan-300' : 'bg-slate-800/25 border-slate-700/25 text-slate-600'
                       }`}>
@@ -264,7 +264,7 @@ export default function PatchingWorkspace({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/25 border border-red-500/15">
                       <span className="text-[9px] font-mono text-red-400 font-bold w-10 shrink-0">PRE</span>
-                      <span className="text-[10px] font-mono text-red-300 truncate">{scenario.owasp.prePatch?.code} — {scenario.owasp.prePatch?.label}</span>
+                      <span className="text-[10px] font-mono text-red-300 truncate">{scenario?.owasp?.prePatch?.code} — {scenario?.owasp?.prePatch?.label}</span>
                     </div>
                     <ChevronRight className="w-3 h-3 text-slate-700 mx-auto" />
                     <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border transition-all ${
@@ -272,7 +272,7 @@ export default function PatchingWorkspace({
                     }`}>
                       <span className={`text-[9px] font-mono font-bold w-10 shrink-0 ${pipelineComplete ? 'text-emerald-400' : 'text-slate-700'}`}>POST</span>
                       <span className={`text-[10px] font-mono truncate ${pipelineComplete ? 'text-emerald-300' : 'text-slate-700'}`}>
-                        {pipelineComplete ? scenario.owasp.postPatch?.label : 'Awaiting patch…'}
+                        {pipelineComplete ? scenario?.owasp?.postPatch?.label : 'Awaiting patch…'}
                       </span>
                     </div>
                   </div>

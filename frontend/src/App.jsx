@@ -370,7 +370,7 @@ function Dashboard({ user, onSignOut }) {
       await fetch(`${BACKEND_URL}/api/rollback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenarioId: scenario.id, fileName: activeRun?.fileName }),
+        body: JSON.stringify({ scenarioId: scenario?.id || 'custom', fileName: activeRun?.fileName }),
       });
     } catch {}
     setShowDiff(false);
@@ -574,14 +574,14 @@ function ScenarioSelector({ scenario, onSelect, isFixing }) {
             {scenarios.map(s => (
               <button key={s.id} onClick={() => { onSelect(s); setOpen(false); }}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center gap-2.5 transition-all ${
-                  scenario.id === s.id ? 'bg-cyan-950/40 border border-cyan-500/15' : 'hover:bg-slate-800/60 border border-transparent'
+                  scenario?.id === s.id ? 'bg-cyan-950/40 border border-cyan-500/15' : 'hover:bg-slate-800/60 border border-transparent'
                 }`}>
                 <span className="text-lg">{s.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-[11px] font-semibold text-slate-200">{s.shortLabel}</div>
                   <div className="text-[9px] text-slate-600 font-mono">{s.filename}</div>
                 </div>
-                {scenario.id === s.id && <Check className="w-3 h-3 text-cyan-400 shrink-0" />}
+                {scenario?.id === s.id && <Check className="w-3 h-3 text-cyan-400 shrink-0" />}
               </button>
             ))}
           </motion.div>
