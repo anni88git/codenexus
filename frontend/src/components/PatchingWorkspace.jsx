@@ -202,9 +202,9 @@ export default function PatchingWorkspace({
                   }`}>
                   <BookOpen className="w-3 h-3" /> Explain Fix
                 </button>
-                <button onClick={onOpenPR} disabled={!pipelineComplete || !scenario?.pr}
+                <button onClick={onOpenPR} disabled={!pipelineComplete}
                   className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold py-2.5 rounded-xl border transition-all ${
-                    pipelineComplete && scenario?.pr ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/30' : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
+                    pipelineComplete ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/30' : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
                   }`}>
                   <GitPullRequest className="w-3 h-3" /> Open PR
                 </button>
