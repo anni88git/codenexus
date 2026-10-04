@@ -87,7 +87,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
             </div>
             <div>
               <div className="text-xl font-black bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent">
-                CodeNexus Studio
+                The Window Studio
               </div>
               <div className="text-[10px] font-mono text-slate-600 tracking-widest">AUTONOMOUS AI PATCHING ENGINE v2</div>
             </div>

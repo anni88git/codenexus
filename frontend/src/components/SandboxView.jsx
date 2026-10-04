@@ -4,7 +4,7 @@ import { TerminalSquare, Bell, CheckCircle2, XCircle, RefreshCw, Wifi, GitMerge,
 
 // ─── Static Webhook feed items ────────────────────────────────────────────────
 const WEBHOOK_ITEMS = [
-  { id: 1, app: 'CodeNexus Bot',    color: '#06b6d4', icon: '🤖', time: '0s ago',  msg: 'AI patch pipeline triggered.' },
+  { id: 1, app: 'The Window Bot',    color: '#06b6d4', icon: '🤖', time: '0s ago',  msg: 'AI patch pipeline triggered.' },
   { id: 2, app: 'Security Scanner', color: '#a855f7', icon: '🛡️', time: '2s ago',  msg: 'OWASP scan complete — severity downgraded.' },
   { id: 3, app: 'Slack',            color: '#eab308', icon: '💬', time: '4s ago',  msg: '#eng-alerts: Null pointer fixed in OrderController.js' },
   { id: 4, app: 'GitHub PR Bot',    color: '#34d399', icon: '🔀', time: '6s ago',  msg: 'PR #15 Merged → main · CI passed ✓' },

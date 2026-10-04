@@ -24,7 +24,7 @@ export default function Sidebar({ activeTab, onTabChange, user, onSignOut }) {
           </div>
           <div className="min-w-0">
             <div className="text-[11px] font-extrabold tracking-[0.14em] bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight">
-              CODENEXUS
+              The Window
             </div>
             <div className="text-[8px] font-mono text-slate-600 tracking-[0.2em] mt-0.5">AI STUDIO v2</div>
           </div>

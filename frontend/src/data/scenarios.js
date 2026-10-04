@@ -1,5 +1,5 @@
 // =============================================================================
-// CodeNexus Studio — 3 Bug Scenarios + OWASP + Rollback + AST data
+// The Window Studio — 3 Bug Scenarios + OWASP + Rollback + AST data
 // =============================================================================
 const scenarios = [
   {

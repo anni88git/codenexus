@@ -164,7 +164,7 @@ export default function SplashOverlay({ onComplete }) {
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
-          <div className="text-[11px] font-extrabold tracking-[0.25em] text-white">CODENEXUS STUDIO</div>
+          <div className="text-[11px] font-extrabold tracking-[0.25em] text-white">The Window STUDIO</div>
         </motion.div>
 
         {/* Animated shield + hammer */}

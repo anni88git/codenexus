@@ -24,7 +24,7 @@ import PRModal from './components/PRModal';
 import ReportModal from './components/ReportModal';
 import CustomCodeModal from './components/CustomCodeModal';
 import SettingsModal from './components/SettingsModal';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://The Window-laa2.onrender.com';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 const socket = io(BACKEND_URL, { autoConnect: true });
 
 const LANGUAGES = [

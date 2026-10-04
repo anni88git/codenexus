@@ -33,7 +33,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://The Window-laa2.onrender.com/api/auth/github/callback"
+    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/github/callback"
   }, (accessToken, refreshToken, profile, done) => {
     const email = profile.emails?.[0]?.value || `${profile.username}@github.dev`;
     let user = users.find(u => u.email === email);
@@ -56,7 +56,7 @@ if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
   passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID,
     clientSecret: process.env.DISCORD_CLIENT_SECRET,
-    callbackURL: "https://The Window-laa2.onrender.com/api/auth/discord/callback",
+    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/discord/callback",
     scope: ['identify', 'email']
   }, (accessToken, refreshToken, profile, done) => {
     const email = profile.email || `${profile.username}@discord.dev`;
@@ -176,7 +176,7 @@ app.post('/api/auth/oauth', (req, res) => {
 // ─── REAL GITHUB OAUTH ROUTES ────────────────────────────────────────────────
 app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:email', 'repo' ], session: false }));
 
-app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://The Window-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   // Redirect to frontend with token and user data in query string so it can instantly log in
   const userData = encodeURIComponent(JSON.stringify({
@@ -184,20 +184,20 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
     email: req.user.email,
     avatar: req.user.avatar
   }));
-  res.redirect(`https://The Window-phi.vercel.app?token=${token}&user=${userData}`);
+  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
 // ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
 app.get('/api/auth/discord', passport.authenticate('discord', { session: false }));
 
-app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://The Window-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   const userData = encodeURIComponent(JSON.stringify({
     name: req.user.name,
     email: req.user.email,
     avatar: req.user.avatar
   }));
-  res.redirect(`https://The Window-phi.vercel.app?token=${token}&user=${userData}`);
+  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────

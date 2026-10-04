@@ -61,7 +61,7 @@ export default function AuthPage({ onAuthenticated }) {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState('');
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://The Window-laa2.onrender.com';
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
