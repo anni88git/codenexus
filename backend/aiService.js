@@ -28,8 +28,8 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
         { role: 'system', content: 'You are a strict Security Auditor. Briefly list vulnerabilities in the provided code in 2 sentences max. Do not write code.' },
         { role: 'user', content: brokenCode }
       ],
-      model: 'mixtral-8x7b-32768',
-      max_tokens: 150,
+      model: 'qwen/qwen3.8-27b',
+      max_tokens: 100,
     });
 
     // Agent 2: Performance Architect
@@ -38,8 +38,8 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
         { role: 'system', content: 'You are a Performance Engineer. Briefly analyze Big-O complexity and suggest optimizations in 2 sentences max. Do not write code.' },
         { role: 'user', content: brokenCode }
       ],
-      model: 'mixtral-8x7b-32768',
-      max_tokens: 150,
+      model: 'qwen/qwen3.8-27b',
+      max_tokens: 100,
     });
 
     // Run parallel agents
@@ -95,8 +95,8 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'mixtral-8x7b-32768',
-      max_tokens: 1024,
+      model: 'qwen/qwen3.8-27b',
+      max_tokens: 750,
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
