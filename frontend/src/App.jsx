@@ -384,113 +384,81 @@ function Dashboard({ user, onSignOut }) {
 
   const handleDownloadReport = useCallback(() => {
     if (!activeRun) return;
-    
-    const content = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Post-Mortem Report - ${activeRun.fileName || 'custom.src'}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 40px; }
-  .container { max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; }
-  .header { background: #1e293b; color: white; padding: 30px 40px; }
-  .header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
-  .header p { margin: 10px 0 0 0; color: #94a3b8; font-size: 14px; }
-  .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 30px 40px; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
-  .meta-item { display: flex; flex-direction: column; }
-  .meta-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-  .meta-value { font-size: 15px; font-weight: 500; color: #0f172a; }
-  .section { padding: 30px 40px; border-bottom: 1px solid #e5e7eb; }
-  .section:last-child { border-bottom: none; }
-  .section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-  pre { background: #0f172a; color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.5; margin: 0; }
-  .analysis { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 20px; border-radius: 4px; color: #166534; font-size: 15px; line-height: 1.6; }
-  .security-list { list-style: none; padding: 0; margin: 0; }
-  .security-item { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px; }
-  .security-item.severity-high { background: #fee2e2; border-color: #fca5a5; }
-  .security-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .security-title { font-weight: 600; color: #92400e; font-size: 15px; }
-  .severity-high .security-title { color: #991b1b; }
-  .severity-badge { background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-  .severity-high .severity-badge { background: #fecaca; color: #991b1b; }
-  .security-desc { color: #78350f; font-size: 14px; margin: 0; line-height: 1.5; }
-  .severity-high .security-desc { color: #7f1d1d; }
-  .footer { text-align: center; padding: 30px; color: #94a3b8; font-size: 13px; }
-</style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>🌌 THE WINDOW AI STUDIO</h1>
-      <p>Post-Mortem Incident & Patch Report</p>
-    </div>
-    <div class="meta-grid">
-      <div class="meta-item">
-        <span class="meta-label">Date Generated</span>
-        <span class="meta-value">${new Date().toLocaleString()}</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Target File</span>
-        <span class="meta-value">${activeRun.fileName || 'custom.src'}</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Detected Language</span>
-        <span class="meta-value">${activeRun.language || 'Auto'}</span>
-      </div>
-      <div class="meta-item">
-        <span class="meta-label">Risk Level</span>
-        <span class="meta-value">${activeRun.securitySuggestions?.length > 0 ? 'Elevated' : 'Low'}</span>
-      </div>
-    </div>
-    
-    <div class="section">
-      <h2 class="section-title">🚨 Original Vulnerable Code</h2>
-      <pre><code>${(activeRun.originalCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>
-    </div>
-    
-    <div class="section">
-      <h2 class="section-title">🛠️ AI Patched Secure Code</h2>
-      <pre><code>${(activeRun.patchedCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>
-    </div>
-    
-    <div class="section">
-      <h2 class="section-title">🧠 Root Cause Analysis</h2>
-      <div class="analysis">
-        ${(activeRun.explanation || '').trim().replace(/\n/g, '<br>')}
-      </div>
-    </div>
-    
-    <div class="section">
-      <h2 class="section-title">🛡️ Security Audit Findings</h2>
-      ${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
-        ? \`<ul class="security-list">
-            \${activeRun.securitySuggestions.map(s => \`
-              <li class="security-item \${s.severity.toLowerCase() === 'high' ? 'severity-high' : ''}">
-                <div class="security-header">
-                  <span class="security-title">\${s.title}</span>
-                  <span class="severity-badge">\${s.severity}</span>
-                </div>
-                <p class="security-desc">\${s.description}</p>
-              </li>
-            \`).join('')}
-           </ul>\`
-        : '<div class="analysis" style="background:#f0fdf4;border-color:#22c55e;color:#166534">✅ No critical security vulnerabilities detected in the patched code.</div>'
-      }
-    </div>
-  </div>
-  <div class="footer">
-    Report generated autonomously by The Window AI Studio v2
-  </div>
-</body>
-</html>`;
 
-    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const generatePDF = () => {
+      const content = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; padding: 20px;">
+        <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden;">
+          <div style="background: #1e293b; color: white; padding: 20px;">
+            <h1 style="margin: 0; font-size: 22px; font-weight: 700;">🌌 THE WINDOW AI STUDIO</h1>
+            <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px;">Post-Mortem Incident & Patch Report</p>
+          </div>
+          
+          <div style="display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid #e5e7eb; background: #f8fafc;">
+            <div style="flex: 1;">
+              <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 4px;">Target File</span>
+              <span style="font-size: 14px; font-weight: 500; color: #0f172a;">${activeRun.fileName || 'custom.src'}</span>
+            </div>
+            <div style="flex: 1;">
+              <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 4px;">Language</span>
+              <span style="font-size: 14px; font-weight: 500; color: #0f172a;">${activeRun.language || 'Auto'}</span>
+            </div>
+          </div>
+          
+          <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
+            <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🚨 Original Vulnerable Code</h2>
+            <pre style="background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin: 0;">${(activeRun.originalCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>
+          </div>
+          
+          <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
+            <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🛠️ AI Patched Secure Code</h2>
+            <pre style="background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin: 0;">${(activeRun.patchedCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</pre>
+          </div>
+          
+          <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
+            <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🧠 Root Cause Analysis</h2>
+            <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; border-radius: 4px; color: #166534; font-size: 13px; line-height: 1.5;">
+              ${(activeRun.explanation || '').trim().replace(/\n/g, '<br>')}
+            </div>
+          </div>
+          
+          <div style="padding: 20px;">
+            <h2 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 15px;">🛡️ Security Audit Findings</h2>
+            ${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
+              ? activeRun.securitySuggestions.map(s => `
+                <div style="background: ${s.severity.toLowerCase() === 'high' ? '#fee2e2' : '#fffbeb'}; border: 1px solid ${s.severity.toLowerCase() === 'high' ? '#fca5a5' : '#fde68a'}; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px;">
+                  <div style="font-weight: 600; color: ${s.severity.toLowerCase() === 'high' ? '#991b1b' : '#92400e'}; font-size: 13px; margin-bottom: 4px;">[${s.severity.toUpperCase()}] ${s.title}</div>
+                  <div style="color: ${s.severity.toLowerCase() === 'high' ? '#7f1d1d' : '#78350f'}; font-size: 12px;">${s.description}</div>
+                </div>
+              `).join('')
+              : '<div style="background:#f0fdf4;color:#166534;padding:12px;border-radius:6px;font-size:13px;">✅ No critical security vulnerabilities detected.</div>'
+            }
+          </div>
+          
+        </div>
+      </div>`;
+
+      const element = document.createElement('div');
+      element.innerHTML = content;
+
+      const opt = {
+        margin:       0,
+        filename:     `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      window.html2pdf().set(opt).from(element).save();
+    };
+
+    if (!window.html2pdf) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+      script.onload = generatePDF;
+      document.body.appendChild(script);
+    } else {
+      generatePDF();
+    }
   }, [activeRun]);
 
   const telemetry = {
