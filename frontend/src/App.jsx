@@ -385,43 +385,110 @@ function Dashboard({ user, onSignOut }) {
   const handleDownloadReport = useCallback(() => {
     if (!activeRun) return;
     
-    const lang = (activeRun.language || 'Auto').toLowerCase();
+    const content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Post-Mortem Report - ${activeRun.fileName || 'custom.src'}</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 40px; }
+  .container { max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); overflow: hidden; }
+  .header { background: #1e293b; color: white; padding: 30px 40px; }
+  .header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+  .header p { margin: 10px 0 0 0; color: #94a3b8; font-size: 14px; }
+  .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 30px 40px; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
+  .meta-item { display: flex; flex-direction: column; }
+  .meta-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+  .meta-value { font-size: 15px; font-weight: 500; color: #0f172a; }
+  .section { padding: 30px 40px; border-bottom: 1px solid #e5e7eb; }
+  .section:last-child { border-bottom: none; }
+  .section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  pre { background: #0f172a; color: #f8fafc; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.5; margin: 0; }
+  .analysis { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 20px; border-radius: 4px; color: #166534; font-size: 15px; line-height: 1.6; }
+  .security-list { list-style: none; padding: 0; margin: 0; }
+  .security-item { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 15px 20px; margin-bottom: 15px; }
+  .security-item.severity-high { background: #fee2e2; border-color: #fca5a5; }
+  .security-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .security-title { font-weight: 600; color: #92400e; font-size: 15px; }
+  .severity-high .security-title { color: #991b1b; }
+  .severity-badge { background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .severity-high .severity-badge { background: #fecaca; color: #991b1b; }
+  .security-desc { color: #78350f; font-size: 14px; margin: 0; line-height: 1.5; }
+  .severity-high .security-desc { color: #7f1d1d; }
+  .footer { text-align: center; padding: 30px; color: #94a3b8; font-size: 13px; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌌 THE WINDOW AI STUDIO</h1>
+      <p>Post-Mortem Incident & Patch Report</p>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Date Generated</span>
+        <span class="meta-value">${new Date().toLocaleString()}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Target File</span>
+        <span class="meta-value">${activeRun.fileName || 'custom.src'}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Detected Language</span>
+        <span class="meta-value">${activeRun.language || 'Auto'}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Risk Level</span>
+        <span class="meta-value">${activeRun.securitySuggestions?.length > 0 ? 'Elevated' : 'Low'}</span>
+      </div>
+    </div>
     
-    const content = `# 🌌 THE WINDOW AI STUDIO
-## Post-Mortem Incident Report
+    <div class="section">
+      <h2 class="section-title">🚨 Original Vulnerable Code</h2>
+      <pre><code>${(activeRun.originalCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">🛠️ AI Patched Secure Code</h2>
+      <pre><code>${(activeRun.patchedCode || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').trim()}</code></pre>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">🧠 Root Cause Analysis</h2>
+      <div class="analysis">
+        ${(activeRun.explanation || '').trim().replace(/\n/g, '<br>')}
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2 class="section-title">🛡️ Security Audit Findings</h2>
+      ${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
+        ? \`<ul class="security-list">
+            \${activeRun.securitySuggestions.map(s => \`
+              <li class="security-item \${s.severity.toLowerCase() === 'high' ? 'severity-high' : ''}">
+                <div class="security-header">
+                  <span class="security-title">\${s.title}</span>
+                  <span class="severity-badge">\${s.severity}</span>
+                </div>
+                <p class="security-desc">\${s.description}</p>
+              </li>
+            \`).join('')}
+           </ul>\`
+        : '<div class="analysis" style="background:#f0fdf4;border-color:#22c55e;color:#166534">✅ No critical security vulnerabilities detected in the patched code.</div>'
+      }
+    </div>
+  </div>
+  <div class="footer">
+    Report generated autonomously by The Window AI Studio v2
+  </div>
+</body>
+</html>`;
 
-**Date:** \`${new Date().toLocaleString()}\`
-**Target File:** \`${activeRun.fileName || 'custom.src'}\`
-**Detected Language:** \`${activeRun.language || 'Auto'}\`
-
----
-
-### 🚨 1. Original (Vulnerable) Code
-\`\`\`${lang}
-${(activeRun.originalCode || '').trim()}
-\`\`\`
-
-### 🛠️ 2. AI Patched (Secure) Code
-\`\`\`${lang}
-${(activeRun.patchedCode || '').trim()}
-\`\`\`
-
-### 🧠 3. AI Root Cause Analysis
-> ${(activeRun.explanation || '').trim().replace(/\n/g, '\n> ')}
-
-### 🛡️ 4. Security Audit Findings
-${activeRun.securitySuggestions && activeRun.securitySuggestions.length > 0 
-  ? activeRun.securitySuggestions.map(s => `- **[${s.severity.toUpperCase()}]** ${s.title}\n  - ${s.description}`).join('\n') 
-  : '✅ *No critical security vulnerabilities detected in the patched code.*'}
-
----
-*Report generated autonomously by The Window AI Studio v2*
-`;
-    const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.md`;
+    a.download = `post_mortem_${(activeRun.fileName || 'report').replace(/\./g, '_')}.html`;
     a.click();
     URL.revokeObjectURL(url);
   }, [activeRun]);
