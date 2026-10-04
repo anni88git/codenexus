@@ -94,12 +94,7 @@ export default function PatchingWorkspace({
                 <div className="text-sm font-semibold text-slate-600 mb-1">No Diff Generated Yet</div>
                 <div className="text-xs text-slate-700 max-w-xs">Enter a stack trace or paste code in the prompt bar below to trigger the AI patch pipeline.</div>
               </div>
-              <div className="w-full max-w-md p-4 rounded-xl bg-slate-800/30 border border-slate-700/25 text-left">
-                <div className="text-[8px] font-mono text-slate-700 uppercase tracking-widest mb-2">Active Stack Trace Preview</div>
-                {(activeRun?.originalCode || scenario?.stackTrace || '').split('\n').slice(0, 4).map((l, i) => (
-                  <div key={i} className={`text-[10px] font-mono leading-relaxed ${i === 0 ? 'text-red-400/70' : 'text-slate-700'}`}>{l}</div>
-                ))}
-              </div>
+
             </div>
           ) : viewMode === 'split' ? (
             <div className="flex-1 grid grid-cols-2 divide-x divide-slate-800/60 overflow-hidden min-h-0">

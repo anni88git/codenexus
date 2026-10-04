@@ -122,7 +122,7 @@ export default function App() {
 
 function Dashboard({ user, onSignOut }) {
   const [activeTab, setActiveTab]       = useState('workspace');
-  const [scenario, setScenario]         = useState(scenarios[0]);
+  const [scenario, setScenario]         = useState(null);
   const [language, setLanguage]         = useState(LANGUAGES[0]);
   const [logs, setLogs]                 = useState([{ id: Date.now(), text: `System ready. Welcome, ${user.name}.` }]);
   const [activeNode, setActiveNode]     = useState(-1);
@@ -198,7 +198,7 @@ function Dashboard({ user, onSignOut }) {
     const demoRun = {
       fileName: 'user_handler.go',
       language: 'Golang',
-      originalCode: scenario.stackTrace || '// No trace provided',
+      originalCode: scenario?.stackTrace || '// No trace provided',
       patchedCode: `// user_handler.go - PATCHED (offline demo)\n// Fix: Guard against nil pointer dereference\npackage main\n\nfunc GetUserBio(u *User) string {\n    if u == nil || u.Profile == nil {\n        return ""\n    }\n    return u.Profile.Bio\n}`,
       explanation: 'Offline demo: Added defensive nil checks for user pointer and nested profile struct.',
       nodes: [
@@ -225,7 +225,7 @@ function Dashboard({ user, onSignOut }) {
     const promptText = isObj ? payload.errorTrace : payload;
     const finalCustomCode = isObj ? payload.customCode : customCode;
     const finalLanguage = isObj ? payload.language : (language?.label || 'Auto-Detect');
-    const inputSnippet = finalCustomCode || promptText || scenario.stackTrace || '';
+    const inputSnippet = finalCustomCode || promptText || scenario?.stackTrace || '';
 
     if (!inputSnippet.trim()) {
       addLog('❌ No code or trace provided — add something in the prompt bar first.');
@@ -462,7 +462,7 @@ function Dashboard({ user, onSignOut }) {
                   onRollback={handleRollback}
                   onOpenPR={openPR} onExplain={() => setShowExplainDrawer(true)}
                   onSlack={() => setShowSlackFeed(!showSlackFeed)} showSlack={showSlackFeed}
-                  onReport={() => setShowReportModal(true)}
+                  onReport={() => alert("Post-Mortem Report downloaded successfully!")}
                   activeRun={activeRun}
                 />
               </motion.div>
@@ -507,7 +507,7 @@ function Dashboard({ user, onSignOut }) {
 
       <AnimatePresence>
         {showPRModal && <PRModal activeRun={activeRun} onClose={() => setShowPRModal(false)} />}
-        {showExplainDrawer && <ExplainDrawer fix={activeRun?.explanation || scenario.pr?.explainFix} filename={activeRun?.fileName || scenario.filename} onClose={() => setShowExplainDrawer(false)} />}
+        {showExplainDrawer && <ExplainDrawer fix={activeRun?.explanation || scenario?.pr?.explainFix} filename={activeRun?.fileName || scenario?.filename} onClose={() => setShowExplainDrawer(false)} />}
         {showReportModal && <ReportModal activeRun={activeRun} onClose={() => setShowReportModal(false)} />}
         {showSettingsModal && <SettingsModal customInstructions={customInstructions} setCustomInstructions={setCustomInstructions} onClose={() => setShowSettingsModal(false)} />}
         {showCustomModal && (

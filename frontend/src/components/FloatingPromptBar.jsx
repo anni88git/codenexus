@@ -110,27 +110,7 @@ export default function FloatingPromptBar({
           boxShadow: '0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(6,182,212,0.12)',
         }}
       >
-        {/* Language Selector Container */}
-        <div className="shrink-0 flex items-center gap-1 bg-slate-900/90 rounded-xl p-1 border border-slate-800/80 overflow-x-auto max-w-[180px] sm:max-w-[240px] md:max-w-[300px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {LANGUAGES.map((l) => (
-            <button
-              key={l.id}
-              type="button"
-              onClick={() => onLanguageChange(l)}
-              disabled={isFixing}
-              className="text-[10px] font-mono font-bold px-2 py-1 rounded-lg transition-all shrink-0 disabled:opacity-40"
-              style={
-                language?.id === l.id
-                  ? { background: l.bg, border: `1px solid ${l.border}`, color: l.color }
-                  : { border: '1px solid transparent', color: '#64748b' }
-              }
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
 
-        <div className="shrink-0 w-px h-6 bg-slate-800" />
 
         {/* Input Form Area */}
         <form onSubmit={handleSubmit} className="flex-1 min-w-0 flex items-center gap-2 relative">
