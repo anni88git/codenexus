@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import {
   Cpu, CheckCircle2, GitPullRequest, Code, Shield, Clock, Gauge, Coins,
   ChevronDown, X, GitBranch, GitMerge, Tag, Check, Wifi, Terminal,
-  TerminalSquare, FileCode, Columns, AlignJustify, Volume2, VolumeX,
+  TerminalSquare, FileCode, Columns, AlignJustify,
   RotateCcw, Zap, BookOpen, Bell, Layers, ChevronRight, AlertTriangle,
   Activity, Network, RefreshCw, Sparkles, Play,
 } from 'lucide-react';
@@ -60,13 +60,7 @@ function computeDiff(a, b) {
   return diff;
 }
 
-function speak(text, muted) {
-  if (muted || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/[🔍✅🕸️🧠⚡🧪↩️]/g, ''));
-  u.rate = 1.1; u.pitch = 0.9; u.volume = 0.7;
-  window.speechSynthesis.speak(u);
-}
+
 
 export default function App() {
   const [user, setUser]           = useState(null);
@@ -137,7 +131,6 @@ function Dashboard({ user, onSignOut }) {
   const [isFixing, setIsFixing]         = useState(false);
   const [pipelineComplete, setPipelineComplete] = useState(false);
   const [showDiff, setShowDiff]         = useState(false);
-  const [muted, setMuted]               = useState(false);
   const [isConnected, setIsConnected]   = useState(false);
   const [rollbackStep, setRollbackStep] = useState(0);
   const [patchedTokens, setPatchedTokens] = useState(0);
@@ -279,7 +272,7 @@ function Dashboard({ user, onSignOut }) {
       nodes: []
     });
 
-    speak(`Initiating fix for ${scenario?.shortLabel || 'custom code'}`, muted);
+
     if (activeTab === 'home') setActiveTab('workspace');
 
     try {
@@ -340,7 +333,7 @@ function Dashboard({ user, onSignOut }) {
         setPatchedTokens(data.tokens?.total || 342);
         setPatchedLatency(data.latency || 1.2);
         addLog(`✅ Patch complete for ${data.fileName}`);
-        speak('Pipeline complete. Patch applied successfully.', muted);
+
       } else {
         throw new Error(data.error || 'Patch generation failed.');
       }
@@ -361,7 +354,7 @@ function Dashboard({ user, onSignOut }) {
       }));
       setShowDiff(true); // show the error state in the panel
     }
-  }, [isFixing, scenario, muted, addLog, customCode, activeTab, language]);
+  }, [isFixing, scenario, addLog, customCode, activeTab, language]);
 
 
   const handleRollback = useCallback(async () => {
@@ -449,10 +442,6 @@ function Dashboard({ user, onSignOut }) {
               <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'}`} />
               <span className="text-[9px] font-mono text-slate-600">{isConnected ? 'LIVE' : 'OFFLINE'}</span>
             </div>
-            <button onClick={() => setMuted(!muted)}
-              className="w-7 h-7 rounded-lg border border-slate-700/40 bg-slate-900/50 flex items-center justify-center hover:border-cyan-500/30 transition-all">
-              {muted ? <VolumeX className="w-3.5 h-3.5 text-slate-600" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
-            </button>
           </div>
         </header>
 
