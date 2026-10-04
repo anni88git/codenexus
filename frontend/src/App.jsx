@@ -154,6 +154,10 @@ function Dashboard({ user, onSignOut }) {
   }, []);
 
   useEffect(() => {
+    if (socket.connected) {
+      setIsConnected(true);
+    }
+    
     socket.connect();
     socket.on('connect',    () => { setIsConnected(true); addLog('🟢 Agent connected to backend.'); });
     socket.on('disconnect', () => { setIsConnected(false); addLog('🔴 Agent disconnected. Reconnecting...'); });
