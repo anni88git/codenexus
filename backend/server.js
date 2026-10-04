@@ -190,14 +190,25 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
 // ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
 app.get('/api/auth/discord', passport.authenticate('discord', { prompt: 'consent', session: false }));
 
-app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app?error=discord_failed', session: false }), (req, res) => {
-  const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
-  const userData = encodeURIComponent(JSON.stringify({
-    name: req.user.name,
-    email: req.user.email,
-    avatar: req.user.avatar
-  }));
-  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
+app.get('/api/auth/discord/callback', (req, res, next) => {
+  passport.authenticate('discord', { session: false }, (err, user, info) => {
+    if (err || !user) {
+      console.error("Discord Auth Error:", err || info);
+      return res.redirect('https://codenexus-phi.vercel.app?error=discord_failed');
+    }
+    try {
+      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+      const userData = encodeURIComponent(JSON.stringify({
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar
+      }));
+      res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
+    } catch (jwtErr) {
+      console.error("JWT Error in Discord Auth:", jwtErr);
+      res.redirect('https://codenexus-phi.vercel.app?error=discord_failed');
+    }
+  })(req, res, next);
 });
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────
