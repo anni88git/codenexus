@@ -28,7 +28,7 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
         { role: 'system', content: 'You are a strict Security Auditor. Briefly list vulnerabilities in the provided code in 2 sentences max. Do not write code.' },
         { role: 'user', content: brokenCode }
       ],
-      model: 'llama3-8b-8192',
+      model: 'mixtral-8x7b-32768',
       max_tokens: 150,
     });
 
@@ -38,7 +38,7 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
         { role: 'system', content: 'You are a Performance Engineer. Briefly analyze Big-O complexity and suggest optimizations in 2 sentences max. Do not write code.' },
         { role: 'user', content: brokenCode }
       ],
-      model: 'llama3-8b-8192',
+      model: 'mixtral-8x7b-32768',
       max_tokens: 150,
     });
 
@@ -95,7 +95,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama3-8b-8192',
+      model: 'mixtral-8x7b-32768',
       max_tokens: 1024,
     });
 
