@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield
+  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield, Settings2
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -110,34 +110,23 @@ export default function Sidebar({ activeTab, onTabChange, user, onSignOut }) {
       </nav>
 
       {/* ─── Bottom User Card ──────────────────────────────────────────────── */}
-      <div className="shrink-0 px-3 pb-4 pt-3 border-t border-slate-800/60">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/50">
-          {/* Avatar */}
-          <div className="relative shrink-0">
-            <img
-              src={user?.avatar || `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=devlead`}
-              alt="avatar"
-              className="w-9 h-9 rounded-xl border border-cyan-500/25 bg-slate-800"
-              onError={e => { e.target.style.display = 'none'; }}
-            />
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-950" />
-          </div>
+      <div className="shrink-0 px-3 pb-4 pt-3 border-t border-slate-800/60 flex gap-2">
+        <button
+          onClick={onSettings}
+          title="Agent Settings"
+          className="flex-1 shrink-0 p-3 rounded-xl bg-slate-900/60 border border-slate-800/50 flex items-center justify-center hover:bg-slate-800 hover:border-cyan-500/25 transition-all group"
+        >
+          <Settings2 className="w-5 h-5 text-slate-500 group-hover:text-cyan-400" />
+          <span className="ml-2 text-xs font-semibold text-slate-400 group-hover:text-cyan-400">Agent Rules</span>
+        </button>
 
-          {/* User info */}
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-slate-200 truncate">{user?.name || 'Dev Lead'}</div>
-            <div className="text-[9px] font-mono text-cyan-500/70 truncate">{user?.email || 'dev@codenexus.ai'}</div>
-          </div>
-
-          {/* Sign out */}
-          <button
-            onClick={onSignOut}
-            title="Sign out"
-            className="shrink-0 w-7 h-7 rounded-lg bg-slate-800/60 border border-slate-700/40 flex items-center justify-center hover:bg-red-950/40 hover:border-red-500/25 transition-all"
-          >
-            <LogOut className="w-3.5 h-3.5 text-slate-500 hover:text-red-400" />
-          </button>
-        </div>
+        <button
+          onClick={onSignOut}
+          title="Sign out"
+          className="shrink-0 p-3 rounded-xl bg-slate-900/60 border border-slate-800/50 flex items-center justify-center hover:bg-red-950/40 hover:border-red-500/25 transition-all"
+        >
+          <LogOut className="w-5 h-5 text-slate-500 hover:text-red-400" />
+        </button>
       </div>
     </aside>
   );

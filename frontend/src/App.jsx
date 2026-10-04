@@ -23,7 +23,8 @@ import ExplainDrawer from './components/ExplainDrawer';
 import PRModal from './components/PRModal';
 import ReportModal from './components/ReportModal';
 import CustomCodeModal from './components/CustomCodeModal';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
+import SettingsModal from './components/SettingsModal';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://The Window-laa2.onrender.com';
 const socket = io(BACKEND_URL, { autoConnect: true });
 
 const LANGUAGES = [
@@ -133,7 +134,9 @@ function Dashboard({ user, onSignOut }) {
   const [showSlackFeed, setShowSlackFeed]           = useState(false);
   const [showCustomModal, setShowCustomModal]       = useState(false);
   const [showReportModal, setShowReportModal]       = useState(false);
+  const [showSettingsModal, setShowSettingsModal]   = useState(false);
   const [customCode, setCustomCode]                 = useState('');
+  const [customInstructions, setCustomInstructions] = useState(() => localStorage.getItem('nexus_agent_rules') || '');
   
   const [activeRun, setActiveRun] = useState(null);
 
@@ -269,6 +272,7 @@ function Dashboard({ user, onSignOut }) {
           errorTrace: promptText || inputSnippet,
           language: finalLanguage,
           prompt: promptText || inputSnippet,
+          customInstructions: customInstructions,
           isCustom: !!(finalCustomCode || promptText)
         }),
         signal: controller.signal,
@@ -377,6 +381,7 @@ function Dashboard({ user, onSignOut }) {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         user={user}
+        onSettings={() => setShowSettingsModal(true)}
         onSignOut={onSignOut}
       />
 
@@ -498,6 +503,7 @@ function Dashboard({ user, onSignOut }) {
         {showPRModal && <PRModal activeRun={activeRun} onClose={() => setShowPRModal(false)} />}
         {showExplainDrawer && <ExplainDrawer fix={activeRun?.explanation || scenario.pr?.explainFix} filename={activeRun?.fileName || scenario.filename} onClose={() => setShowExplainDrawer(false)} />}
         {showReportModal && <ReportModal activeRun={activeRun} onClose={() => setShowReportModal(false)} />}
+        {showSettingsModal && <SettingsModal customInstructions={customInstructions} setCustomInstructions={setCustomInstructions} onClose={() => setShowSettingsModal(false)} />}
         {showCustomModal && (
           <CustomCodeModal
             value={customCode}

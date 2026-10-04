@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { X, GitPullRequest, GitMerge, Loader2 } from 'lucide-react';
 
 export default function PRModal({ pr, activeRun, onClose }) {
-  const [repo, setRepo] = useState('anni88git/codenexus');
+  const [repo, setRepo] = useState('anni88git/The Window');
   const [filePath, setFilePath] = useState(activeRun?.fileName || 'src/App.jsx');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ export default function PRModal({ pr, activeRun, onClose }) {
       const token = localStorage.getItem('nexus_token');
       const [repoOwner, repoName] = repo.split('/');
       
-      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://The Window-laa2.onrender.com';
       const res = await fetch(`${BACKEND_URL}/api/github/pr`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -25,7 +25,7 @@ export default function PRModal({ pr, activeRun, onClose }) {
           repoOwner, repoName, filePath,
           newCode: activeRun?.patchedCode || '',
           prTitle: `🤖 Fix issue in ${filePath}`,
-          commitMessage: `Auto-patch applied by CodeNexus AI to ${filePath}`
+          commitMessage: `Auto-patch applied by The Window AI to ${filePath}`
         })
       });
       const data = await res.json();

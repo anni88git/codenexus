@@ -61,7 +61,7 @@ export default function AuthPage({ onAuthenticated }) {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState('');
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://The Window-laa2.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -158,7 +158,7 @@ export default function AuthPage({ onAuthenticated }) {
             <Cpu className="w-4.5 h-4.5 text-white" />
           </div>
           <div>
-            <div className="text-xs font-extrabold tracking-[0.2em] text-white">CODENEXUS</div>
+            <div className="text-xs font-extrabold tracking-[0.2em] text-white">The Window</div>
             <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AI STUDIO</div>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function AuthPage({ onAuthenticated }) {
             <span className="text-[10px] font-mono text-cyan-400/80 tracking-widest uppercase">Autonomous Engine</span>
           </div>
           <h1 className="text-4xl font-black leading-tight bg-gradient-to-br from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent mb-3">
-            CodeNexus<br />AI Studio
+            The Window<br />AI Studio
           </h1>
           <p className="text-sm text-slate-300/70 leading-relaxed">
             Autonomous Code Healing & AST Analysis.<br />
@@ -219,7 +219,7 @@ export default function AuthPage({ onAuthenticated }) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center">
               <Cpu className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-extrabold tracking-widest text-white">CODENEXUS STUDIO</span>
+            <span className="text-sm font-extrabold tracking-widest text-white">The Window STUDIO</span>
           </div>
 
           {/* Auth Card */}
@@ -227,7 +227,7 @@ export default function AuthPage({ onAuthenticated }) {
 
             {/* Card header */}
             <div>
-              <h2 className="text-2xl font-bold text-slate-100">Welcome to CodeNexus</h2>
+              <h2 className="text-2xl font-bold text-slate-100">Welcome to The Window</h2>
               <p className="text-sm text-slate-400 mt-1">Sign in to access the autonomous patching dashboard.</p>
             </div>
 
@@ -334,7 +334,7 @@ export default function AuthPage({ onAuthenticated }) {
 
             {/* Footer */}
             <p className="text-center text-[10px] text-slate-600 font-mono leading-relaxed">
-              By continuing you agree to the CodeNexus{' '}
+              By continuing you agree to the The Window{' '}
               <button className="text-cyan-500/70 hover:text-cyan-400 underline">Terms of Service</button>
               {' '}and{' '}
               <button className="text-cyan-500/70 hover:text-cyan-400 underline">Privacy Policy</button>.

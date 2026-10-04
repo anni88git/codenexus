@@ -12,7 +12,7 @@ dotenv.config();
 
 // In-memory mock database
 const users = [];
-const JWT_SECRET = process.env.JWT_SECRET || 'codenexus-super-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'The Window-super-secret-key';
 
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
@@ -33,7 +33,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/github/callback"
+    callbackURL: "https://The Window-laa2.onrender.com/api/auth/github/callback"
   }, (accessToken, refreshToken, profile, done) => {
     const email = profile.emails?.[0]?.value || `${profile.username}@github.dev`;
     let user = users.find(u => u.email === email);
@@ -56,7 +56,7 @@ if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
   passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID,
     clientSecret: process.env.DISCORD_CLIENT_SECRET,
-    callbackURL: "https://codenexus-laa2.onrender.com/api/auth/discord/callback",
+    callbackURL: "https://The Window-laa2.onrender.com/api/auth/discord/callback",
     scope: ['identify', 'email']
   }, (accessToken, refreshToken, profile, done) => {
     const email = profile.email || `${profile.username}@discord.dev`;
@@ -87,7 +87,7 @@ const originalCache = new Map();
 
 // Root route for Render health checks & quick verification
 app.get('/', (req, res) => {
-  res.send('🚀 CodeNexus Backend is live and running!');
+  res.send('🚀 The Window Backend is live and running!');
 });
 
 io.on('connection', (socket) => {
@@ -176,7 +176,7 @@ app.post('/api/auth/oauth', (req, res) => {
 // ─── REAL GITHUB OAUTH ROUTES ────────────────────────────────────────────────
 app.get('/api/auth/github', passport.authenticate('github', { scope: [ 'user:email', 'repo' ], session: false }));
 
-app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/github/callback', passport.authenticate('github', { failureRedirect: 'https://The Window-phi.vercel.app', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   // Redirect to frontend with token and user data in query string so it can instantly log in
   const userData = encodeURIComponent(JSON.stringify({
@@ -184,20 +184,20 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
     email: req.user.email,
     avatar: req.user.avatar
   }));
-  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
+  res.redirect(`https://The Window-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
 // ─── REAL DISCORD OAUTH ROUTES ────────────────────────────────────────────────
 app.get('/api/auth/discord', passport.authenticate('discord', { session: false }));
 
-app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://codenexus-phi.vercel.app', session: false }), (req, res) => {
+app.get('/api/auth/discord/callback', passport.authenticate('discord', { failureRedirect: 'https://The Window-phi.vercel.app', session: false }), (req, res) => {
   const token = jwt.sign({ id: req.user.id, email: req.user.email }, JWT_SECRET, { expiresIn: '7d' });
   const userData = encodeURIComponent(JSON.stringify({
     name: req.user.name,
     email: req.user.email,
     avatar: req.user.avatar
   }));
-  res.redirect(`https://codenexus-phi.vercel.app?token=${token}&user=${userData}`);
+  res.redirect(`https://The Window-phi.vercel.app?token=${token}&user=${userData}`);
 });
 
 // ─── POST /api/run-agent ──────────────────────────────────────────────────────
@@ -212,7 +212,7 @@ app.post('/api/github/pr', authenticateToken, async (req, res) => {
     const defaultBranch = repo.default_branch;
     const { data: ref } = await octokit.git.getRef({ owner: repoOwner, repo: repoName, ref: `heads/${defaultBranch}` });
     
-    const newBranchName = `codenexus-fix-${Date.now()}`;
+    const newBranchName = `The Window-fix-${Date.now()}`;
     await octokit.git.createRef({ owner: repoOwner, repo: repoName, ref: `refs/heads/${newBranchName}`, sha: ref.object.sha });
 
     let fileSha;
@@ -223,7 +223,7 @@ app.post('/api/github/pr', authenticateToken, async (req, res) => {
 
     await octokit.repos.createOrUpdateFileContents({
       owner: repoOwner, repo: repoName, path: filePath,
-      message: commitMessage || '✨ Applied AI CodeNexus Patch',
+      message: commitMessage || '✨ Applied AI The Window Patch',
       content: Buffer.from(newCode).toString('base64'),
       branch: newBranchName,
       sha: fileSha
@@ -231,10 +231,10 @@ app.post('/api/github/pr', authenticateToken, async (req, res) => {
 
     const { data: pr } = await octokit.pulls.create({
       owner: repoOwner, repo: repoName,
-      title: prTitle || '🤖 AI Code Fix from CodeNexus',
+      title: prTitle || '🤖 AI Code Fix from The Window',
       head: newBranchName,
       base: defaultBranch,
-      body: 'This Pull Request was automatically generated by **CodeNexus AI Studio**. Please review the injected code patch before merging.'
+      body: 'This Pull Request was automatically generated by **The Window AI Studio**. Please review the injected code patch before merging.'
     });
 
     res.json({ prUrl: pr.html_url });
@@ -250,6 +250,7 @@ app.post('/api/run-agent', async (req, res) => {
       errorTrace = '', 
       prompt = '', 
       language = 'Auto', 
+      customInstructions = '',
       socketId,
       scenarioId 
     } = req.body;
@@ -323,7 +324,7 @@ app.post('/api/run-agent', async (req, res) => {
     } else {
       // Use the Gemini/Groq AI service for real patching
       try {
-        const aiResult = await generateCodePatch(rawInput, rawInput, detectedLang);
+        const aiResult = await generateCodePatch(rawInput, rawInput, detectedLang, customInstructions);
         patchedCode = aiResult.code;
         explanation = aiResult.explanation || 'Patch generated by AI.';
         testOutput = aiResult.testOutput || [];
@@ -424,4 +425,4 @@ app.post('/api/rollback', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`🚀 CodeNexus Backend running on port ${PORT}`));
+server.listen(PORT, () => console.log(`🚀 The Window Backend running on port ${PORT}`));

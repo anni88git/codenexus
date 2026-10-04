@@ -10,7 +10,7 @@ const ai = apiKey ? new Groq({ apiKey }) : null;
  * Generate a code patch using Groq API.
  * Falls back to a simulated patch if no API key is configured.
  */
-export async function generateCodePatch(brokenCode, errorMessage, language = 'Auto') {
+export async function generateCodePatch(brokenCode, errorMessage, language = 'Auto', customInstructions = '') {
   if (!ai) {
     console.warn('⚠️ GROQ_API_KEY not found in .env. Returning simulated patch.');
     return {
@@ -21,10 +21,43 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
   }
 
   try {
-    const prompt = `You are an automated code repair agent and AST analyzer. Analyze and fix this broken ${language} code.
+    // ── MULTI-AGENT SWARM ──
+    // Agent 1: Security Auditor
+    const securityPromise = ai.chat.completions.create({
+      messages: [
+        { role: 'system', content: 'You are a strict Security Auditor. Briefly list vulnerabilities in the provided code in 2 sentences max. Do not write code.' },
+        { role: 'user', content: brokenCode }
+      ],
+      model: 'qwen/qwen3.8-27b',
+      max_tokens: 150,
+    });
+
+    // Agent 2: Performance Architect
+    const perfPromise = ai.chat.completions.create({
+      messages: [
+        { role: 'system', content: 'You are a Performance Engineer. Briefly analyze Big-O complexity and suggest optimizations in 2 sentences max. Do not write code.' },
+        { role: 'user', content: brokenCode }
+      ],
+      model: 'qwen/qwen3.8-27b',
+      max_tokens: 150,
+    });
+
+    // Run parallel agents
+    const [secRes, perfRes] = await Promise.all([securityPromise, perfPromise]);
+    const securityNotes = secRes.choices[0]?.message?.content || 'No security notes.';
+    const perfNotes = perfRes.choices[0]?.message?.content || 'No performance notes.';
+
+    // Agent 3: Lead Coder (Final Synthesizer)
+    const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language} code.
+
+USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
+${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}
+
+Security Auditor Notes: ${securityNotes}
+Performance Architect Notes: ${perfNotes}
 
 Error / Stack Trace:
-${errorMessage}
+${errorMessage || 'None provided.'}
 
 Broken Code:
 ${brokenCode}
@@ -34,7 +67,7 @@ Instructions:
 2. Analyze the dependencies of this code (e.g., what services, databases, or external modules it uses).
 3. Return a JSON object with EXACTLY the following structure:
 {
-  "code": "The full corrected, executable code here (use \n for newlines, do not wrap in markdown code blocks)",
+  "code": "The full corrected, executable code here (use \\n for newlines, do not wrap in markdown code blocks)",
   "explanation": "A short 1-sentence explanation of what was fixed",
   "nodes": [
     { "id": "1", "label": "MainClassName (Target)", "status": "PATCHED", "type": "primary" },
@@ -63,7 +96,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'qwen/qwen3.8-27b',
-      max_tokens: 900,
+      max_tokens: 1500,
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
