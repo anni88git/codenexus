@@ -273,7 +273,7 @@ function Dashboard({ user, onSignOut }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          scenarioId: scenario.id,
+          scenarioId: scenario?.id || 'custom',
           customCode: finalCustomCode || null,
           errorTrace: promptText || inputSnippet,
           language: finalLanguage,
