@@ -21,40 +21,10 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
   }
 
   try {
-    // ── MULTI-AGENT SWARM ──
-    // Agent 1: Security Auditor
-    const securityPromise = ai.chat.completions.create({
-      messages: [
-        { role: 'system', content: 'You are a strict Security Auditor. Briefly list vulnerabilities in the provided code in 2 sentences max. Do not write code.' },
-        { role: 'user', content: brokenCode }
-      ],
-      model: 'qwen/qwen3.8-27b',
-      max_tokens: 100,
-    });
-
-    // Agent 2: Performance Architect
-    const perfPromise = ai.chat.completions.create({
-      messages: [
-        { role: 'system', content: 'You are a Performance Engineer. Briefly analyze Big-O complexity and suggest optimizations in 2 sentences max. Do not write code.' },
-        { role: 'user', content: brokenCode }
-      ],
-      model: 'qwen/qwen3.8-27b',
-      max_tokens: 100,
-    });
-
-    // Run parallel agents
-    const [secRes, perfRes] = await Promise.all([securityPromise, perfPromise]);
-    const securityNotes = secRes.choices[0]?.message?.content || 'No security notes.';
-    const perfNotes = perfRes.choices[0]?.message?.content || 'No performance notes.';
-
-    // Agent 3: Lead Coder (Final Synthesizer)
     const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language} code.
 
 USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
 ${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}
-
-Security Auditor Notes: ${securityNotes}
-Performance Architect Notes: ${perfNotes}
 
 Error / Stack Trace:
 ${errorMessage || 'None provided.'}
@@ -96,7 +66,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'qwen/qwen3.8-27b',
-      max_tokens: 750,
+      max_tokens: 950,
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';
