@@ -115,11 +115,19 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     try {
       parsedData = JSON.parse(cleanedJsonText);
     } catch (e) {
-      console.error("Failed to parse JSON from LLM:", cleanedJsonText);
-      // Fallback
+      console.error("Failed to parse JSON from LLM (likely truncated). Attempting regex extraction.");
+      
+      // If JSON is truncated, try to manually extract the "code" field value using Regex
+      let extractedCode = cleanedJsonText;
+      const codeMatch = cleanedJsonText.match(/"code"\s*:\s*"([\s\S]*?)(?:"|$)/);
+      if (codeMatch && codeMatch[1]) {
+        // Unescape newlines and quotes
+        extractedCode = codeMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+      }
+
       parsedData = {
-        code: cleanedJsonText,
-        explanation: 'Patch generated (JSON parsing failed).',
+        code: extractedCode,
+        explanation: 'Patch generated (JSON parsing failed due to length).',
         nodes: []
       };
     }
