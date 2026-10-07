@@ -261,26 +261,33 @@ app.post('/api/git/commits', async (req, res) => {
 app.post('/api/run-code', async (req, res) => {
   const { code, language } = req.body;
   
-  let pistonLang = 'javascript';
-  const l = (language || '').toLowerCase();
-  if (l.includes('python')) pistonLang = 'python';
-  else if (l.includes('go')) pistonLang = 'go';
-  else if (l.includes('rust')) pistonLang = 'rust';
-  else if (l.includes('c++') || l === 'cpp') pistonLang = 'cpp';
-  else if (l.includes('java')) pistonLang = 'java';
+  const rawKey = process.env.GROQ_API_KEY || '';
+  const apiKey = rawKey.trim();
+  if (!apiKey) return res.status(500).json({ output: 'Error: No GROQ API Key configured for the AI Sandbox Simulator.' });
   
   try {
-    const pistonRes = await fetch('https://emkc.org/api/v2/piston/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: pistonLang,
-        version: '*',
-        files: [{ content: code }]
-      })
+    const { default: Groq } = await import('groq-sdk');
+    const ai = new Groq({ apiKey });
+
+    const prompt = `You are a strict terminal console and execution simulator. 
+The user is attempting to run the following ${language || 'code'} snippet.
+Simulate executing this code. 
+- If it has syntax errors, output the exact compiler error.
+- If it has missing module imports (like react, express), output a realistic runtime/module error. 
+- If it runs successfully, output what would be printed to stdout. 
+- If it's a test file (like jest/vitest), output realistic test suite results.
+OUTPUT ONLY THE RAW CONSOLE TEXT. Do NOT use markdown code blocks. Do NOT explain anything.
+
+CODE:
+${code}`;
+
+    const completion = await ai.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama3-70b-8192',
+      temperature: 0.1
     });
-    const data = await pistonRes.json();
-    res.json({ output: data.run?.output || data.message || 'No output' });
+
+    res.json({ output: completion.choices[0]?.message?.content || 'Execution finished.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
