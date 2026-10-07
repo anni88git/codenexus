@@ -37,6 +37,7 @@ const socket = io(BACKEND_URL, {
 });
 
 const LANGUAGES = [
+  { id: 'auto',   label: 'Auto-Detect', color: '#94a3b8', testCmd: '' },
   { id: 'nodejs', label: 'Node.js', color: '#68a063', testCmd: 'vitest run' },
   { id: 'python', label: 'Python',  color: '#3b82f6', testCmd: 'pytest -v' },
   { id: 'golang', label: 'Golang',  color: '#06b6d4', testCmd: 'go test ./...' },

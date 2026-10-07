@@ -234,7 +234,8 @@ app.post('/api/run-agent', async (req, res) => {
       Python: rawInput.match(/([a-zA-Z0-9_\-]+\.py)/i),
       'C++': rawInput.match(/([a-zA-Z0-9_\-]+\.(cpp|hpp|c|h))/i),
       'Node.js': rawInput.match(/([a-zA-Z0-9_\-]+\.(js|ts|jsx|tsx))/i),
-      Golang: rawInput.match(/([a-zA-Z0-9_\-]+\.go)/i)
+      Golang: rawInput.match(/([a-zA-Z0-9_\-]+\.go)/i),
+      Java: rawInput.match(/([a-zA-Z0-9_\-]+\.java)/i)
     };
 
     if (matches.Rust || detectedLang.toLowerCase() === 'rust') {
@@ -249,9 +250,15 @@ app.post('/api/run-agent', async (req, res) => {
     } else if (matches['Node.js'] || ['node.js', 'nodejs', 'javascript'].includes(detectedLang.toLowerCase())) {
       fileName = matches['Node.js'] ? matches['Node.js'][1] : 'userController.js';
       detectedLang = 'Node.js';
-    } else {
+    } else if (matches.Java || detectedLang.toLowerCase() === 'java') {
+      fileName = matches.Java ? matches.Java[1] : 'Main.java';
+      detectedLang = 'Java';
+    } else if (matches.Golang || detectedLang.toLowerCase() === 'golang' || detectedLang.toLowerCase() === 'go') {
       fileName = matches.Golang ? matches.Golang[1] : 'user_handler.go';
       detectedLang = 'Golang';
+    } else {
+      fileName = 'solution.src';
+      detectedLang = 'Auto';
     }
 
     // Cache original code for rollback functionality
