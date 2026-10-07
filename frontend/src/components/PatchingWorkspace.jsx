@@ -366,6 +366,7 @@ function ChatBox({ activeRun, onApplyCode }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState('Software Dev');
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const ref = useRef(null);
   
   const AI_MODES = ['Software Dev', 'QA', 'ML Engineer', 'Backend Dev', 'Frontend Dev', 'Cybersecurity Expert'];
@@ -375,6 +376,8 @@ function ChatBox({ activeRun, onApplyCode }) {
   const handleSend = async (overrideText) => {
     const textToSend = typeof overrideText === 'string' ? overrideText : input;
     if (!textToSend.trim() || isLoading) return;
+    
+    setShowSuggestions(false);
     
     const newMsgs = [...messages, { role: 'user', content: textToSend }];
     setMessages(newMsgs);
@@ -416,9 +419,16 @@ function ChatBox({ activeRun, onApplyCode }) {
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
           <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">AI Code Chat</span>
         </div>
-        <select value={mode} onChange={e => setMode(e.target.value)} className="bg-slate-950/80 border border-slate-700/50 text-slate-300 text-[10px] font-mono rounded-lg px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors">
-          {AI_MODES.map(m => <option key={m} value={m}>{m}</option>)}
-        </select>
+        <div className="flex items-center gap-2">
+          {!showSuggestions && (
+            <button onClick={() => setShowSuggestions(true)} className="text-slate-500 hover:text-cyan-400 transition-colors" title="Show Suggestions">
+              <Sparkles className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <select value={mode} onChange={e => { setMode(e.target.value); setShowSuggestions(true); }} className="bg-slate-950/80 border border-slate-700/50 text-slate-300 text-[10px] font-mono rounded-lg px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors">
+            {AI_MODES.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+        </div>
       </div>
       <div ref={ref} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
         {messages.map((m, i) => (
@@ -494,7 +504,7 @@ function ChatBox({ activeRun, onApplyCode }) {
       </div>
       
       {/* Suggestions */}
-      {MODE_SUGGESTIONS[mode] && (
+      {showSuggestions && MODE_SUGGESTIONS[mode] && (
         <div className="px-3 pt-2 pb-1 flex flex-wrap gap-2 border-t border-slate-800/50 bg-slate-900/20">
           {MODE_SUGGESTIONS[mode].map(s => (
             <button 
