@@ -253,7 +253,7 @@ export default function PatchingWorkspace({
                 </div>
               )}
             </motion.div>
-          ) : (
+          ) : rightTab === 'logs' ? (
             <motion.div key="logs" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
               {scenario?.owasp && (
