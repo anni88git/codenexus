@@ -319,9 +319,19 @@ Help them understand the code, answer questions about the patch, or suggest furt
 });
 
 // ─── POST /api/github/pr ──────────────────────────────────────────────────────
-app.post('/api/github/pr', authenticateToken, async (req, res) => {
+app.post('/api/github/pr', async (req, res) => {
   const { repoOwner, repoName, filePath, newCode, prTitle, commitMessage, token, commitDirectly } = req.body;
-  const user = users.find(u => u.id === req.user.id);
+  
+  let user;
+  const authHeader = req.headers['authorization'];
+  const jwtToken = authHeader && authHeader.split(' ')[1];
+  if (jwtToken) {
+    try {
+      const userPayload = jwt.verify(jwtToken, JWT_SECRET);
+      user = users.find(u => u.id === userPayload.id);
+    } catch(e) {}
+  }
+
   const gitToken = token || (user && user.githubToken);
   
   if (!gitToken) return res.status(400).json({ error: 'GitHub token not found. Connect your repo in the Git Repository tab or log in with GitHub.' });
