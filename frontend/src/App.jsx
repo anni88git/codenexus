@@ -264,11 +264,11 @@ function Dashboard({ user, onSignOut }) {
     setLogs([{ id: Date.now(), text: `[TRIGGERED] Pipeline initiated: ${finalLanguage}` }]);
 
     // ── Optimistic UI: immediately show input in the workspace panel
-    const optimisticFileName =
-      finalLanguage === 'Rust'   ? 'main.rs'          :
+    const optimisticFileName = (isObj && payload.fileName) ? payload.fileName :
+      (finalLanguage === 'Rust'   ? 'main.rs'          :
       finalLanguage === 'Python' ? 'analytics.py'     :
       finalLanguage === 'C++'    ? 'vector_bounds.cpp':
-      finalLanguage === 'Node.js'? 'userController.js': 'user_handler.go';
+      finalLanguage === 'Node.js'? 'userController.js': 'user_handler.go');
 
     setActiveRun({
       fileName: optimisticFileName,
@@ -296,6 +296,7 @@ function Dashboard({ user, onSignOut }) {
           customCode: finalCustomCode || null,
           errorTrace: promptText || inputSnippet,
           language: finalLanguage,
+          fileName: isObj && payload.fileName ? payload.fileName : undefined,
           prompt: promptText || inputSnippet,
           customInstructions: customInstructions,
           isCustom: !!(finalCustomCode || promptText)
