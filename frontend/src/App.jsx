@@ -23,6 +23,7 @@ import HomeView from './components/HomeView';
 import ExplainDrawer from './components/ExplainDrawer';
 import PRModal from './components/PRModal';
 import ReportModal from './components/ReportModal';
+import SwarmCouncil from './components/SwarmCouncil';
 import CustomCodeModal from './components/CustomCodeModal';
 import SettingsModal from './components/SettingsModal';
 import GitRepositoryView from './components/GitRepositoryView';
@@ -466,6 +467,7 @@ function Dashboard({ user, onSignOut }) {
             <div className="text-xs font-semibold text-slate-400 font-mono">
               {activeTab === 'home'      && '/ Home'}
               {activeTab === 'workspace' && '/ Patching Workspace'}
+              {activeTab === 'swarm'     && '/ Swarm Council'}
               {activeTab === 'ast'       && '/ AST Graph Mesh — Node 02'}
               {activeTab === 'security'  && '/ Security Audit — Node 04'}
               {activeTab === 'sandbox'   && '/ Sandbox & DevOps — Node 05'}
@@ -512,6 +514,18 @@ function Dashboard({ user, onSignOut }) {
                   activeScenario={scenario}
                   onSelect={switchScenario}
                   onTrigger={() => { setActiveTab('workspace'); trigger(); }}
+                />
+              </motion.div>
+            )}
+            {activeTab === 'swarm' && (
+              <motion.div key="swarm" className="absolute inset-0 flex flex-col p-6 pb-28 min-h-0"
+                initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
+                <SwarmCouncil 
+                  activeRun={activeRun} 
+                  onApplyCode={(code) => {
+                    setActiveRun(p => ({ ...p, patchedCode: code }));
+                    setActiveTab('workspace');
+                  }} 
                 />
               </motion.div>
             )}

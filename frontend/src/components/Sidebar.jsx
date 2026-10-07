@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield, Settings2, GitBranch
+  Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield, Settings2, GitBranch, Users
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { id: 'home',      icon: LayoutDashboard, label: 'Home',              sub: 'Banner Showcase' },
   { id: 'workspace', icon: Code2,           label: 'Patching Workspace', sub: 'Diff + Graph' },
+  { id: 'swarm',     icon: Users,           label: 'Swarm Council',     sub: 'Multi-Agent Consensus' },
   { id: 'git',       icon: GitBranch,       label: 'Git Repository',    sub: 'Auto Push & PRs' },
   { id: 'ast',       icon: Network,         label: 'AST Graph Mesh',    sub: 'Node 02 Visualizer' },
   { id: 'security',  icon: Shield,          label: 'Security Audit',    sub: 'Vuln Prevention' },

@@ -293,6 +293,60 @@ ${code}`;
   }
 });
 
+// ─── POST /api/swarm-turn ───────────────────────────────────────────────────────
+app.post('/api/swarm-turn', async (req, res) => {
+  const { currentCode, chatHistory, agentId, agentRole, language } = req.body;
+  const rawKey = process.env.GROQ_API_KEY || '';
+  const apiKey = rawKey.trim();
+  if (!apiKey) return res.status(400).json({ error: 'No GROQ API Key configured.' });
+
+  try {
+    const { default: Groq } = await import('groq-sdk');
+    const ai = new Groq({ apiKey });
+
+    const historyText = chatHistory && chatHistory.length > 0 
+      ? 'Here is what the team has discussed so far:\n' + chatHistory.map(c => `[${c.role}]: ${c.message}`).join('\n')
+      : 'You are the first to review this code.';
+
+    const prompt = `You are ${agentRole}. You are participating in a multi-agent swarm council to fix/improve a code snippet.
+    
+${historyText}
+
+Here is the CURRENT state of the code after the previous agents worked on it:
+\`\`\`${language || 'javascript'}
+${currentCode || ''}
+\`\`\`
+
+YOUR TASK:
+1. Write a short conversational message (1-3 sentences max) addressing the team. Critique the current code from your specific domain's perspective, mention what you fixed, or agree with the previous changes.
+2. Provide your updated version of the code.
+
+You MUST respond in STRICT JSON format with exactly two keys: "message" (your conversational text) and "code" (your final updated code string). Do NOT wrap the JSON in markdown blocks like \`\`\`json, just output the raw JSON string.`;
+
+    const completion = await ai.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model: 'llama3-70b-8192', 
+      temperature: 0.3,
+      response_format: { type: "json_object" }
+    });
+
+    let result;
+    try {
+      result = JSON.parse(completion.choices[0]?.message?.content || '{}');
+    } catch (e) {
+      result = { message: "I reviewed the code and it looks solid.", code: currentCode };
+    }
+
+    res.json({ 
+      message: result.message || 'Looks good to me.', 
+      code: result.code || currentCode 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── POST /api/chat ───────────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
   const { messages, contextCode, language, mode } = req.body;
