@@ -231,34 +231,30 @@ app.post('/api/git/commits', async (req, res) => {
     await git.clone(cloneUrl, cloneDir, ['--no-checkout']);
     
     const localGit = simpleGit(cloneDir);
-    const logResult = await localGit.raw(['log', '--all', '--graph', '--pretty=format:%H|%P|%an|%ad|%s']);
+    
+    // Instead of raw regex parsing, use simple-git's built in log parser
+    const logResult = await localGit.log({
+      '--all': null,
+      '--graph': null,
+      format: {
+        hash: '%H',
+        parents: '%P',
+        author: '%an',
+        date: '%ad',
+        message: '%s'
+      }
+    });
     
     await rimraf(cloneDir);
     
-    const lines = logResult.split('\n');
-    const commits = lines.map(line => {
-      // Split off the graph ascii from the actual data
-      const dataIdx = line.indexOf('|');
-      if (dataIdx === -1) return { graph: line, hash: '', parents: '', author: '', date: '', message: '' };
-      
-      // The hash starts before the first '|' but after the graph characters
-      // Finding where the text actually begins:
-      const parts = line.split('|');
-      const graphAndHash = parts[0];
-      
-      const graphMatch = graphAndHash.match(/^([ *|/\\_.-]+)(.*)$/);
-      const graph = graphMatch ? graphMatch[1] : '';
-      const hash = graphMatch ? graphMatch[2].trim() : graphAndHash;
-      
-      return {
-        graph,
-        hash,
-        parents: parts[1] || '',
-        author: parts[2] || '',
-        date: parts[3] || '',
-        message: parts.slice(4).join('|') || ''
-      };
-    });
+    const commits = logResult.all.map(c => ({
+      graph: c.hash ? '' : '*', // Fallback for simple graph
+      hash: c.hash || '',
+      parents: c.parents || '',
+      author: c.author || '',
+      date: c.date || '',
+      message: c.message || ''
+    }));
 
     res.json({ commits });
   } catch (err) {
