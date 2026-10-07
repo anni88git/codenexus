@@ -372,11 +372,13 @@ function ChatBox({ activeRun, onApplyCode }) {
   
   useEffect(() => { if (ref.current) ref.current.scrollTop = ref.current.scrollHeight; }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
-    const newMsgs = [...messages, { role: 'user', content: input }];
+  const handleSend = async (overrideText) => {
+    const textToSend = typeof overrideText === 'string' ? overrideText : input;
+    if (!textToSend.trim() || isLoading) return;
+    
+    const newMsgs = [...messages, { role: 'user', content: textToSend }];
     setMessages(newMsgs);
-    setInput('');
+    if (!overrideText || typeof overrideText !== 'string') setInput('');
     setIsLoading(true);
 
     try {
@@ -396,6 +398,15 @@ function ChatBox({ activeRun, onApplyCode }) {
       setMessages([...newMsgs, { role: 'assistant', content: 'Error connecting to AI...' }]);
     }
     setIsLoading(false);
+  };
+
+  const MODE_SUGGESTIONS = {
+    'Software Dev': ['Optimize this function', 'Refactor for readability', 'Add error handling'],
+    'QA': ['Write unit tests for this', 'What are edge cases here?', 'Generate mock data'],
+    'ML Engineer': ['Is this model efficient?', 'Suggest data augmentations', 'How to prevent overfitting?'],
+    'Backend Dev': ['Optimize database query', 'Add Redis caching', 'Secure this API endpoint'],
+    'Frontend Dev': ['Make this responsive', 'Improve accessibility', 'Add framer-motion animations'],
+    'Cybersecurity Expert': ['Find vulnerabilities', 'Check for SQL injection', 'Audit dependencies']
   };
 
   return (
@@ -481,9 +492,26 @@ function ChatBox({ activeRun, onApplyCode }) {
           </div>
         )}
       </div>
+      
+      {/* Suggestions */}
+      {messages.length < 3 && MODE_SUGGESTIONS[mode] && (
+        <div className="px-3 pt-2 pb-1 flex flex-wrap gap-2 border-t border-slate-800/50 bg-slate-900/20">
+          {MODE_SUGGESTIONS[mode].map(s => (
+            <button 
+              key={s} 
+              onClick={() => handleSend(s)}
+              disabled={isLoading}
+              className="text-[9px] font-mono bg-slate-800/60 border border-slate-700 hover:bg-slate-700/80 text-cyan-300/80 hover:text-cyan-300 rounded-full px-2.5 py-1 transition-colors disabled:opacity-50"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="p-2 border-t border-slate-800/50 bg-slate-900/40">
         <input type="text" value={input} onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSend()}
+          onKeyDown={e => e.key === 'Enter' && handleSend(input)}
           placeholder="Ask AI about this patch..."
           className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 placeholder:text-slate-600"
         />
