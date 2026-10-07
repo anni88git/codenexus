@@ -230,48 +230,25 @@ app.post('/api/git/commits', async (req, res) => {
   if (!repoUrl) return res.status(400).json({ error: 'Repository URL is required.' });
 
   try {
+    const octokit = new Octokit({ auth: token || undefined });
     const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
     if (!match) return res.status(400).json({ error: 'Invalid GitHub URL format.' });
     const owner = match[1];
     const repo = match[2].replace('.git', '');
 
-    const cloneDir = path.join(process.cwd(), 'clones', `${owner}-${repo}-${Date.now()}`);
-    
-    let cloneUrl = repoUrl;
-    if (token) {
-      cloneUrl = repoUrl.replace('https://', `https://${token}@`);
-    }
-
-    await rimraf(cloneDir);
-    fs.mkdirSync(cloneDir, { recursive: true });
-
-    const git = simpleGit();
-    await git.clone(cloneUrl, cloneDir, ['--no-checkout']);
-    
-    const localGit = simpleGit(cloneDir);
-    
-    // Instead of raw regex parsing, use simple-git's built in log parser
-    const logResult = await localGit.log({
-      '--all': null,
-      '--graph': null,
-      format: {
-        hash: '%H',
-        parents: '%P',
-        author: '%an',
-        date: '%ad',
-        message: '%s'
-      }
+    const { data: githubCommits } = await octokit.repos.listCommits({
+      owner,
+      repo,
+      per_page: 50
     });
-    
-    await rimraf(cloneDir);
-    
-    const commits = logResult.all.map(c => ({
-      graph: c.hash ? '' : '*', // Fallback for simple graph
-      hash: c.hash || '',
-      parents: c.parents || '',
-      author: c.author || '',
-      date: c.date || '',
-      message: c.message || ''
+
+    const commits = githubCommits.map(c => ({
+      graph: '*', // Simple bullet
+      hash: c.sha,
+      parents: c.parents.map(p => p.sha).join(' '),
+      author: c.commit.author.name,
+      date: c.commit.author.date,
+      message: c.commit.message.split('\n')[0]
     }));
 
     res.json({ commits });

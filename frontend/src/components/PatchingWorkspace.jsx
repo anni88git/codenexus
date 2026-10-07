@@ -200,12 +200,7 @@ export default function PatchingWorkspace({
                 </div>
               </div>
 
-              <div className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
-                <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider mb-3">
-                  <Network className="w-3 h-3 text-cyan-400" /> AST Dependency Graph
-                </div>
-                <ASTMiniGraph nodes={scenario?.astNodes || []} activeNode={activeNode} pipelineComplete={pipelineComplete} />
-              </div>
+
 
               <div className="shrink-0 flex gap-2">
                 <button onClick={onExplain} disabled={!pipelineComplete}

@@ -123,27 +123,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
         </div>
       </div>
 
-      {/* ── AI Agent Stats ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-4 gap-4">
-        {STATS.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <motion.div key={s.label}
-              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 + i * 0.06 }}
-              className={`p-4 rounded-2xl border flex items-center gap-4 ${s.bg}`}
-            >
-              <div className={`w-10 h-10 rounded-xl bg-slate-900/60 border border-slate-700/40 flex items-center justify-center shrink-0`}>
-                <Icon className={`w-4.5 h-4.5 ${s.color}`} />
-              </div>
-              <div>
-                <div className={`text-2xl font-black font-mono ${s.color}`}>{s.value}</div>
-                <div className="text-[9px] font-mono text-slate-600 uppercase tracking-wider mt-0.5">{s.label}</div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+
 
       {/* Removed Scenario Launcher Cards per user request */}
     </div>
