@@ -21,7 +21,7 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
   }
 
   try {
-    const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language} code.
+    const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language === 'Auto' ? 'source' : language} code.
 
 USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
 ${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}

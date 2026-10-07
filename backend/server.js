@@ -227,7 +227,7 @@ app.post('/api/run-agent', async (req, res) => {
 
     // 1. Language & File Name Resolution
     let fileName = 'solution.src';
-    let detectedLang = language !== 'Auto' && language !== 'Auto-Detect' ? language : 'Golang';
+    let detectedLang = language !== 'Auto' && language !== 'Auto-Detect' ? language : 'Auto';
 
     const matches = {
       Rust: rawInput.match(/([a-zA-Z0-9_\-]+\.rs)/i),
