@@ -192,15 +192,33 @@ app.post('/api/git/files', async (req, res) => {
     const files = [];
     for (const item of treeData.tree) {
       if (item.type === 'blob' && /\.(js|ts|jsx|tsx|py|go|rs|cpp|h|java|json)$/.test(item.path)) {
-        // Fetch file content to pass to frontend
-        const { data: fileData } = await octokit.repos.getContent({ owner, repo, path: item.path, ref: branch || 'main' });
-        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        files.push({ path: item.path, content });
+        files.push({ path: item.path });
       }
     }
     
     // Sort logically and limit to avoid massive payload on large repos
     res.json({ files: files.slice(0, 100) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── POST /api/git/file-content ────────────────────────────────────────────────
+app.post('/api/git/file-content', async (req, res) => {
+  const { repoUrl, branch, token, path } = req.body;
+  if (!repoUrl || !path) return res.status(400).json({ error: 'Repository URL and path are required.' });
+
+  try {
+    const octokit = new Octokit({ auth: token || undefined });
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return res.status(400).json({ error: 'Invalid GitHub URL format.' });
+    const owner = match[1];
+    const repo = match[2].replace('.git', '');
+
+    const { data: fileData } = await octokit.repos.getContent({ owner, repo, path, ref: branch || 'main' });
+    const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+    
+    res.json({ content });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

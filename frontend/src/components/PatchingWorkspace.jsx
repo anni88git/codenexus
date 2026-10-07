@@ -73,15 +73,25 @@ export default function PatchingWorkspace({
                 </>
               )}
             </div>
-            <div className="flex items-center gap-1 bg-slate-800/60 rounded-xl p-1 border border-slate-700/40">
-              {[['split','Split',Columns], ['unified','Unified',AlignJustify]].map(([m, lbl, Icon]) => (
-                <button key={m} onClick={() => setViewMode(m)}
-                  className={`flex items-center gap-1.5 text-[10px] font-mono px-3 py-1 rounded-lg transition-all ${
-                    viewMode === m ? 'bg-cyan-600/20 text-cyan-200 border border-cyan-500/20' : 'text-slate-500 hover:text-slate-300'
-                  }`}>
-                  <Icon className="w-3 h-3" /> {lbl}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <button onClick={onOpenPR} disabled={!pipelineComplete}
+                className={`flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border transition-all ${
+                  pipelineComplete 
+                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 shadow-[0_0_15px_rgba(52,211,153,0.15)]'
+                    : 'bg-slate-800/20 border-slate-700/30 text-slate-500 cursor-not-allowed'
+                }`}>
+                <GitPullRequest className="w-3.5 h-3.5" /> Push Code
+              </button>
+              <div className="flex items-center gap-1 bg-slate-800/60 rounded-xl p-1 border border-slate-700/40">
+                {[['split','Split',Columns], ['unified','Unified',AlignJustify]].map(([m, lbl, Icon]) => (
+                  <button key={m} onClick={() => setViewMode(m)}
+                    className={`flex items-center gap-1.5 text-[10px] font-mono px-3 py-1 rounded-lg transition-all ${
+                      viewMode === m ? 'bg-cyan-600/20 text-cyan-200 border border-cyan-500/20' : 'text-slate-500 hover:text-slate-300'
+                    }`}>
+                    <Icon className="w-3 h-3" /> {lbl}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -202,12 +212,7 @@ export default function PatchingWorkspace({
                   }`}>
                   <BookOpen className="w-3 h-3" /> Explain Fix
                 </button>
-                <button onClick={onOpenPR} disabled={!pipelineComplete}
-                  className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold py-2.5 rounded-xl border transition-all ${
-                    pipelineComplete ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300 hover:bg-emerald-900/30' : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
-                  }`}>
-                  <GitPullRequest className="w-3 h-3" /> Open PR
-                </button>
+
                 <button onClick={onSlack}
                   className={`flex items-center gap-1 text-[10px] font-mono px-3 py-2.5 rounded-xl border transition-all ${
                     showSlack ? 'bg-amber-950/30 border-amber-500/20 text-amber-300' : 'bg-slate-800/25 border-slate-700/25 text-slate-500 hover:text-slate-300'

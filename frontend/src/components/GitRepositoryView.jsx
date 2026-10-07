@@ -81,6 +81,30 @@ export default function GitRepositoryView({ onSelectFile }) {
     localStorage.removeItem('nexus_git_connected');
   };
 
+  const handleFileClick = async (file) => {
+    if (file.content) {
+      onSelectFile(file);
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/git/file-content`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoUrl, branch, token, path: file.path })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      onSelectFile({ ...file, content: data.content });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-[600px] h-full relative">
       <div className="absolute inset-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -170,7 +194,7 @@ export default function GitRepositoryView({ onSelectFile }) {
                     {repoTab === 'files' ? (
                       <>
                         {files.map((file, idx) => (
-                          <button key={idx} onClick={() => onSelectFile(file)}
+                          <button key={idx} onClick={() => handleFileClick(file)}
                             className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left hover:bg-slate-800/50 transition-colors group">
                             <FileCode className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
                             <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">{file.path}</span>
