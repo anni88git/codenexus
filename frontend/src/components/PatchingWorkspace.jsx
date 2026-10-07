@@ -427,9 +427,26 @@ function ChatBox({ activeRun, onApplyCode }) {
                         <div className="my-2 rounded-lg overflow-hidden border border-slate-700/50">
                           <div className="bg-slate-900 px-3 py-1.5 text-[9px] text-slate-400 font-mono uppercase border-b border-slate-700/50 flex justify-between items-center">
                             <span>{match[1]}</span>
-                            <button onClick={() => onApplyCode?.(String(children).replace(/\n$/, ''))} className="text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 px-2 py-0.5 rounded transition-all flex items-center gap-1 font-bold">
-                              <Code className="w-3 h-3" /> Apply to Canvas
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button 
+                                onClick={async () => {
+                                  const code = String(children).replace(/\n$/, '');
+                                  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/run-code`, {
+                                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ code, language: match[1] })
+                                  });
+                                  const data = await res.json();
+                                  setMessages(p => [...p, { role: 'user', content: `I just tested this code. Here is the console output:\n\n\`\`\`\n${data.output}\n\`\`\`` }]);
+                                }} 
+                                className="text-emerald-400 hover:text-emerald-300 bg-emerald-950/50 border border-emerald-500/30 px-2 py-0.5 rounded transition-all flex items-center gap-1 font-bold">
+                                <Activity className="w-3 h-3" /> Test Code
+                              </button>
+                              <button 
+                                onClick={() => onApplyCode?.(String(children).replace(/\n$/, ''))} 
+                                className="text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 px-2 py-0.5 rounded transition-all flex items-center gap-1 font-bold">
+                                <Code className="w-3 h-3" /> Apply to Canvas
+                              </button>
+                            </div>
                           </div>
                           <SyntaxHighlighter
                             {...props}

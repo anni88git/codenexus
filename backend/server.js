@@ -257,6 +257,35 @@ app.post('/api/git/commits', async (req, res) => {
   }
 });
 
+// ─── POST /api/run-code ───────────────────────────────────────────────────────
+app.post('/api/run-code', async (req, res) => {
+  const { code, language } = req.body;
+  
+  let pistonLang = 'javascript';
+  const l = (language || '').toLowerCase();
+  if (l.includes('python')) pistonLang = 'python';
+  else if (l.includes('go')) pistonLang = 'go';
+  else if (l.includes('rust')) pistonLang = 'rust';
+  else if (l.includes('c++') || l === 'cpp') pistonLang = 'cpp';
+  else if (l.includes('java')) pistonLang = 'java';
+  
+  try {
+    const pistonRes = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: pistonLang,
+        version: '*',
+        files: [{ content: code }]
+      })
+    });
+    const data = await pistonRes.json();
+    res.json({ output: data.run?.output || data.message || 'No output' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── POST /api/chat ───────────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
   const { messages, contextCode, language, mode } = req.body;
@@ -287,7 +316,11 @@ The user is currently looking at this ${language || 'source'} code in their work
 ${contextCode || 'No code provided.'}
 \`\`\`
 
-Help them understand the code, answer questions, or write new code based on their requests. Your responses should reflect your role as ${roleName}. When providing code, always use proper markdown code blocks so the user can easily apply it to their workspace. Please be concise and helpful.`;
+IMPORTANT INSTRUCTIONS:
+1. Do NOT just dump full code solutions immediately. 
+2. BE HIGHLY CONVERSATIONAL AND INTERACTIVE.
+3. Always ask clarifying questions about what the user wants to achieve. Wait for their response and confirmation before writing out the final complete code block.
+4. When you do provide code, always use proper markdown code blocks.`;
 
     const formattedMessages = [
       { role: 'system', content: systemPrompt },
