@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Bot, CheckCircle2, Code, Shield, Network, BrainCircuit, Loader2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';
 import vscDarkPlus from 'react-syntax-highlighter/dist/esm/styles/prism/vsc-dark-plus';
@@ -15,68 +14,93 @@ const AGENTS = [
   { id: 'QA Engineer', role: 'an expert QA Engineer focusing on edge cases, testability, and bulletproof reliability', color: 'from-indigo-500 to-violet-500', icon: CheckCircle2 }
 ];
 
-export default function SwarmCouncil({ activeRun, onApplyCode }) {
-  const [turns, setTurns] = useState([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [activeAgentIndex, setActiveAgentIndex] = useState(-1);
-  const [finalCode, setFinalCode] = useState(null);
+export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSwarmState }) {
   const scrollRef = useRef(null);
+
+  const { turns = [], isRunning = false, finalCode = null, statusText = '' } = swarmState || {};
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [turns, isRunning]);
+  }, [turns, isRunning, statusText]);
+
+  const updateState = (updates) => {
+    setSwarmState((prev) => ({ ...(prev || {}), ...updates }));
+  };
 
   const startSwarm = async () => {
     if (!activeRun || !activeRun.originalCode) return;
-    setIsRunning(true);
-    setTurns([]);
-    setFinalCode(null);
+    updateState({ isRunning: true, turns: [], finalCode: null, statusText: 'Round 1: Parallel Code Audit' });
 
-    let currentCode = activeRun.originalCode;
-    let chatHistory = [];
     let localTurns = [];
+    let chatHistory = [];
 
-    for (let i = 0; i < AGENTS.length; i++) {
-      setActiveAgentIndex(i);
-      const agent = AGENTS[i];
+    const fetchAgent = async (agent, history) => {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentCode: activeRun.originalCode,
+          chatHistory: history,
+          agentId: agent.id,
+          agentRole: agent.role,
+          language: activeRun.language || 'javascript'
+        })
+      });
+      if (!res.ok) throw new Error('API Error');
+      return await res.json();
+    };
 
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            currentCode,
-            chatHistory,
-            agentId: agent.id,
-            agentRole: agent.role,
-            language: activeRun.language || 'javascript'
-          })
-        });
+    try {
+      // ROUND 1: Parallel Brainstorming
+      const round1Promises = AGENTS.map(agent => fetchAgent(agent, []));
+      const round1Results = await Promise.allSettled(round1Promises);
 
-        const data = await res.json();
-        
-        // Artificial delay for UI realism
-        await new Promise(r => setTimeout(r, 2000));
+      round1Results.forEach((res, i) => {
+        const agent = AGENTS[i];
+        const msg = res.status === 'fulfilled' ? res.value.message : "I encountered a network issue during audit.";
+        chatHistory.push({ role: agent.id, message: msg });
+        localTurns.push({ agent: agent.id, message: msg, round: 1 });
+      });
+      updateState({ turns: [...localTurns], statusText: 'Round 2: Parallel Debate & Cross-Review' });
 
-        currentCode = data.code || currentCode;
-        chatHistory.push({ role: agent.id, message: data.message });
-        
-        const newTurn = { agent: agent.id, message: data.message, code: currentCode };
-        localTurns.push(newTurn);
-        setTurns([...localTurns]);
+      // Artificial wait for dramatic effect
+      await new Promise(r => setTimeout(r, 2000));
 
-      } catch (err) {
-        console.error(err);
-        const errorTurn = { agent: agent.id, message: "I encountered a network error while reviewing the code.", code: currentCode };
-        localTurns.push(errorTurn);
-        setTurns([...localTurns]);
-        break;
-      }
+      // ROUND 2: Parallel Debate
+      const round2Promises = AGENTS.map(agent => fetchAgent(agent, chatHistory));
+      const round2Results = await Promise.allSettled(round2Promises);
+
+      round2Results.forEach((res, i) => {
+        const agent = AGENTS[i];
+        const msg = res.status === 'fulfilled' ? res.value.message : "I have nothing further to add.";
+        chatHistory.push({ role: agent.id, message: msg });
+        localTurns.push({ agent: agent.id, message: msg, round: 2 });
+      });
+      updateState({ turns: [...localTurns], statusText: 'Round 3: Lead Developer Synthesizing Consensus' });
+
+      // Artificial wait
+      await new Promise(r => setTimeout(r, 2000));
+
+      // ROUND 3: Coordinator Consensus
+      const coordRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentCode: activeRun.originalCode,
+          chatHistory: chatHistory,
+          agentId: 'Coordinator',
+          agentRole: 'the Lead Developer. Your job is to read the arguments from the team, resolve conflicts, and output the final perfected code.',
+          language: activeRun.language || 'javascript'
+        })
+      });
+      const data = await coordRes.json();
+      
+      updateState({ isRunning: false, finalCode: data.code, statusText: '' });
+
+    } catch (err) {
+      console.error(err);
+      updateState({ isRunning: false, statusText: 'Swarm failed to complete.' });
     }
-
-    setActiveAgentIndex(-1);
-    setIsRunning(false);
-    setFinalCode(currentCode);
   };
 
   if (!activeRun) {
@@ -101,13 +125,13 @@ export default function SwarmCouncil({ activeRun, onApplyCode }) {
         <div>
           <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
             <Users className="w-6 h-6 text-cyan-400" />
-            Swarm Council
+            Parallel Swarm Council
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Multi-agent consensus protocol for code hardening.</p>
+          <p className="text-xs text-slate-500 mt-1">Multi-round parallel debate and consensus protocol.</p>
         </div>
         {!isRunning && !finalCode && (
           <button onClick={startSwarm} className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all flex items-center gap-2">
-            <BrainCircuit className="w-4 h-4" /> Commence Swarm Review
+            <BrainCircuit className="w-4 h-4" /> Commence Parallel Swarm
           </button>
         )}
       </div>
@@ -125,33 +149,21 @@ export default function SwarmCouncil({ activeRun, onApplyCode }) {
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-slate-900/40 border border-slate-800/50 rounded-2xl overflow-hidden shadow-lg">
                   <div className={`px-4 py-2 bg-gradient-to-r ${agentDef?.color || 'from-slate-700 to-slate-600'} flex items-center gap-2 opacity-90`}>
                     <Icon className="w-4 h-4 text-white" />
-                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">{turn.agent}</span>
+                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">{turn.agent} (Round {turn.round})</span>
                   </div>
                   <div className="p-5">
-                    <p className="text-sm text-slate-200 mb-4">{turn.message}</p>
-                    <div className="rounded-xl overflow-hidden border border-slate-800">
-                      <div className="bg-slate-950 px-3 py-1.5 text-[9px] text-slate-500 font-mono uppercase border-b border-slate-800 flex justify-between">
-                        <span>Code Iteration {i+1}</span>
-                      </div>
-                      <SyntaxHighlighter
-                        children={turn.code}
-                        style={vscDarkPlus}
-                        language={activeRun?.language || 'javascript'}
-                        PreTag="div"
-                        customStyle={{ margin: 0, padding: '16px', background: '#09090b', fontSize: '11px' }}
-                      />
-                    </div>
+                    <p className="text-sm text-slate-200">{turn.message}</p>
                   </div>
                 </motion.div>
               );
             })}
           </AnimatePresence>
 
-          {isRunning && activeAgentIndex >= 0 && (
+          {isRunning && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 p-4 bg-slate-900/40 border border-slate-800/50 rounded-2xl">
               <Loader2 className="w-5 h-5 text-cyan-500 animate-spin" />
-              <div className="text-xs text-slate-400">
-                <strong className="text-slate-200">{AGENTS[activeAgentIndex].id}</strong> is auditing the codebase...
+              <div className="text-xs text-slate-300 font-semibold uppercase tracking-wider">
+                {statusText}...
               </div>
             </motion.div>
           )}
@@ -164,7 +176,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode }) {
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-100 mb-1">Consensus Reached</h2>
-                <p className="text-xs text-slate-400">All agents have agreed on this final implementation.</p>
+                <p className="text-xs text-slate-400">The Lead Developer has resolved the debate and synthesized the final code.</p>
               </div>
               <div className="p-4 bg-slate-950">
                  <SyntaxHighlighter
