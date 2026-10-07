@@ -494,7 +494,7 @@ function ChatBox({ activeRun, onApplyCode }) {
       </div>
       
       {/* Suggestions */}
-      {messages.length < 3 && MODE_SUGGESTIONS[mode] && (
+      {MODE_SUGGESTIONS[mode] && (
         <div className="px-3 pt-2 pb-1 flex flex-wrap gap-2 border-t border-slate-800/50 bg-slate-900/20">
           {MODE_SUGGESTIONS[mode].map(s => (
             <button 
@@ -511,7 +511,7 @@ function ChatBox({ activeRun, onApplyCode }) {
 
       <div className="p-2 border-t border-slate-800/50 bg-slate-900/40">
         <input type="text" value={input} onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSend(input)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
           placeholder="Ask AI about this patch..."
           className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 placeholder:text-slate-600"
         />
