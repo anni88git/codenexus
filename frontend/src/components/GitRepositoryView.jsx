@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GitBranch, Github, Key, FolderOpen, FileCode, CheckCircle2, RefreshCw, Send, GitCommit } from 'lucide-react';
+import { GitBranch, GitPullRequest, Key, FolderOpen, FileCode, CheckCircle2, RefreshCw, Send, GitCommit } from 'lucide-react';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
@@ -89,7 +89,7 @@ export default function GitRepositoryView({ onSelectFile }) {
         <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-800/60 bg-slate-900/40">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center">
-              <Github className="w-5 h-5 text-indigo-400" />
+              <GitPullRequest className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-slate-200">Git Repository Link</h2>
