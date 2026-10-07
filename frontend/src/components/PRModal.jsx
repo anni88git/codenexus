@@ -59,8 +59,14 @@ export default function PRModal({ pr, activeRun, onClose }) {
             <div className="mx-auto w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-4">
               <GitMerge className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold text-slate-100">Pull Request Created!</h3>
-            <p className="text-sm text-slate-400">The code patch has been pushed and a PR is waiting for your review.</p>
+            <h3 className="text-xl font-bold text-slate-100">
+              {commitDirectly ? 'Committed Directly!' : 'Pull Request Created!'}
+            </h3>
+            <p className="text-sm text-slate-400">
+              {commitDirectly 
+                ? 'The code patch has been successfully pushed to the repository\'s default branch.' 
+                : 'The code patch has been pushed and a PR is waiting for your review.'}
+            </p>
             <a href={successUrl} target="_blank" rel="noopener noreferrer" className="block w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-colors">
               View on GitHub
             </a>
