@@ -259,7 +259,7 @@ app.post('/api/git/commits', async (req, res) => {
 
 // ─── POST /api/chat ───────────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
-  const { messages, contextCode, language } = req.body;
+  const { messages, contextCode, language, mode } = req.body;
   
   const rawKey = process.env.GROQ_API_KEY || '';
   const apiKey = rawKey.trim();
@@ -269,14 +269,25 @@ app.post('/api/chat', async (req, res) => {
     const { default: Groq } = await import('groq-sdk');
     const ai = new Groq({ apiKey });
 
-    const systemPrompt = `You are an expert AI coding assistant built into The Window Code Patching Studio.
+    const roleMap = {
+      'QA': 'an expert Quality Assurance (QA) engineer',
+      'ML Engineer': 'an expert Machine Learning (ML) Engineer',
+      'Software Dev': 'an expert Software Developer',
+      'Backend Dev': 'an expert Backend Developer',
+      'Frontend Dev': 'an expert Frontend Developer',
+      'Cybersecurity Expert': 'an expert Cybersecurity Analyst and Penetration Tester'
+    };
+
+    const roleName = roleMap[mode] || 'an expert AI coding assistant';
+
+    const systemPrompt = `You are ${roleName} built into The Window Code Patching Studio.
 The user is currently looking at this ${language || 'source'} code in their workspace:
 
 \`\`\`
 ${contextCode || 'No code provided.'}
 \`\`\`
 
-Help them understand the code, answer questions about the patch, or suggest further changes based on their requests. Please be concise and helpful.`;
+Help them understand the code, answer questions, or write new code based on their requests. Your responses should reflect your role as ${roleName}. When providing code, always use proper markdown code blocks so the user can easily apply it to their workspace. Please be concise and helpful.`;
 
     const formattedMessages = [
       { role: 'system', content: systemPrompt },

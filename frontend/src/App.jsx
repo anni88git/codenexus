@@ -529,6 +529,7 @@ function Dashboard({ user, onSignOut }) {
                   onSlack={() => setShowSlackFeed(!showSlackFeed)} showSlack={showSlackFeed}
                   onReport={handleDownloadReport}
                   activeRun={activeRun}
+                  onApplyCode={(code) => setActiveRun(prev => ({ ...prev, patchedCode: code }))}
                 />
               </motion.div>
             )}
