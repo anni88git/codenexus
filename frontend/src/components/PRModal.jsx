@@ -5,6 +5,7 @@ import { X, GitPullRequest, GitMerge, Loader2 } from 'lucide-react';
 export default function PRModal({ pr, activeRun, onClose }) {
   const [repo, setRepo] = useState('anni88git/codenexus');
   const [filePath, setFilePath] = useState(activeRun?.fileName || 'src/App.jsx');
+  const [commitDirectly, setCommitDirectly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successUrl, setSuccessUrl] = useState(null);
@@ -26,7 +27,8 @@ export default function PRModal({ pr, activeRun, onClose }) {
           newCode: activeRun?.patchedCode || '',
           prTitle: `🤖 Fix issue in ${filePath}`,
           commitMessage: `Auto-patch applied by The Window AI to ${filePath}`,
-          token: localStorage.getItem('nexus_git_token') || undefined
+          token: localStorage.getItem('nexus_git_token') || undefined,
+          commitDirectly
         })
       });
       const data = await res.json();
@@ -74,11 +76,16 @@ export default function PRModal({ pr, activeRun, onClose }) {
               <input type="text" value={filePath} onChange={e => setFilePath(e.target.value)} required placeholder="e.g. src/index.js" className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none focus:border-cyan-500" />
             </div>
             
+            <div className="flex items-center gap-2 mt-2">
+              <input type="checkbox" id="directCommit" checked={commitDirectly} onChange={e => setCommitDirectly(e.target.checked)} className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-emerald-500" />
+              <label htmlFor="directCommit" className="text-xs text-slate-300 cursor-pointer">Auto-Push directly to branch (Skip PR)</label>
+            </div>
+            
             {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg">{error}</div>}
             
-            <button type="submit" disabled={loading} className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitPullRequest className="w-4 h-4" />}
-              Create Pull Request
+            <button type="submit" disabled={loading} className={`w-full mt-2 flex items-center justify-center gap-2 py-2.5 text-white text-xs font-bold rounded-xl transition-colors disabled:opacity-50 ${commitDirectly ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-emerald-600 hover:bg-emerald-500'}`}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (commitDirectly ? <GitMerge className="w-4 h-4" /> : <GitPullRequest className="w-4 h-4" />)}
+              {commitDirectly ? 'Commit Directly to Repo' : 'Create Pull Request'}
             </button>
           </form>
         )}
