@@ -516,7 +516,7 @@ function Dashboard({ user, onSignOut }) {
               </motion.div>
             )}
             {activeTab === 'workspace' && (
-              <motion.div key="workspace" className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 p-6 pb-32"
+              <motion.div key="workspace" className="absolute inset-0 flex flex-col p-6 pb-28 min-h-0"
                 initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
                 <PatchingWorkspace
                   scenario={scenario} language={language}
