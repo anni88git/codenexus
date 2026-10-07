@@ -19,6 +19,7 @@ export default function FloatingPromptBar({
   onTrigger,
   isFixing,
   onOpenCustomModal,
+  onClearCustomCode,
   scenario,
   customCode,
   activeEditorCode, // Pass active editor content as fallback
@@ -149,19 +150,33 @@ export default function FloatingPromptBar({
         <div className="shrink-0 w-px h-6 bg-slate-800" />
 
         {/* Custom Code Button */}
-        <button
-          type="button"
-          onClick={onOpenCustomModal}
-          disabled={isFixing}
-          title="Paste custom code snippet"
-          className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${
-            customCode?.trim()
-              ? 'bg-cyan-950/60 border-cyan-500/50 text-cyan-400'
-              : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400'
-          }`}
-        >
-          <FileCode className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={onOpenCustomModal}
+            disabled={isFixing}
+            title="View/Edit attached code snippet"
+            className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${
+              customCode?.trim()
+                ? 'bg-cyan-950/60 border-cyan-500/50 text-cyan-400'
+                : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400'
+            }`}
+          >
+            <FileCode className="w-4 h-4" />
+          </button>
+
+          {customCode?.trim() && (
+            <button
+              type="button"
+              onClick={onClearCustomCode}
+              disabled={isFixing}
+              title="Clear attached code"
+              className="shrink-0 w-6 h-6 rounded-lg bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/60 hover:text-red-300 flex items-center justify-center transition-all"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
 
         {/* Action Button */}
         <button

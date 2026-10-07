@@ -577,6 +577,10 @@ function Dashboard({ user, onSignOut }) {
           onTrigger={trigger}
           isFixing={isFixing}
           onOpenCustomModal={() => setShowCustomModal(true)}
+          onClearCustomCode={() => {
+            setCustomCode('');
+            addLog('🗑️ Custom workspace code cleared.');
+          }}
           scenario={scenario}
           customCode={customCode}
         />
