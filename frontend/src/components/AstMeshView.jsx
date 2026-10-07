@@ -11,7 +11,7 @@ const FALLBACK_NODES = [
 
 // ─── Map backend flat node list to SVG-positional format ─────────────────────
 function positionNodes(rawNodes = []) {
-  if (!rawNodes.length) return FALLBACK_NODES;
+  if (!rawNodes || !rawNodes.length) return FALLBACK_NODES;
 
   // If the nodes already have x/y (from scenario astNodes), use them
   if (rawNodes[0]?.x !== undefined) return rawNodes;
