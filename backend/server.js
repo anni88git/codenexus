@@ -262,6 +262,44 @@ app.post('/api/git/commits', async (req, res) => {
   }
 });
 
+// ─── POST /api/chat ───────────────────────────────────────────────────────────
+app.post('/api/chat', async (req, res) => {
+  const { messages, contextCode, language } = req.body;
+  
+  const rawKey = process.env.GROQ_API_KEY || '';
+  const apiKey = rawKey.trim();
+  if (!apiKey) return res.status(400).json({ error: 'No GROQ API Key configured.' });
+  
+  try {
+    const { default: Groq } = await import('groq-sdk');
+    const ai = new Groq({ apiKey });
+
+    const systemPrompt = `You are an expert AI coding assistant built into The Window Code Patching Studio.
+The user is currently looking at this ${language || 'source'} code in their workspace:
+
+\`\`\`
+${contextCode || 'No code provided.'}
+\`\`\`
+
+Help them understand the code, answer questions about the patch, or suggest further changes based on their requests. Please be concise and helpful.`;
+
+    const formattedMessages = [
+      { role: 'system', content: systemPrompt },
+      ...messages
+    ];
+
+    const response = await ai.chat.completions.create({
+      messages: formattedMessages,
+      model: 'openai/gpt-oss-120b',
+      max_tokens: 2000,
+    });
+
+    res.json({ text: response.choices[0]?.message?.content || '' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─── POST /api/github/pr ──────────────────────────────────────────────────────
 app.post('/api/github/pr', authenticateToken, async (req, res) => {
   const { repoOwner, repoName, filePath, newCode, prTitle, commitMessage, token, commitDirectly } = req.body;

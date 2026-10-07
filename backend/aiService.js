@@ -66,7 +66,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'openai/gpt-oss-120b',
-      max_tokens: 950,
+      max_tokens: 4000,
     });
 
     const rawText = response.choices[0]?.message?.content || '{}';

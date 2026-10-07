@@ -144,7 +144,7 @@ export default function PatchingWorkspace({
         <div className="shrink-0 flex gap-2 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-1.5 shadow-xl">
           {[
             { id:'pipeline', label:'Pipeline & AST Mesh', icon: Activity },
-            { id:'logs', label:'Stdout & Security', icon: Terminal },
+            { id:'chat', label:'AI Chat', icon: Sparkles },
           ].map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setRightTab(id)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold transition-all ${
@@ -288,7 +288,12 @@ export default function PatchingWorkspace({
                 <LogBox logs={logs} />
               </div>
             </motion.div>
-          )}
+          ) : rightTab === 'chat' ? (
+            <motion.div key="chat" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+              className="flex-1 flex flex-col min-h-0">
+              <ChatBox activeRun={activeRun} />
+            </motion.div>
+          ) : null}
         </AnimatePresence>
       </div>
     </div>
@@ -350,6 +355,76 @@ function LogBox({ logs }) {
           <span className={l.isError ? 'text-red-400' : 'text-emerald-400/80'}>{l.text}</span>
         </div>
       ))}
+    </div>
+  );
+}
+
+function ChatBox({ activeRun }) {
+  const [messages, setMessages] = useState([{ role: 'assistant', content: 'How can I help you with this code?' }]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const ref = useRef(null);
+  
+  useEffect(() => { if (ref.current) ref.current.scrollTop = ref.current.scrollHeight; }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+    const newMsgs = [...messages, { role: 'user', content: input }];
+    setMessages(newMsgs);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMsgs.map(m => ({ role: m.role, content: m.content })),
+          contextCode: `ORIGINAL CODE:\n${activeRun?.originalCode || ''}\n\nPATCHED CODE:\n${activeRun?.patchedCode || ''}`,
+          language: activeRun?.language
+        })
+      });
+      const data = await res.json();
+      setMessages([...newMsgs, { role: 'assistant', content: data.text }]);
+    } catch (err) {
+      setMessages([...newMsgs, { role: 'assistant', content: 'Error connecting to AI...' }]);
+    }
+    setIsLoading(false);
+  };
+
+  return (
+    <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+      <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50">
+        <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+        <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">AI Code Chat</span>
+      </div>
+      <div ref={ref} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-[11px] leading-relaxed ${
+              m.role === 'user' ? 'bg-indigo-600/40 text-indigo-100 border border-indigo-500/30' : 'bg-slate-800/50 text-slate-300 border border-slate-700/50'
+            }`}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-slate-800/50 text-slate-400 border border-slate-700/50 rounded-xl px-3 py-2 text-xs flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-pulse" />
+              <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="p-2 border-t border-slate-800/50 bg-slate-900/40">
+        <input type="text" value={input} onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
+          placeholder="Ask AI about this patch..."
+          className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 placeholder:text-slate-600"
+        />
+      </div>
     </div>
   );
 }
