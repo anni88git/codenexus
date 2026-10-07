@@ -91,23 +91,7 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
           );
         })}
 
-        {/* Divider */}
-        <div className="border-t border-slate-800/50 my-4" />
 
-        {/* Quick stats */}
-        <div className="text-[8px] font-mono text-slate-700 uppercase tracking-[0.2em] px-2 mb-2">Engine Stats</div>
-        <div className="space-y-1 px-1">
-          {[
-            { label:'Pipeline Runs', value:'24', color:'text-cyan-400' },
-            { label:'Patches Applied', value:'19', color:'text-emerald-400' },
-            { label:'PRs Merged', value:'8', color:'text-purple-400' },
-          ].map(s => (
-            <div key={s.label} className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-slate-900/40">
-              <span className="text-[9px] text-slate-600 font-mono">{s.label}</span>
-              <span className={`text-[10px] font-bold font-mono ${s.color}`}>{s.value}</span>
-            </div>
-          ))}
-        </div>
       </nav>
 
       {/* ─── Bottom User Card ──────────────────────────────────────────────── */}

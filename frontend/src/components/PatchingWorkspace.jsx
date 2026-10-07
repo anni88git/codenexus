@@ -5,7 +5,9 @@ import {
   RefreshCw, Shield, ChevronRight, Terminal, Network, Sparkles, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 function computeDiff(a = '', b = '') {
   if (!a && !b) return [];
   const aL = a.split('\n'), bL = b.split('\n');
@@ -406,10 +408,42 @@ function ChatBox({ activeRun }) {
       <div ref={ref} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] rounded-xl px-3 py-2 text-[11px] leading-relaxed ${
+            <div className={`max-w-[85%] rounded-xl px-4 py-3 text-[11px] leading-relaxed overflow-hidden ${
               m.role === 'user' ? 'bg-indigo-600/40 text-indigo-100 border border-indigo-500/30' : 'bg-slate-800/50 text-slate-300 border border-slate-700/50'
             }`}>
-              {m.content}
+              {m.role === 'user' ? (
+                m.content
+              ) : (
+                <ReactMarkdown
+                  className="prose prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0 prose-pre:my-0 prose-code:text-[10px]"
+                  components={{
+                    code({node, inline, className, children, ...props}) {
+                      const match = /language-(\w+)/.exec(className || '')
+                      return !inline && match ? (
+                        <div className="my-2 rounded-lg overflow-hidden border border-slate-700/50">
+                          <div className="bg-slate-900 px-3 py-1 text-[9px] text-slate-400 font-mono uppercase border-b border-slate-700/50">
+                            {match[1]}
+                          </div>
+                          <SyntaxHighlighter
+                            {...props}
+                            children={String(children).replace(/\n$/, '')}
+                            style={vscDarkPlus}
+                            language={match[1]}
+                            PreTag="div"
+                            customStyle={{ margin: 0, padding: '12px', background: '#0f172a', fontSize: '10px' }}
+                          />
+                        </div>
+                      ) : (
+                        <code {...props} className="bg-slate-900/60 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[10px]">
+                          {children}
+                        </code>
+                      )
+                    }
+                  }}
+                >
+                  {m.content}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
         ))}
