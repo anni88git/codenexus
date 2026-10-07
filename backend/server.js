@@ -366,7 +366,8 @@ app.post('/api/run-agent', async (req, res) => {
       language = 'Auto', 
       customInstructions = '',
       socketId,
-      scenarioId 
+      scenarioId,
+      fileName: reqFileName
     } = req.body;
     const rawInput = (customCode || errorTrace || prompt || '').trim();
 
@@ -375,39 +376,38 @@ app.post('/api/run-agent', async (req, res) => {
     }
 
     // 1. Language & File Name Resolution
-    let fileName = 'solution.src';
+    let fileName = reqFileName || 'solution.src';
     let detectedLang = language !== 'Auto' && language !== 'Auto-Detect' ? language : 'Auto';
 
-    const matches = {
-      Rust: rawInput.match(/([a-zA-Z0-9_\-]+\.rs)/i),
-      Python: rawInput.match(/([a-zA-Z0-9_\-]+\.py)/i),
-      'C++': rawInput.match(/([a-zA-Z0-9_\-]+\.(cpp|hpp|c|h))/i),
-      'Node.js': rawInput.match(/([a-zA-Z0-9_\-]+\.(js|ts|jsx|tsx))/i),
-      Golang: rawInput.match(/([a-zA-Z0-9_\-]+\.go)/i),
-      Java: rawInput.match(/([a-zA-Z0-9_\-]+\.java)/i)
-    };
+    if (!reqFileName) {
+      const matches = {
+        Rust: rawInput.match(/([a-zA-Z0-9_\-]+\.rs)/i),
+        Python: rawInput.match(/([a-zA-Z0-9_\-]+\.py)/i),
+        'C++': rawInput.match(/([a-zA-Z0-9_\-]+\.(cpp|hpp|c|h))/i),
+        'Node.js': rawInput.match(/([a-zA-Z0-9_\-]+\.(js|ts|jsx|tsx))/i),
+        Golang: rawInput.match(/([a-zA-Z0-9_\-]+\.go)/i),
+        Java: rawInput.match(/([a-zA-Z0-9_\-]+\.java)/i)
+      };
 
-    if (matches.Rust || detectedLang.toLowerCase() === 'rust') {
-      fileName = matches.Rust ? matches.Rust[1] : 'main.rs';
-      detectedLang = 'Rust';
-    } else if (matches.Python || detectedLang.toLowerCase() === 'python') {
-      fileName = matches.Python ? matches.Python[1] : 'analytics.py';
-      detectedLang = 'Python';
-    } else if (matches['C++'] || detectedLang.toLowerCase() === 'cpp' || detectedLang === 'C++') {
-      fileName = matches['C++'] ? matches['C++'][1] : 'vector_bounds.cpp';
-      detectedLang = 'C++';
-    } else if (matches['Node.js'] || ['node.js', 'nodejs', 'javascript'].includes(detectedLang.toLowerCase())) {
-      fileName = matches['Node.js'] ? matches['Node.js'][1] : 'userController.js';
-      detectedLang = 'Node.js';
-    } else if (matches.Java || detectedLang.toLowerCase() === 'java') {
-      fileName = matches.Java ? matches.Java[1] : 'Main.java';
-      detectedLang = 'Java';
-    } else if (matches.Golang || detectedLang.toLowerCase() === 'golang' || detectedLang.toLowerCase() === 'go') {
-      fileName = matches.Golang ? matches.Golang[1] : 'user_handler.go';
-      detectedLang = 'Golang';
-    } else {
-      fileName = 'solution.src';
-      detectedLang = 'Auto';
+      if (matches.Rust || detectedLang.toLowerCase() === 'rust') {
+        fileName = matches.Rust ? matches.Rust[1] : 'main.rs';
+        detectedLang = 'Rust';
+      } else if (matches.Python || detectedLang.toLowerCase() === 'python') {
+        fileName = matches.Python ? matches.Python[1] : 'analytics.py';
+        detectedLang = 'Python';
+      } else if (matches['C++'] || detectedLang.toLowerCase() === 'cpp' || detectedLang === 'C++') {
+        fileName = matches['C++'] ? matches['C++'][1] : 'vector_bounds.cpp';
+        detectedLang = 'C++';
+      } else if (matches['Node.js'] || ['node.js', 'nodejs', 'javascript'].includes(detectedLang.toLowerCase())) {
+        fileName = matches['Node.js'] ? matches['Node.js'][1] : 'userController.js';
+        detectedLang = 'Node.js';
+      } else if (matches.Java || detectedLang.toLowerCase() === 'java') {
+        fileName = matches.Java ? matches.Java[1] : 'Main.java';
+        detectedLang = 'Java';
+      } else if (matches.Golang || detectedLang.toLowerCase() === 'golang' || detectedLang.toLowerCase() === 'go') {
+        fileName = matches.Golang ? matches.Golang[1] : 'user_handler.go';
+        detectedLang = 'Golang';
+      }
     }
 
     // Cache original code for rollback functionality
