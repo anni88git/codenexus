@@ -3,7 +3,14 @@ import { motion } from 'framer-motion';
 import { X, GitPullRequest, GitMerge, Loader2 } from 'lucide-react';
 
 export default function PRModal({ pr, activeRun, onClose }) {
-  const [repo, setRepo] = useState('anni88git/codenexus');
+  const [repo, setRepo] = useState(() => {
+    const savedUrl = localStorage.getItem('nexus_git_url');
+    if (savedUrl) {
+      const match = savedUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+      if (match) return `${match[1]}/${match[2].replace('.git', '')}`;
+    }
+    return 'anni88git/codenexus';
+  });
   const [filePath, setFilePath] = useState(activeRun?.fileName || 'src/App.jsx');
   const [commitDirectly, setCommitDirectly] = useState(false);
   const [loading, setLoading] = useState(false);
