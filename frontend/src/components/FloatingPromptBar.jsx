@@ -157,7 +157,7 @@ export default function FloatingPromptBar({
             disabled={isFixing}
             title="View/Edit attached code snippet"
             className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${
-              customCode?.trim()
+              (customCode?.trim() || activeEditorCode?.trim())
                 ? 'bg-cyan-950/60 border-cyan-500/50 text-cyan-400'
                 : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400'
             }`}
@@ -165,7 +165,7 @@ export default function FloatingPromptBar({
             <FileCode className="w-4 h-4" />
           </button>
 
-          {customCode?.trim() && (
+          {(customCode?.trim() || activeEditorCode?.trim()) && (
             <button
               type="button"
               onClick={onClearCustomCode}

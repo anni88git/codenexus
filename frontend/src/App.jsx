@@ -579,10 +579,13 @@ function Dashboard({ user, onSignOut }) {
           onOpenCustomModal={() => setShowCustomModal(true)}
           onClearCustomCode={() => {
             setCustomCode('');
-            addLog('🗑️ Custom workspace code cleared.');
+            setActiveRun(null);
+            setScenario(null);
+            addLog('🗑️ Workspace cleared.');
           }}
           scenario={scenario}
           customCode={customCode}
+          activeEditorCode={activeRun?.originalCode}
         />
       </div>
 

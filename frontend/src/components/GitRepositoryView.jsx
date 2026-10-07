@@ -151,7 +151,10 @@ export default function GitRepositoryView({ onSelectFile }) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-mono text-slate-500 mb-1.5 ml-1">Personal Access Token (PAT)</label>
+                      <div className="flex items-center justify-between mb-1.5 ml-1 mr-1">
+                        <label className="block text-[10px] font-mono text-slate-500">Personal Access Token (PAT)</label>
+                        <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-indigo-400 hover:text-indigo-300 transition-colors">How to get a PAT?</a>
+                      </div>
                       <div className="relative">
                         <Key className="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="ghp_xxxxxxxxxxxx"
