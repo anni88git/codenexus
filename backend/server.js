@@ -295,10 +295,21 @@ ${code}`;
 
 // ─── POST /api/swarm-turn ───────────────────────────────────────────────────────
 app.post('/api/swarm-turn', async (req, res) => {
-  const { currentCode, chatHistory, agentId, agentRole, language } = req.body;
-  const rawKey = process.env.GROQ_API_KEY || '';
-  const apiKey = rawKey.trim();
-  if (!apiKey) return res.status(400).json({ error: 'No GROQ API Key configured.' });
+  const { currentCode, chatHistory, agentId, agentRole, language, agentIndex = 0 } = req.body;
+  
+  // Support multiple API keys for parallel execution without rate limits
+  const keys = [
+    process.env.GROQ_API_KEY_1,
+    process.env.GROQ_API_KEY_2,
+    process.env.GROQ_API_KEY_3,
+    process.env.GROQ_API_KEY_4,
+    process.env.GROQ_API_KEY
+  ].filter(k => k && k.trim() !== '');
+
+  if (keys.length === 0) return res.status(400).json({ error: 'No GROQ API Key configured.' });
+
+  // Distribute keys based on agent index
+  const apiKey = keys[agentIndex % keys.length].trim();
 
   try {
     const { default: Groq } = await import('groq-sdk');

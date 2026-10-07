@@ -34,7 +34,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
     let localTurns = [];
     let chatHistory = [];
 
-    const fetchAgent = async (agent, history) => {
+    const fetchAgent = async (agent, index, history) => {
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -43,6 +43,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           chatHistory: history,
           agentId: agent.id,
           agentRole: agent.role,
+          agentIndex: index,
           language: activeRun.language || 'javascript'
         })
       });
@@ -52,12 +53,12 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
 
     try {
       // ROUND 1: Parallel Brainstorming
-      const round1Promises = AGENTS.map(agent => fetchAgent(agent, []));
+      const round1Promises = AGENTS.map((agent, i) => fetchAgent(agent, i, []));
       const round1Results = await Promise.allSettled(round1Promises);
 
       round1Results.forEach((res, i) => {
         const agent = AGENTS[i];
-        const msg = res.status === 'fulfilled' ? res.value.message : "I encountered a network issue during audit.";
+        const msg = res.status === 'fulfilled' ? res.value.message : "I encountered a rate limit or network issue during audit.";
         chatHistory.push({ role: agent.id, message: msg });
         localTurns.push({ agent: agent.id, message: msg, round: 1 });
       });
@@ -67,12 +68,12 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
       await new Promise(r => setTimeout(r, 2000));
 
       // ROUND 2: Parallel Debate
-      const round2Promises = AGENTS.map(agent => fetchAgent(agent, chatHistory));
+      const round2Promises = AGENTS.map((agent, i) => fetchAgent(agent, i, chatHistory));
       const round2Results = await Promise.allSettled(round2Promises);
 
       round2Results.forEach((res, i) => {
         const agent = AGENTS[i];
-        const msg = res.status === 'fulfilled' ? res.value.message : "I have nothing further to add.";
+        const msg = res.status === 'fulfilled' ? res.value.message : "I have nothing further to add due to rate limits.";
         chatHistory.push({ role: agent.id, message: msg });
         localTurns.push({ agent: agent.id, message: msg, round: 2 });
       });
@@ -90,6 +91,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           chatHistory: chatHistory,
           agentId: 'Coordinator',
           agentRole: 'the Lead Developer. Your job is to read the arguments from the team, resolve conflicts, and output the final perfected code.',
+          agentIndex: 4,
           language: activeRun.language || 'javascript'
         })
       });
