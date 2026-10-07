@@ -538,7 +538,7 @@ function Dashboard({ user, onSignOut }) {
                 <GitRepositoryView 
                   onSelectFile={(file) => {
                     setCustomCode(file.content);
-                    trigger({ customCode: file.content, errorTrace: null, language: 'Auto-Detect' });
+                    trigger({ customCode: file.content, errorTrace: null, language: 'Auto-Detect', fileName: file.path });
                     setActiveTab('workspace');
                   }} 
                 />
