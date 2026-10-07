@@ -25,7 +25,8 @@ export default function PRModal({ pr, activeRun, onClose }) {
           repoOwner, repoName, filePath,
           newCode: activeRun?.patchedCode || '',
           prTitle: `🤖 Fix issue in ${filePath}`,
-          commitMessage: `Auto-patch applied by The Window AI to ${filePath}`
+          commitMessage: `Auto-patch applied by The Window AI to ${filePath}`,
+          token: localStorage.getItem('nexus_git_token') || undefined
         })
       });
       const data = await res.json();

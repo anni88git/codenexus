@@ -25,6 +25,7 @@ import PRModal from './components/PRModal';
 import ReportModal from './components/ReportModal';
 import CustomCodeModal from './components/CustomCodeModal';
 import SettingsModal from './components/SettingsModal';
+import GitRepositoryView from './components/GitRepositoryView';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 const socket = io(BACKEND_URL, {
   autoConnect: true,
@@ -527,6 +528,18 @@ function Dashboard({ user, onSignOut }) {
                   onSlack={() => setShowSlackFeed(!showSlackFeed)} showSlack={showSlackFeed}
                   onReport={handleDownloadReport}
                   activeRun={activeRun}
+                />
+              </motion.div>
+            )}
+            {activeTab === 'git' && (
+              <motion.div key="git" className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 p-6 pb-32"
+                initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
+                <GitRepositoryView 
+                  onSelectFile={(file) => {
+                    setCustomCode(file.content);
+                    trigger({ customCode: file.content, errorTrace: null, language: 'Auto-Detect' });
+                    setActiveTab('workspace');
+                  }} 
                 />
               </motion.div>
             )}

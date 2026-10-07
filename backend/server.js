@@ -165,13 +165,52 @@ app.get('/api/auth/github/callback', passport.authenticate('github', { failureRe
 
 
 
-// ─── POST /api/run-agent ──────────────────────────────────────────────────────
-app.post('/api/github/pr', authenticateToken, async (req, res) => {
-  const { repoOwner, repoName, filePath, newCode, prTitle, commitMessage } = req.body;
-  const user = users.find(u => u.id === req.user.id);
-  if (!user || !user.githubToken) return res.status(400).json({ error: 'GitHub token not found. Please log out and log back in with GitHub.' });
+// ─── POST /api/git/files ──────────────────────────────────────────────────────
+app.post('/api/git/files', async (req, res) => {
+  const { repoUrl, branch, token } = req.body;
+  if (!repoUrl) return res.status(400).json({ error: 'Repository URL is required.' });
 
-  const octokit = new Octokit({ auth: user.githubToken });
+  try {
+    const octokit = new Octokit({ auth: token || undefined });
+    // Parse owner and repo from URL (e.g., https://github.com/owner/repo)
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return res.status(400).json({ error: 'Invalid GitHub URL format.' });
+    const owner = match[1];
+    const repo = match[2].replace('.git', '');
+
+    const { data: treeData } = await octokit.git.getTree({
+      owner,
+      repo,
+      tree_sha: branch || 'main',
+      recursive: 'true'
+    });
+
+    const files = [];
+    for (const item of treeData.tree) {
+      if (item.type === 'blob' && /\.(js|ts|jsx|tsx|py|go|rs|cpp|h|java|json)$/.test(item.path)) {
+        // Fetch file content to pass to frontend
+        const { data: fileData } = await octokit.repos.getContent({ owner, repo, path: item.path, ref: branch || 'main' });
+        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+        files.push({ path: item.path, content });
+      }
+    }
+    
+    // Sort logically and limit to avoid massive payload on large repos
+    res.json({ files: files.slice(0, 100) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── POST /api/github/pr ──────────────────────────────────────────────────────
+app.post('/api/github/pr', authenticateToken, async (req, res) => {
+  const { repoOwner, repoName, filePath, newCode, prTitle, commitMessage, token } = req.body;
+  const user = users.find(u => u.id === req.user.id);
+  const gitToken = token || (user && user.githubToken);
+  
+  if (!gitToken) return res.status(400).json({ error: 'GitHub token not found. Connect your repo in the Git Repository tab or log in with GitHub.' });
+
+  const octokit = new Octokit({ auth: gitToken });
   try {
     const { data: repo } = await octokit.repos.get({ owner: repoOwner, repo: repoName });
     const defaultBranch = repo.default_branch;
