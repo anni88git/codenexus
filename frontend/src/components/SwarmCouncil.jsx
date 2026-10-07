@@ -35,6 +35,9 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
     let chatHistory = [];
 
     const fetchAgent = async (agent, index, history) => {
+      // Stagger requests by 1000ms each to completely bypass Groq's IP concurrency block
+      await new Promise(r => setTimeout(r, index * 1000));
+
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,7 +50,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           language: activeRun.language || 'javascript'
         })
       });
-      if (!res.ok) throw new Error('API Error');
+      if (!res.ok) throw new Error(`API Error: ${res.status}`);
       return await res.json();
     };
 
