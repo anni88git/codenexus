@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GitBranch, Github, Key, FolderOpen, FileCode, CheckCircle2, RefreshCw, Send } from 'lucide-react';
+import { GitBranch, Github, Key, FolderOpen, FileCode, CheckCircle2, RefreshCw, Send, GitCommit } from 'lucide-react';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
@@ -13,11 +13,13 @@ export default function GitRepositoryView({ onSelectFile }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [files, setFiles] = useState([]);
+  const [commits, setCommits] = useState([]);
+  const [repoTab, setRepoTab] = useState('files'); // 'files' or 'commits'
 
   useEffect(() => {
     if (localStorage.getItem('nexus_git_connected') === 'true') {
       setIsConnected(true);
-      fetchFiles(repoUrl, branch, token);
+      fetchFilesAndCommits(repoUrl, branch, token);
     }
   }, []);
 
@@ -29,7 +31,7 @@ export default function GitRepositoryView({ onSelectFile }) {
     setError('');
     
     try {
-      const success = await fetchFiles(repoUrl, branch, token);
+      const success = await fetchFilesAndCommits(repoUrl, branch, token);
       if (success) {
         localStorage.setItem('nexus_git_url', repoUrl);
         localStorage.setItem('nexus_git_token', token);
@@ -42,17 +44,28 @@ export default function GitRepositoryView({ onSelectFile }) {
     }
   };
 
-  const fetchFiles = async (url, branch, tkn) => {
+  const fetchFilesAndCommits = async (url, branch, tkn) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/git/files`, {
+      const resFiles = await fetch(`${BACKEND_URL}/api/git/files`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ repoUrl: url, branch, token: tkn })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to connect to repository.');
+      const dataFiles = await resFiles.json();
+      if (!resFiles.ok) throw new Error(dataFiles.error || 'Failed to connect to repository.');
       
-      setFiles(data.files);
+      setFiles(dataFiles.files);
+
+      const resCommits = await fetch(`${BACKEND_URL}/api/git/commits`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoUrl: url, token: tkn })
+      });
+      const dataCommits = await resCommits.json();
+      if (resCommits.ok) {
+        setCommits(dataCommits.commits || []);
+      }
+
       return true;
     } catch (err) {
       setError(err.message);
@@ -143,21 +156,47 @@ export default function GitRepositoryView({ onSelectFile }) {
                 
                 <div className="bg-slate-950/50 border border-slate-800/80 rounded-2xl overflow-hidden flex flex-col h-[400px]">
                   <div className="px-4 py-3 border-b border-slate-800/60 bg-slate-900/40 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Repository Files</span>
-                  </div>
-                  <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-800">
-                    {files.map((file, idx) => (
-                      <button key={idx} onClick={() => onSelectFile(file)}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left hover:bg-slate-800/50 transition-colors group">
-                        <FileCode className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
-                        <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">{file.path}</span>
-                        <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 text-[9px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-lg border border-indigo-500/20">
-                          <Send className="w-3 h-3" /> Load in Workspace
-                        </div>
+                    <div className="flex bg-slate-950 rounded-lg p-1">
+                      <button onClick={() => setRepoTab('files')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-mono transition-colors ${repoTab === 'files' ? 'bg-slate-800 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}>
+                        <FolderOpen className="w-3.5 h-3.5" /> Files
                       </button>
-                    ))}
-                    {files.length === 0 && !isLoading && (
-                      <div className="h-full flex items-center justify-center text-[10px] font-mono text-slate-600">No supported files found in repository.</div>
+                      <button onClick={() => setRepoTab('commits')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-mono transition-colors ${repoTab === 'commits' ? 'bg-slate-800 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}>
+                        <GitCommit className="w-3.5 h-3.5" /> Commits Tree
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-800">
+                    {repoTab === 'files' ? (
+                      <>
+                        {files.map((file, idx) => (
+                          <button key={idx} onClick={() => onSelectFile(file)}
+                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left hover:bg-slate-800/50 transition-colors group">
+                            <FileCode className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+                            <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">{file.path}</span>
+                            <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 text-[9px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-lg border border-indigo-500/20">
+                              <Send className="w-3 h-3" /> Load in Workspace
+                            </div>
+                          </button>
+                        ))}
+                        {files.length === 0 && !isLoading && (
+                          <div className="h-full flex items-center justify-center text-[10px] font-mono text-slate-600">No supported files found in repository.</div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="font-mono text-[11px] leading-tight px-3 py-2">
+                        {commits.map((c, idx) => (
+                          <div key={idx} className="flex hover:bg-slate-800/30 px-2 py-1 rounded transition-colors group">
+                            <span className="text-emerald-500 whitespace-pre mr-4">{c.graph}</span>
+                            <span className="text-slate-500 mr-3 shrink-0">{c.hash.substring(0, 7)}</span>
+                            <span className="text-cyan-400 mr-3 truncate w-32 shrink-0">{c.author}</span>
+                            <span className="text-slate-300 truncate flex-1 group-hover:text-white transition-colors">{c.message}</span>
+                          </div>
+                        ))}
+                        {commits.length === 0 && !isLoading && (
+                          <div className="h-full flex items-center justify-center text-[10px] font-mono text-slate-600 mt-10">No commit history found.</div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

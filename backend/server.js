@@ -5,6 +5,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import fs from 'fs';
+import path from 'path';
+import { simpleGit } from 'simple-git';
+import { rimraf } from 'rimraf';
 import { Octokit } from '@octokit/rest';
 import { generateCodePatch } from './aiService.js';
 
@@ -197,6 +201,66 @@ app.post('/api/git/files', async (req, res) => {
     
     // Sort logically and limit to avoid massive payload on large repos
     res.json({ files: files.slice(0, 100) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── POST /api/git/commits ───────────────────────────────────────────────────
+app.post('/api/git/commits', async (req, res) => {
+  const { repoUrl, token } = req.body;
+  if (!repoUrl) return res.status(400).json({ error: 'Repository URL is required.' });
+
+  try {
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return res.status(400).json({ error: 'Invalid GitHub URL format.' });
+    const owner = match[1];
+    const repo = match[2].replace('.git', '');
+
+    const cloneDir = path.join(process.cwd(), 'clones', `${owner}-${repo}-${Date.now()}`);
+    
+    let cloneUrl = repoUrl;
+    if (token) {
+      cloneUrl = repoUrl.replace('https://', `https://${token}@`);
+    }
+
+    await rimraf(cloneDir);
+    fs.mkdirSync(cloneDir, { recursive: true });
+
+    const git = simpleGit();
+    await git.clone(cloneUrl, cloneDir, ['--no-checkout']);
+    
+    const localGit = simpleGit(cloneDir);
+    const logResult = await localGit.raw(['log', '--all', '--graph', '--pretty=format:%H|%P|%an|%ad|%s']);
+    
+    await rimraf(cloneDir);
+    
+    const lines = logResult.split('\n');
+    const commits = lines.map(line => {
+      // Split off the graph ascii from the actual data
+      const dataIdx = line.indexOf('|');
+      if (dataIdx === -1) return { graph: line, hash: '', parents: '', author: '', date: '', message: '' };
+      
+      // The hash starts before the first '|' but after the graph characters
+      // Finding where the text actually begins:
+      const parts = line.split('|');
+      const graphAndHash = parts[0];
+      
+      const graphMatch = graphAndHash.match(/^([ *|/\\_.-]+)(.*)$/);
+      const graph = graphMatch ? graphMatch[1] : '';
+      const hash = graphMatch ? graphMatch[2].trim() : graphAndHash;
+      
+      return {
+        graph,
+        hash,
+        parents: parts[1] || '',
+        author: parts[2] || '',
+        date: parts[3] || '',
+        message: parts.slice(4).join('|') || ''
+      };
+    });
+
+    res.json({ commits });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
