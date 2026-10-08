@@ -64,6 +64,40 @@ function computeDiff(a, b) {
   return diff;
 }
 
+function HeaderTypingText({ activeTab }) {
+  const descriptions = {
+    home: "Welcome to The Weave.",
+    workspace: "Diffing multi-agent patches & visualizing AST.",
+    swarm: "Consensus protocol active. Resolving bugs.",
+    ast: "Mapping structural dependencies...",
+    security: "Auditing patch for critical vulnerabilities...",
+    sandbox: "Executing isolated tests against patch...",
+    git: "Managing PRs and repository state..."
+  };
+  
+  const textToType = descriptions[activeTab] || "System ready.";
+  
+  const [text, setText] = useState('');
+  
+  useEffect(() => {
+    setText('');
+    let i = 0;
+    const interval = setInterval(() => {
+      setText(textToType.substring(0, i + 1));
+      i++;
+      if (i >= textToType.length) clearInterval(interval);
+    }, 40);
+    return () => clearInterval(interval);
+  }, [textToType]);
+
+  return (
+    <span className="ml-3 text-[10px] text-cyan-400/80 font-normal border-l border-slate-700 pl-3">
+      {text}
+      <span className="w-1.5 h-2.5 bg-cyan-400/80 inline-block ml-1 animate-pulse align-middle" />
+    </span>
+  );
+}
+
 
 
 export default function App() {
@@ -473,13 +507,17 @@ function Dashboard({ user, onSignOut }) {
       <div className="flex-1 h-full flex flex-col overflow-hidden relative min-w-0">
         <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-black/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-3">
-            <div className="text-xs font-semibold text-slate-400 font-mono">
-              {activeTab === 'home'      && '/ Home'}
-              {activeTab === 'workspace' && '/ Patching Workspace'}
-              {activeTab === 'swarm'     && '/ Swarm Council'}
-              {activeTab === 'ast'       && '/ AST Graph Mesh — Node 02'}
-              {activeTab === 'security'  && '/ Security Audit — Node 04'}
-              {activeTab === 'sandbox'   && '/ Sandbox & DevOps — Node 05'}
+            <div className="text-xs font-semibold text-slate-400 font-mono flex items-center">
+              <span>
+                {activeTab === 'home'      && '/ Home'}
+                {activeTab === 'workspace' && '/ Patching Workspace'}
+                {activeTab === 'swarm'     && '/ Swarm Council'}
+                {activeTab === 'ast'       && '/ AST Graph Mesh — Node 02'}
+                {activeTab === 'security'  && '/ Security Audit — Node 04'}
+                {activeTab === 'sandbox'   && '/ Sandbox & DevOps — Node 05'}
+                {activeTab === 'git'       && '/ Git Repository'}
+              </span>
+              <HeaderTypingText activeTab={activeTab} />
             </div>
           </div>
 
