@@ -58,7 +58,7 @@ export default function PatchingWorkspace({
   const removed = diff.filter(d => d.type === 'removed').length;
 
   return (
-    <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
+    <div className="flex-1 grid grid-cols-12 gap-6 min-h-0 pb-28">
       {/* LEFT: Code Diff Viewer (7 cols) */}
       <div className="col-span-7 flex flex-col gap-4 min-h-0">
         <div className="flex-1 bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col min-h-0">
