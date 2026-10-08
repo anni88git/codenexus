@@ -72,10 +72,17 @@ export default function App() {
 
   const handleAuthenticated = useCallback((u) => {
     setUser(u);
+    localStorage.setItem('nexus_user', JSON.stringify(u));
     setShowSplash(true);
   }, []);
 
   useEffect(() => {
+    // Restore user session if available
+    const savedUser = localStorage.getItem('nexus_user');
+    if (savedUser) {
+      try { setUser(JSON.parse(savedUser)); } catch (e) {}
+    }
+
     // Check if we just redirected back from GitHub OAuth
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
@@ -91,6 +98,7 @@ export default function App() {
       try {
         const userObj = JSON.parse(decodeURIComponent(userStr));
         localStorage.setItem('token', token);
+        localStorage.setItem('nexus_user', JSON.stringify(userObj));
         setUser(userObj);
         setShowSplash(true);
         // Clear the URL so it looks clean
@@ -105,6 +113,7 @@ export default function App() {
     setUser(null);
     setShowSplash(false);
     localStorage.removeItem('token');
+    localStorage.removeItem('nexus_user');
   }, []);
 
   if (!user && !showSplash) {
@@ -218,7 +227,7 @@ function Dashboard({ user, onSignOut }) {
     const demoRun = {
       fileName: 'user_handler.go',
       language: 'Golang',
-      originalCode: scenario?.stackTrace || '// No trace provided',
+      originalCode: (scenario?.stackTrace || '// No trace provided').replace(/\\n/g, '\n'),
       patchedCode: `// user_handler.go - PATCHED (offline demo)\n// Fix: Guard against nil pointer dereference\npackage main\n\nfunc GetUserBio(u *User) string {\n    if u == nil || u.Profile == nil {\n        return ""\n    }\n    return u.Profile.Bio\n}`,
       explanation: 'Offline demo: Added defensive nil checks for user pointer and nested profile struct.',
       nodes: [
@@ -245,7 +254,7 @@ function Dashboard({ user, onSignOut }) {
     const promptText = isObj ? payload.errorTrace : payload;
     const finalCustomCode = isObj ? payload.customCode : customCode;
     const finalLanguage = isObj ? payload.language : (language?.label || 'Auto-Detect');
-    const inputSnippet = finalCustomCode || promptText || scenario?.stackTrace || '';
+    const inputSnippet = (finalCustomCode || promptText || scenario?.stackTrace || '').replace(/\\n/g, '\n');
 
     if (!inputSnippet.trim()) {
       addLog('❌ No code or trace provided — add something in the prompt bar first.');
@@ -326,8 +335,8 @@ function Dashboard({ user, onSignOut }) {
         setActiveRun({
           fileName:     data.fileName || optimisticFileName,
           language:     data.language || finalLanguage,
-          originalCode: data.originalCode || inputSnippet,
-          patchedCode:  data.patchedCode,
+          originalCode: (data.originalCode || inputSnippet).replace(/\\n/g, '\n'),
+          patchedCode:  (data.patchedCode || '').replace(/\\n/g, '\n'),
           explanation:  data.explanation || 'Patch generated successfully.',
           nodes:        liveNodes,
           testOutput:   data.testOutput || [],
