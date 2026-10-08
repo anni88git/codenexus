@@ -185,11 +185,13 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               </div>
               <div className="p-4 bg-slate-950">
                  <SyntaxHighlighter
-                    children={finalCode}
+                    children={finalCode ? finalCode.replace(/\\n/g, '\n') : ''}
                     style={vscDarkPlus}
                     language={activeRun?.language || 'javascript'}
                     PreTag="div"
-                    customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '11px' }}
+                    wrapLines={true}
+                    wrapLongLines={true}
+                    customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '11px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}
                   />
               </div>
               <div className="p-4 border-t border-slate-800 flex justify-center bg-slate-900">

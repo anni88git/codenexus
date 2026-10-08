@@ -150,7 +150,7 @@ export default function AuthPage({ onAuthenticated }) {
           </div>
           <div>
             <div className="text-xs font-extrabold tracking-[0.2em] text-white">The Weave</div>
-            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AUTONOMOUS MULTI-AGENT FABRIC</div>
+            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">MANY MINDS, ONE SOLUTION</div>
           </div>
         </div>
 
@@ -177,7 +177,24 @@ export default function AuthPage({ onAuthenticated }) {
           <h1 className="text-4xl font-black leading-tight bg-gradient-to-br from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent mb-3">
             The Weave
           </h1>
-          <p className="text-sm text-slate-300/70 leading-relaxed">
+          <div className="text-sm font-bold text-cyan-400 mb-2 font-mono h-5 flex items-center">
+            {"Many minds, one solution.".split('').map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 + index * 0.05 }}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </motion.span>
+            ))}
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ repeat: Infinity, duration: 0.8 }}
+              className="inline-block w-1.5 h-4 bg-cyan-400 ml-1"
+            />
+          </div>
+          <p className="text-sm text-slate-300/70 leading-relaxed mt-2">
             Multi-Agent Neural Development Fabric.<br />
             Let the Synthetic Team find, patch, and ship fixes — you review.
           </p>
