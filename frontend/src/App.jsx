@@ -653,7 +653,7 @@ function Dashboard({ user, onSignOut }) {
           </AnimatePresence>
         </main>
 
-        {(activeTab === 'home' || activeTab === 'workspace') && (
+        {activeTab === 'workspace' && (
           <FloatingPromptBar
             language={language}
             onLanguageChange={setLanguage}

@@ -104,10 +104,10 @@ export default function FloatingPromptBar({
           <span className="text-slate-400"><kbd className="bg-[#111111] border border-slate-700 px-1 rounded text-slate-300">Shift+Enter</kbd> new line</span>
         </div>
         {(customCode?.trim() || activeEditorCode?.trim()) && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="text-cyan-400 font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Workspace code loaded</span>
-            <span className="bg-red-500/20 text-red-300 font-bold px-2 py-0.5 rounded border border-red-500/30 animate-pulse">
-              Click red ✕ to clear before pasting new code
+            <span className="text-slate-500 text-[9px] opacity-70">
+              (Clear with ✕ before pasting new code)
             </span>
           </div>
         )}
