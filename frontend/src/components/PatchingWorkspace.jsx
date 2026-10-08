@@ -181,19 +181,19 @@ export default function PatchingWorkspace({
                     const isDone = (pipelineComplete && activeNode >= s.node) || (!isFixing && activeNode > s.node);
                     return (
                       <div key={s.node} className={`p-3 rounded-xl border text-center transition-all ${
-                        isActive ? 'bg-cyan-950/40 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
-                        : isDone ? 'bg-emerald-950/20 border-emerald-500/20'
-                        : 'bg-slate-800/25 border-slate-700/25'
+                        isActive ? 'bg-[#222] border-[#444]'
+                        : isDone ? 'bg-[#1a1a1a] border-[#333]'
+                        : 'bg-transparent border-transparent'
                       }`}>
                         <div className={`w-7 h-7 rounded-xl mx-auto mb-1.5 flex items-center justify-center text-[9px] font-mono font-bold ${
-                          isActive ? 'bg-cyan-600/25 text-cyan-300 border border-cyan-500/25'
-                          : isDone ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/15'
-                          : 'bg-slate-700/25 text-slate-600 border border-slate-700/20'
+                          isActive ? 'bg-[#333] text-white border border-[#555]'
+                          : isDone ? 'bg-[#222] text-slate-300 border border-[#444]'
+                          : 'bg-transparent text-slate-600 border border-[#222]'
                         }`}>
                           {isDone ? <CheckCircle2 className="w-4 h-4" /> : isActive ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : `0${s.node}`}
                         </div>
-                        <div className={`text-[9px] font-semibold ${isActive ? 'text-cyan-200' : isDone ? 'text-slate-300' : 'text-slate-600'}`}>{s.name}</div>
-                        <div className={`text-[8px] mt-0.5 ${isActive ? 'text-slate-300/60' : isDone ? 'text-slate-600' : 'text-slate-700'}`}>{s.desc}</div>
+                        <div className={`text-[9px] font-semibold ${isActive ? 'text-white' : isDone ? 'text-slate-300' : 'text-slate-600'}`}>{s.name}</div>
+                        <div className={`text-[8px] mt-0.5 ${isActive ? 'text-slate-400' : isDone ? 'text-slate-500' : 'text-slate-700'}`}>{s.desc}</div>
                       </div>
                     );
                   })}
@@ -205,7 +205,7 @@ export default function PatchingWorkspace({
               <div className="shrink-0 flex gap-2">
                 <button onClick={onExplain} disabled={!pipelineComplete}
                   className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold py-2.5 rounded-xl border transition-all ${
-                    pipelineComplete ? 'bg-purple-950/30 border-purple-500/20 text-purple-300 hover:bg-purple-900/30' : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
+                    pipelineComplete ? 'bg-[#1a1a1a] border-[#333] text-slate-300 hover:bg-[#222]' : 'bg-transparent border-transparent text-slate-700 cursor-not-allowed'
                   }`}>
                   <BookOpen className="w-3 h-3" /> Explain Fix
                 </button>

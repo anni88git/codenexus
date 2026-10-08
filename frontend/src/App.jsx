@@ -540,27 +540,27 @@ function Dashboard({ user, onSignOut }) {
               {pipelineComplete && (
                 <>
                   {[
-                    { label:'Conf', value:`${telemetry.confidence}%`, c:'text-purple-400' },
-                    { label:'Lat',  value:`${telemetry.latency}s`,    c:'text-cyan-400' },
-                    { label:'Risk', value:telemetry.risk,             c: telemetry.risk==='Low'?'text-emerald-400':telemetry.risk==='Medium'?'text-amber-400':'text-red-400' },
-                    { label:'Tok',  value:String(telemetry.tokens),   c:'text-amber-400' },
+                    { label:'Confidence', value:`${telemetry.confidence}%` },
+                    { label:'Latency',    value:`${telemetry.latency}s` },
+                    { label:'Risk',       value:telemetry.risk },
+                    { label:'Tokens',     value:String(telemetry.tokens) },
                   ].map((chip, i) => (
                     <motion.div key={chip.label}
                       initial={{ opacity:0, scale:0.85 }} animate={{ opacity:1, scale:1 }}
                       transition={{ delay: i * 0.06 }}
-                      className="flex items-center gap-1.5 bg-slate-900/60 border border-slate-700/40 px-2.5 py-1 rounded-lg">
-                      <span className="text-[8px] font-mono text-slate-600">{chip.label}</span>
-                      <span className={`text-[10px] font-bold font-mono ${chip.c}`}>{chip.value}</span>
+                      className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2.5 py-1 rounded-lg">
+                      <span className="text-[9px] font-mono text-slate-500">{chip.label}</span>
+                      <span className="text-[10px] font-bold font-mono text-slate-300">{chip.value}</span>
                     </motion.div>
                   ))}
                 </>
               )}
             </AnimatePresence>
 
-            <div className="flex items-center gap-1.5 bg-slate-900/50 border border-slate-800/40 px-2.5 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2.5 py-1 rounded-lg">
               <Wifi className="w-3 h-3 text-slate-600" />
-              <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'}`} />
-              <span className="text-[9px] font-mono text-slate-600">{isConnected ? 'LIVE' : 'OFFLINE'}</span>
+              <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-slate-300' : 'bg-red-500'}`} />
+              <span className="text-[9px] font-mono text-slate-400">{isConnected ? 'LIVE' : 'OFFLINE'}</span>
             </div>
           </div>
         </header>
