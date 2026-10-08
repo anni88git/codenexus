@@ -32,11 +32,6 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
           </div>
         </div>
 
-        {/* Live status */}
-        <div className="flex items-center gap-1.5 mt-4 bg-emerald-950/25 border border-emerald-500/15 rounded-lg px-2.5 py-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          <span className="text-[9px] font-mono text-emerald-400">AUTONOMOUS AGENT ACTIVE</span>
-        </div>
       </div>
 
       {/* ─── Navigation ────────────────────────────────────────────────────── */}

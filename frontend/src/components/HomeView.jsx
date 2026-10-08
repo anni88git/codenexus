@@ -39,10 +39,10 @@ function FeatureTypingTerminal() {
   }, [text, isDeleting, idx]);
   
   return (
-    <div className="mt-8 flex items-center gap-3 p-4 bg-[#0a0a0a]/80 border border-slate-800/80 rounded-xl font-mono text-xs shadow-inner">
-      <span className="text-slate-600 font-bold shrink-0">agent@weave:~$</span>
-      <span className="text-cyan-400">{text}</span>
-      <span className="w-1.5 h-3 bg-cyan-400 animate-pulse shrink-0" />
+    <div className="mt-8 flex items-center gap-3 p-4 bg-[#111111] border border-[#2a2a2a] rounded-xl font-mono text-xs">
+      <span className="text-slate-500 font-bold shrink-0">agent@weave:~$</span>
+      <span className="text-slate-300">{text}</span>
+      <span className="w-1.5 h-3 bg-slate-400 animate-pulse shrink-0" />
     </div>
   );
 }
@@ -120,25 +120,17 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
     <div className="min-h-full space-y-8 p-6 pb-36">
 
       {/* ── Hero banner ──────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden mb-8 p-8 bg-black/80 border border-slate-800 rounded-2xl backdrop-blur-md shadow-2xl">
-        {/* Ambient orbs */}
-        <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(#06b6d4, transparent)' }} />
-        <div className="absolute -bottom-12 -right-12 w-56 h-56 rounded-full opacity-8 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(#a855f7, transparent)' }} />
-
+      <div className="relative overflow-hidden mb-8 p-8 bg-[#111111] border border-[#2a2a2a] rounded-2xl">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-              <Network className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-2xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center">
+              <Network className="w-5 h-5 text-slate-300" />
             </div>
             <div>
-              <div className="text-xl font-black bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent">
+              <div className="text-xl font-semibold text-slate-100">
                 The Weave
               </div>
-              <div className="text-[10px] font-mono text-slate-600 tracking-widest">AUTONOMOUS CODE SWARM v2</div>
-            </div>
-            <div className="ml-auto flex items-center gap-2 bg-emerald-950/30 border border-emerald-500/20 rounded-xl px-3 py-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] font-mono text-emerald-400">AGENT ACTIVE</span>
+              <div className="text-[10px] font-mono text-slate-500 tracking-wide mt-0.5">Autonomous Code Swarm</div>
             </div>
           </div>
 
@@ -149,19 +141,19 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
           {/* How it works steps */}
           <div className="grid grid-cols-4 gap-3">
             {[
-              { n: '01', label: 'Triage',    desc: 'Error classified & priority routed', color: '#06b6d4' },
-              { n: '02', label: 'AST Index', desc: 'Dependency graph built & indexed',    color: '#a855f7' },
-              { n: '03', label: 'AI Patch',  desc: 'Codestral streams patch diff to disk', color: '#34d399' },
-              { n: '04', label: 'Auto-Push', desc: 'Sandbox tests run & PR auto-created', color: '#f59e0b' },
+              { n: '01', label: 'Triage',    desc: 'Error classified & priority routed' },
+              { n: '02', label: 'AST Index', desc: 'Dependency graph built & indexed' },
+              { n: '03', label: 'AI Patch',  desc: 'Codestral streams patch diff to disk' },
+              { n: '04', label: 'Auto-Push', desc: 'Sandbox tests run & PR auto-created' },
             ].map((s, i) => (
               <motion.div key={s.n}
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="p-3 rounded-xl border border-slate-800/50 bg-[#111111]/40"
+                className="p-3 rounded-xl border border-[#2a2a2a] bg-[#171717]"
               >
-                <div className="text-2xl font-black font-mono mb-1.5" style={{ color: s.color, textShadow: `0 0 12px ${s.color}40` }}>{s.n}</div>
+                <div className="text-2xl font-black font-mono mb-1.5 text-slate-500">{s.n}</div>
                 <div className="text-[11px] font-bold text-slate-200 mb-0.5">{s.label}</div>
-                <div className="text-[9px] text-slate-600 leading-relaxed">{s.desc}</div>
+                <div className="text-[9px] text-slate-500 leading-relaxed">{s.desc}</div>
               </motion.div>
             ))}
           </div>
@@ -171,7 +163,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
           <div className="mt-10 flex justify-center">
             <button
               onClick={onGetStarted}
-              className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500/90 to-purple-600/90 hover:from-cyan-400 hover:to-purple-500 text-white font-semibold text-xs tracking-wider flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] border border-white/10 hover:-translate-y-0.5"
+              className="px-5 py-2.5 rounded-lg bg-white hover:bg-slate-200 text-black font-semibold text-xs flex items-center gap-2 transition-all"
             >
               Click to get started <ChevronRight className="w-3.5 h-3.5" />
             </button>
