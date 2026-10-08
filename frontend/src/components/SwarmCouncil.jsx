@@ -194,12 +194,15 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
                     customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '11px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}
                   />
               </div>
-              <div className="p-4 border-t border-slate-800 flex justify-center bg-[#111111]">
+              <div className="p-4 border-t border-slate-800 flex flex-col items-center gap-3 bg-[#111111]">
                 <button 
                   onClick={() => onApplyCode?.(finalCode)}
                   className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2">
                   <Code className="w-4 h-4" /> Apply to Canvas
                 </button>
+                <div className="text-[10px] text-slate-500">
+                  Need more help? <button onClick={() => updateState({ isRunning: false, turns: [], finalCode: null, statusText: '' })} className="text-cyan-400 hover:underline cursor-pointer">Start a new session</button>
+                </div>
               </div>
             </motion.div>
           )}

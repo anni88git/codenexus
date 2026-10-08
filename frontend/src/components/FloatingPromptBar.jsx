@@ -106,7 +106,7 @@ export default function FloatingPromptBar({
         {(customCode?.trim() || activeEditorCode?.trim()) && (
           <div className="flex items-center gap-3">
             <span className="text-cyan-400 font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Workspace code loaded</span>
-            <span className="bg-red-950/60 border border-red-500/40 text-red-300 font-semibold px-2 py-0.5 rounded text-[9px]">
+            <span className="text-slate-500 text-[9px] opacity-70">
               Press ✕ to clear before pasting new code
             </span>
           </div>
