@@ -111,21 +111,21 @@ export default function PatchingWorkspace({
           ) : viewMode === 'split' ? (
             <div className="flex-1 grid grid-cols-2 divide-x divide-slate-800/60 overflow-hidden min-h-0">
               <div className="flex flex-col min-h-0">
-                <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-slate-800/60 bg-red-950/10 backdrop-blur-sm z-10">
-                  <FileCode className="w-3 h-3 text-red-400" />
-                  <span className="text-[9px] font-mono text-red-300/60 uppercase tracking-wider">Original (Broken)</span>
+                <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-[#222] bg-[#1a1a1a] backdrop-blur-sm z-10">
+                  <FileCode className="w-3 h-3 text-slate-400" />
+                  <span className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">Original (Broken)</span>
                 </div>
-                <div className="flex-1 overflow-auto bg-black">
+                <div className="flex-1 overflow-auto bg-[#111111]">
                   <pre className="p-4 text-xs font-mono text-slate-300"><code>{activeRun?.originalCode}</code></pre>
                 </div>
               </div>
               <div className="flex flex-col min-h-0">
-                <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-slate-800/60 bg-emerald-950/10 backdrop-blur-sm z-10">
-                  <FileCode className="w-3 h-3 text-emerald-400" />
-                  <span className="text-[9px] font-mono text-emerald-300/60 uppercase tracking-wider">Patched (Fixed)</span>
+                <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-[#222] bg-[#1a1a1a] backdrop-blur-sm z-10">
+                  <FileCode className="w-3 h-3 text-slate-400" />
+                  <span className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">Patched (Fixed)</span>
                 </div>
-                <div className="flex-1 overflow-auto bg-black">
-                  <pre className="p-4 text-xs font-mono text-emerald-400"><code>{activeRun?.patchedCode}</code></pre>
+                <div className="flex-1 overflow-auto bg-[#111111]">
+                  <pre className="p-4 text-xs font-mono text-slate-300"><code>{activeRun?.patchedCode}</code></pre>
                 </div>
               </div>
             </div>
@@ -140,9 +140,9 @@ export default function PatchingWorkspace({
           {pipelineComplete && activeRun?.explanation && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="shrink-0 p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl">
               <div className="flex items-start gap-3">
-                <BookOpen className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                <BookOpen className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[9px] font-mono text-purple-500/70 uppercase tracking-wider mb-1">AI Explanation</div>
+                  <div className="text-[9px] font-mono text-slate-500 uppercase tracking-wider mb-1">AI Explanation</div>
                   <div className="text-xs text-slate-300 leading-relaxed">{activeRun.explanation}</div>
                 </div>
               </div>
