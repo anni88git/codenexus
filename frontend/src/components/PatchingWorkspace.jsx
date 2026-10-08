@@ -61,8 +61,8 @@ export default function PatchingWorkspace({
     <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
       {/* LEFT: Code Diff Viewer (7 cols) */}
       <div className="col-span-7 flex flex-col gap-4 min-h-0">
-        <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
-          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-slate-900/40">
+        <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-[#111111]/40">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 bg-slate-800/60 border border-slate-700/40 px-3 py-1.5 rounded-xl">
                 <FileCode className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
@@ -153,7 +153,7 @@ export default function PatchingWorkspace({
 
       {/* RIGHT: Intelligence Panel (5 cols) */}
       <div className="col-span-5 flex flex-col min-h-0 gap-4">
-        <div className="shrink-0 flex gap-2 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-1.5 shadow-xl">
+        <div className="shrink-0 flex gap-2 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-1.5 shadow-xl">
           {[
             { id:'pipeline', label:'Pipeline & AST Mesh', icon: Activity },
             { id:'chat', label:'AI Chat', icon: Sparkles },
@@ -171,7 +171,7 @@ export default function PatchingWorkspace({
           {rightTab === 'pipeline' ? (
             <motion.div key="pipeline" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               className="flex-1 flex flex-col gap-4 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 pb-4">
-              <div className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+              <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
                 <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider mb-3">
                   <Activity className="w-3 h-3 text-cyan-400" /> Execution Pipeline
                 </div>
@@ -228,7 +228,7 @@ export default function PatchingWorkspace({
               </button>
 
               {scenario?.rollbackCheckpoints && (
-                <div className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+                <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider">
                       <Layers className="w-3 h-3 text-cyan-400" /> Rollback Checkpoints
@@ -259,7 +259,7 @@ export default function PatchingWorkspace({
             <motion.div key="logs" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
               {scenario?.owasp && (
-                <div className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+                <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
                   <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider mb-3">
                     <Shield className="w-3 h-3 text-cyan-400" /> OWASP Security Scorecard
                   </div>
@@ -281,7 +281,7 @@ export default function PatchingWorkspace({
                 </div>
               )}
 
-              <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+              <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
                 <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50">
                   <Terminal className="w-3.5 h-3.5 text-pink-400" />
                   <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">Stdout Log Stream</span>
@@ -413,7 +413,7 @@ function ChatBox({ activeRun, onApplyCode }) {
   };
 
   return (
-    <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+    <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
       <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-slate-800/50">
         <div className="flex items-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
@@ -425,7 +425,7 @@ function ChatBox({ activeRun, onApplyCode }) {
               <Sparkles className="w-3.5 h-3.5" />
             </button>
           )}
-          <select value={mode} onChange={e => { setMode(e.target.value); setShowSuggestions(true); }} className="bg-slate-950/80 border border-slate-700/50 text-slate-300 text-[10px] font-mono rounded-lg px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors">
+          <select value={mode} onChange={e => { setMode(e.target.value); setShowSuggestions(true); }} className="bg-[#0a0a0a]/80 border border-slate-700/50 text-slate-300 text-[10px] font-mono rounded-lg px-2 py-1 outline-none focus:border-cyan-500/50 transition-colors">
             {AI_MODES.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
         </div>
@@ -446,7 +446,7 @@ function ChatBox({ activeRun, onApplyCode }) {
                       const match = /language-(\w+)/.exec(className || '')
                       return !inline && match ? (
                         <div className="my-2 rounded-lg overflow-hidden border border-slate-700/50">
-                          <div className="bg-slate-900 px-3 py-1.5 text-[9px] text-slate-400 font-mono uppercase border-b border-slate-700/50 flex justify-between items-center">
+                          <div className="bg-[#111111] px-3 py-1.5 text-[9px] text-slate-400 font-mono uppercase border-b border-slate-700/50 flex justify-between items-center">
                             <span>{match[1]}</span>
                             <div className="flex items-center gap-1.5">
                               <button 
@@ -479,7 +479,7 @@ function ChatBox({ activeRun, onApplyCode }) {
                           />
                         </div>
                       ) : (
-                        <code {...props} className="bg-slate-900/60 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[10px]">
+                        <code {...props} className="bg-[#111111]/60 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[10px]">
                           {children}
                         </code>
                       )
@@ -505,7 +505,7 @@ function ChatBox({ activeRun, onApplyCode }) {
       
       {/* Suggestions */}
       {showSuggestions && MODE_SUGGESTIONS[mode] && (
-        <div className="px-3 pt-2 pb-1 flex flex-wrap gap-2 border-t border-slate-800/50 bg-slate-900/20">
+        <div className="px-3 pt-2 pb-1 flex flex-wrap gap-2 border-t border-slate-800/50 bg-[#111111]/20">
           {MODE_SUGGESTIONS[mode].map(s => (
             <button 
               key={s} 
@@ -519,11 +519,11 @@ function ChatBox({ activeRun, onApplyCode }) {
         </div>
       )}
 
-      <div className="p-2 border-t border-slate-800/50 bg-slate-900/40">
+      <div className="p-2 border-t border-slate-800/50 bg-[#111111]/40">
         <input type="text" value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           placeholder="Ask AI about this patch..."
-          className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 placeholder:text-slate-600"
+          className="w-full bg-[#0a0a0a]/50 border border-slate-700/50 rounded-xl py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/50 placeholder:text-slate-600"
         />
       </div>
     </div>

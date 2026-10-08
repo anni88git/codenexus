@@ -240,7 +240,7 @@ export default function AuthPage({ onAuthenticated }) {
           </div>
 
           {/* Auth Card */}
-          <div className="p-8 space-y-6 bg-slate-900/90 border border-slate-800/80 rounded-2xl shadow-2xl backdrop-blur-md">
+          <div className="p-8 space-y-6 bg-[#111111]/90 border border-slate-800/80 rounded-2xl shadow-2xl backdrop-blur-md">
 
             {/* Card header */}
             <div>

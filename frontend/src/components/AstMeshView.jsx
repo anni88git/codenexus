@@ -94,7 +94,7 @@ export default function AstMeshView({ scenario, activeNode, pipelineComplete, ac
       )}
 
       {/* Main Canvas Card */}
-      <div className="flex-1 bg-slate-950/80 border border-slate-800/80 rounded-xl overflow-hidden relative min-h-[220px]">
+      <div className="flex-1 bg-[#0a0a0a]/80 border border-slate-800/80 rounded-xl overflow-hidden relative min-h-[220px]">
         {/* Subtle grid background */}
         <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
           style={{
@@ -203,7 +203,7 @@ export default function AstMeshView({ scenario, activeNode, pipelineComplete, ac
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="absolute top-2 right-2 bg-slate-900/95 border border-slate-700 p-2.5 rounded-lg text-[9px] font-mono text-slate-200 z-10 shadow-2xl"
+                className="absolute top-2 right-2 bg-[#111111]/95 border border-slate-700 p-2.5 rounded-lg text-[9px] font-mono text-slate-200 z-10 shadow-2xl"
               >
                 <div className="font-bold text-[10px] text-slate-100 mb-1">{n.id}</div>
                 <div className={`flex items-center gap-1 ${

@@ -107,10 +107,10 @@ export default function GitRepositoryView({ onSelectFile }) {
 
   return (
     <div className="flex-1 flex flex-col min-h-[600px] h-full relative">
-      <div className="absolute inset-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl shadow-xl flex flex-col overflow-hidden">
+      <div className="absolute inset-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl shadow-xl flex flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-800/60 bg-slate-900/40">
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-800/60 bg-[#111111]/40">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center">
               <GitPullRequest className="w-5 h-5 text-indigo-400" />
@@ -132,14 +132,14 @@ export default function GitRepositoryView({ onSelectFile }) {
           <AnimatePresence mode="wait">
             {!isConnected ? (
               <motion.div key="connect" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="max-w-md mx-auto mt-10">
-                <div className="bg-slate-950/50 border border-slate-800/80 rounded-2xl p-6 shadow-2xl">
+                <div className="bg-[#0a0a0a]/50 border border-slate-800/80 rounded-2xl p-6 shadow-2xl">
                   <form onSubmit={handleConnect} className="space-y-4">
                     <div>
                       <label className="block text-[10px] font-mono text-slate-500 mb-1.5 ml-1">Repository URL</label>
                       <div className="relative">
                         <FolderOpen className="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input type="text" value={repoUrl} onChange={e => setRepoUrl(e.target.value)} placeholder="https://github.com/username/repo"
-                          className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
+                          className="w-full bg-[#111111]/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
                       </div>
                     </div>
                     <div>
@@ -147,7 +147,7 @@ export default function GitRepositoryView({ onSelectFile }) {
                       <div className="relative">
                         <GitBranch className="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input type="text" value={branch} onChange={e => setBranch(e.target.value)} placeholder="main"
-                          className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
+                          className="w-full bg-[#111111]/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
                       </div>
                     </div>
                     <div>
@@ -158,7 +158,7 @@ export default function GitRepositoryView({ onSelectFile }) {
                       <div className="relative">
                         <Key className="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="ghp_xxxxxxxxxxxx"
-                          className="w-full bg-slate-900/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
+                          className="w-full bg-[#111111]/80 border border-slate-700/50 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-colors" />
                       </div>
                     </div>
 
@@ -181,9 +181,9 @@ export default function GitRepositoryView({ onSelectFile }) {
                   <CheckCircle2 className="w-3.5 h-3.5" /> Repository Connected: {repoUrl.split('/').slice(-2).join('/')}
                 </div>
                 
-                <div className="bg-slate-950/50 border border-slate-800/80 rounded-2xl overflow-hidden flex flex-col h-[400px]">
-                  <div className="px-4 py-3 border-b border-slate-800/60 bg-slate-900/40 flex items-center justify-between">
-                    <div className="flex bg-slate-950 rounded-lg p-1">
+                <div className="bg-[#0a0a0a]/50 border border-slate-800/80 rounded-2xl overflow-hidden flex flex-col h-[400px]">
+                  <div className="px-4 py-3 border-b border-slate-800/60 bg-[#111111]/40 flex items-center justify-between">
+                    <div className="flex bg-[#0a0a0a] rounded-lg p-1">
                       <button onClick={() => setRepoTab('files')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-mono transition-colors ${repoTab === 'files' ? 'bg-slate-800 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}>
                         <FolderOpen className="w-3.5 h-3.5" /> Files
                       </button>

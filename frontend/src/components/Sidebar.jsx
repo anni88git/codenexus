@@ -100,7 +100,7 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
         <button
           onClick={onSettings}
           title="Agent Settings"
-          className="flex-1 shrink-0 p-3 rounded-xl bg-slate-900/60 border border-slate-800/50 flex items-center justify-center hover:bg-slate-800 hover:border-cyan-500/25 transition-all group"
+          className="flex-1 shrink-0 p-3 rounded-xl bg-[#111111]/60 border border-slate-800/50 flex items-center justify-center hover:bg-slate-800 hover:border-cyan-500/25 transition-all group"
         >
           <Settings2 className="w-5 h-5 text-slate-500 group-hover:text-cyan-400" />
           <span className="ml-2 text-xs font-semibold text-slate-400 group-hover:text-cyan-400">Agent Rules</span>
@@ -109,7 +109,7 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
         <button
           onClick={onSignOut}
           title="Sign out"
-          className="shrink-0 p-3 rounded-xl bg-slate-900/60 border border-slate-800/50 flex items-center justify-center hover:bg-red-950/40 hover:border-red-500/25 transition-all"
+          className="shrink-0 p-3 rounded-xl bg-[#111111]/60 border border-slate-800/50 flex items-center justify-center hover:bg-red-950/40 hover:border-red-500/25 transition-all"
         >
           <LogOut className="w-5 h-5 text-slate-500 hover:text-red-400" />
         </button>

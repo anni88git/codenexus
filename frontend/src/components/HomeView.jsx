@@ -39,7 +39,7 @@ function FeatureTypingTerminal() {
   }, [text, isDeleting, idx]);
   
   return (
-    <div className="mt-8 flex items-center gap-3 p-4 bg-slate-950/80 border border-slate-800/80 rounded-xl font-mono text-xs shadow-inner">
+    <div className="mt-8 flex items-center gap-3 p-4 bg-[#0a0a0a]/80 border border-slate-800/80 rounded-xl font-mono text-xs shadow-inner">
       <span className="text-slate-600 font-bold shrink-0">agent@weave:~$</span>
       <span className="text-cyan-400">{text}</span>
       <span className="w-1.5 h-3 bg-cyan-400 animate-pulse shrink-0" />
@@ -157,7 +157,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
               <motion.div key={s.n}
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="p-3 rounded-xl border border-slate-800/50 bg-slate-900/40"
+                className="p-3 rounded-xl border border-slate-800/50 bg-[#111111]/40"
               >
                 <div className="text-2xl font-black font-mono mb-1.5" style={{ color: s.color, textShadow: `0 0 12px ${s.color}40` }}>{s.n}</div>
                 <div className="text-[11px] font-bold text-slate-200 mb-0.5">{s.label}</div>

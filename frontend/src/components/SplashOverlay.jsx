@@ -42,7 +42,7 @@ function DigitalLoom() {
       />
       
       {/* Weaving Grid Core */}
-      <div className="relative w-20 h-20 overflow-hidden rounded-xl border border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.25)] bg-slate-950/60 backdrop-blur-md">
+      <div className="relative w-20 h-20 overflow-hidden rounded-xl border border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.25)] bg-[#0a0a0a]/60 backdrop-blur-md">
         {/* Vertical Threads (Warp) */}
         {[15, 32.5, 50, 67.5, 85].map((pos, i) => (
           <div key={`v-${i}`} className="absolute top-0 bottom-0 w-[1px] bg-cyan-500/30" style={{ left: `${pos}%` }} />

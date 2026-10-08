@@ -653,22 +653,24 @@ function Dashboard({ user, onSignOut }) {
           </AnimatePresence>
         </main>
 
-        <FloatingPromptBar
-          language={language}
-          onLanguageChange={setLanguage}
-          onTrigger={trigger}
-          isFixing={isFixing}
-          onOpenCustomModal={() => setShowCustomModal(true)}
-          onClearCustomCode={() => {
-            setCustomCode('');
-            setActiveRun(null);
-            setScenario(null);
-            addLog('🗑️ Workspace cleared.');
-          }}
-          scenario={scenario}
-          customCode={customCode}
-          activeEditorCode={activeRun?.originalCode}
-        />
+        {(activeTab === 'home' || activeTab === 'workspace') && (
+          <FloatingPromptBar
+            language={language}
+            onLanguageChange={setLanguage}
+            onTrigger={trigger}
+            isFixing={isFixing}
+            onOpenCustomModal={() => setShowCustomModal(true)}
+            onClearCustomCode={() => {
+              setCustomCode('');
+              setActiveRun(null);
+              setScenario(null);
+              addLog('🗑️ Workspace cleared.');
+            }}
+            scenario={scenario}
+            customCode={customCode}
+            activeEditorCode={activeRun?.originalCode}
+          />
+        )}
       </div>
 
       <AnimatePresence>

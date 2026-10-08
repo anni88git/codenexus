@@ -135,8 +135,8 @@ export default function SandboxView({
           )}
 
           {/* Terminal box */}
-          <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
-            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-slate-800/60 bg-slate-900/40">
+          <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+            <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-slate-800/60 bg-[#111111]/40">
               <div className="flex items-center gap-2">
                 <TerminalSquare className="w-3.5 h-3.5 text-pink-400" />
                 <span className="text-[10px] font-mono text-slate-400 font-semibold">SANDBOX RUNNER</span>
@@ -173,8 +173,8 @@ export default function SandboxView({
         <div className="flex flex-col gap-4 min-h-0">
 
           {/* Stdout log stream */}
-          <div className="flex-1 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
-            <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50 bg-slate-900/40">
+          <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+            <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50 bg-[#111111]/40">
               <Zap className="w-3.5 h-3.5 text-cyan-400" />
               <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">Agent Log Stream</span>
               <span className="ml-auto text-[8px] font-mono text-slate-800">{logs.length} lines</span>
@@ -198,7 +198,7 @@ export default function SandboxView({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="shrink-0 bg-slate-900/60 border border-slate-800/60 rounded-2xl overflow-hidden shadow-xl"
+                className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden shadow-xl"
               >
                 <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50">
                   <Bell className="w-3.5 h-3.5 text-amber-400" />

@@ -8,14 +8,14 @@ export default function ReportModal({ activeRun, onClose }) {
   const handlePrint = () => window.print();
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 print:bg-white print:p-0">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]/80 backdrop-blur-sm p-4 print:bg-white print:p-0">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="w-full max-w-3xl max-h-full overflow-y-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none"
+        className="w-full max-w-3xl max-h-full overflow-y-auto bg-[#111111] border border-slate-700 rounded-2xl shadow-2xl print:bg-white print:text-black print:border-none print:shadow-none"
       >
-        <div className="sticky top-0 bg-slate-900/90 backdrop-blur border-b border-slate-800 p-4 flex items-center justify-between print:hidden">
+        <div className="sticky top-0 bg-[#111111]/90 backdrop-blur border-b border-slate-800 p-4 flex items-center justify-between print:hidden">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-cyan-400" />
             <h2 className="text-sm font-bold text-slate-100 uppercase tracking-widest">Post-Mortem Incident Report</h2>
@@ -56,7 +56,7 @@ export default function ReportModal({ activeRun, onClose }) {
             <p className="text-sm text-slate-300 leading-relaxed print:text-gray-700">
               The original implementation contained critical flaws that caused runtime errors or security vulnerabilities. Below is the active stack trace and original snippet:
             </p>
-            <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-red-300 overflow-x-auto print:bg-gray-100 print:border-gray-300 print:text-red-800">
+            <pre className="p-4 bg-[#0a0a0a] border border-slate-800 rounded-xl text-xs font-mono text-red-300 overflow-x-auto print:bg-gray-100 print:border-gray-300 print:text-red-800">
               <code>{activeRun.originalCode}</code>
             </pre>
           </section>
@@ -69,7 +69,7 @@ export default function ReportModal({ activeRun, onClose }) {
             <p className="text-sm text-slate-300 leading-relaxed print:text-gray-700">
               {activeRun.explanation}
             </p>
-            <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-emerald-300 overflow-x-auto print:bg-gray-100 print:border-gray-300 print:text-green-800">
+            <pre className="p-4 bg-[#0a0a0a] border border-slate-800 rounded-xl text-xs font-mono text-emerald-300 overflow-x-auto print:bg-gray-100 print:border-gray-300 print:text-green-800">
               <code>{activeRun.patchedCode}</code>
             </pre>
           </section>

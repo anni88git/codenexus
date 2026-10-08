@@ -37,7 +37,7 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
           <div className="text-xs font-mono text-slate-400">Live AI Vulnerability Scan</div>
         </div>
         <div className="ml-auto flex gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-700">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#111111] border border-slate-700">
              <span className="text-[10px] font-mono text-slate-400">Total Findings:</span>
              <span className="text-[11px] font-bold text-slate-200">{suggestions.length}</span>
           </div>
@@ -69,7 +69,7 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
                   transition={{ delay: i * 0.1 }}
                   className={`p-5 rounded-2xl border ${borderClass} ${bgClass} flex gap-4 items-start`}
                 >
-                  <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-full border ${borderClass} flex items-center justify-center bg-slate-950/50`}>
+                  <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-full border ${borderClass} flex items-center justify-center bg-[#0a0a0a]/50`}>
                     {isHigh ? <ShieldAlert className={`w-4 h-4 ${colorClass}`} /> : <Info className={`w-4 h-4 ${colorClass}`} />}
                   </div>
                   <div className="flex-1">
@@ -83,7 +83,7 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
                       {s.description}
                     </p>
                     {s.fix && (
-                      <div className="mt-2 bg-slate-950/50 border border-slate-800 rounded-lg p-3">
+                      <div className="mt-2 bg-[#0a0a0a]/50 border border-slate-800 rounded-lg p-3">
                         <div className="text-[10px] font-mono text-emerald-400 mb-1.5 flex items-center gap-1.5">
                           <CheckCircle2 className="w-3 h-3" /> Recommended Fix Implemented
                         </div>

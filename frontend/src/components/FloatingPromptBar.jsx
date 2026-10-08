@@ -139,7 +139,7 @@ export default function FloatingPromptBar({
                 setPrompt(scenario.stackTrace.split('\n')[0]);
                 inputRef.current?.focus();
               }}
-              className="hidden lg:flex shrink-0 items-center gap-1 text-[9px] font-mono text-slate-400 hover:text-cyan-400 border border-slate-800 bg-slate-900/80 px-2 py-1 rounded-lg transition-all"
+              className="hidden lg:flex shrink-0 items-center gap-1 text-[9px] font-mono text-slate-400 hover:text-cyan-400 border border-slate-800 bg-[#111111]/80 px-2 py-1 rounded-lg transition-all"
             >
               <Sparkles className="w-3 h-3 text-cyan-400" />
               Load trace
@@ -159,7 +159,7 @@ export default function FloatingPromptBar({
             className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${
               (customCode?.trim() || activeEditorCode?.trim())
                 ? 'bg-cyan-950/60 border-cyan-500/50 text-cyan-400'
-                : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400'
+                : 'bg-[#111111]/60 border-slate-800 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400'
             }`}
           >
             <FileCode className="w-4 h-4" />
@@ -203,8 +203,8 @@ export default function FloatingPromptBar({
       {/* Sub-bar Hints */}
       <div className="flex items-center justify-center gap-3 mt-1.5">
         <span className="text-[9px] font-mono text-slate-500">
-          <kbd className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-slate-400">Enter</kbd> run ·{' '}
-          <kbd className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-slate-400">Shift+Enter</kbd> new line
+          <kbd className="bg-[#111111] border border-slate-800 px-1 py-0.5 rounded text-slate-400">Enter</kbd> run ·{' '}
+          <kbd className="bg-[#111111] border border-slate-800 px-1 py-0.5 rounded text-slate-400">Shift+Enter</kbd> new line
           {(customCode?.trim() || activeEditorCode?.trim()) && (
             <span className="ml-2 inline-flex items-center gap-1.5">
               <span className="text-cyan-400 font-semibold">✓ Workspace code ready</span>

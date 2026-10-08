@@ -110,7 +110,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
 
   if (!activeRun) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 h-full bg-slate-950">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 h-full bg-[#0a0a0a]">
         <div className="w-16 h-16 rounded-2xl bg-cyan-950/20 border border-cyan-500/10 flex items-center justify-center mb-5">
           <Users className="w-7 h-7 text-cyan-400/25" />
         </div>
@@ -123,10 +123,10 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-950 p-6 overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#0a0a0a] p-6 overflow-hidden">
       
       {/* Header */}
-      <div className="shrink-0 mb-6 bg-slate-900/60 border border-slate-800/60 rounded-2xl p-6 shadow-xl flex items-center justify-between">
+      <div className="shrink-0 mb-6 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-6 shadow-xl flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
             <Users className="w-6 h-6 text-cyan-400" />
@@ -151,7 +151,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               const Icon = agentDef?.icon || Bot;
               
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-slate-900/40 border border-slate-800/50 rounded-2xl overflow-hidden shadow-lg">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#111111]/40 border border-slate-800/50 rounded-2xl overflow-hidden shadow-lg">
                   <div className={`px-4 py-2 bg-gradient-to-r ${agentDef?.color || 'from-slate-700 to-slate-600'} flex items-center gap-2 opacity-90`}>
                     <Icon className="w-4 h-4 text-white" />
                     <span className="text-[10px] font-bold text-white uppercase tracking-wider">{turn.agent} (Round {turn.round})</span>
@@ -165,7 +165,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           </AnimatePresence>
 
           {isRunning && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 p-4 bg-slate-900/40 border border-slate-800/50 rounded-2xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 p-4 bg-[#111111]/40 border border-slate-800/50 rounded-2xl">
               <Loader2 className="w-5 h-5 text-cyan-500 animate-spin" />
               <div className="text-xs text-slate-300 font-semibold uppercase tracking-wider">
                 {statusText}...
@@ -174,7 +174,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           )}
 
           {finalCode && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 border-2 border-emerald-500/30 rounded-2xl overflow-hidden bg-slate-900/80 shadow-[0_0_30px_rgba(16,185,129,0.15)] relative">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 border-2 border-emerald-500/30 rounded-2xl overflow-hidden bg-[#111111]/80 shadow-[0_0_30px_rgba(16,185,129,0.15)] relative">
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay pointer-events-none" />
               <div className="p-6 text-center border-b border-slate-800">
                 <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-500/30">
@@ -183,7 +183,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
                 <h2 className="text-xl font-bold text-slate-100 mb-1">Consensus Reached</h2>
                 <p className="text-xs text-slate-400">The Lead Developer has resolved the debate and synthesized the final code.</p>
               </div>
-              <div className="p-4 bg-slate-950">
+              <div className="p-4 bg-[#0a0a0a]">
                  <SyntaxHighlighter
                     children={finalCode ? finalCode.replace(/\\n/g, '\n') : ''}
                     style={vscDarkPlus}
@@ -194,7 +194,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
                     customStyle={{ margin: 0, padding: '16px', background: 'transparent', fontSize: '11px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}
                   />
               </div>
-              <div className="p-4 border-t border-slate-800 flex justify-center bg-slate-900">
+              <div className="p-4 border-t border-slate-800 flex justify-center bg-[#111111]">
                 <button 
                   onClick={() => onApplyCode?.(finalCode)}
                   className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2">
