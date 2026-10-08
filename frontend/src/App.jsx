@@ -78,17 +78,31 @@ function HeaderTypingText({ activeTab }) {
   const textToType = descriptions[activeTab] || "System ready.";
   
   const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   
+  // Reset when tab changes
   useEffect(() => {
     setText('');
-    let i = 0;
-    const interval = setInterval(() => {
-      setText(textToType.substring(0, i + 1));
-      i++;
-      if (i >= textToType.length) clearInterval(interval);
-    }, 40);
-    return () => clearInterval(interval);
+    setIsDeleting(false);
   }, [textToType]);
+  
+  useEffect(() => {
+    let timeout;
+    if (isDeleting) {
+      if (text.length > 0) {
+        timeout = setTimeout(() => setText(textToType.substring(0, text.length - 1)), 25);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(false), 800);
+      }
+    } else {
+      if (text.length < textToType.length) {
+        timeout = setTimeout(() => setText(textToType.substring(0, text.length + 1)), 50);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(true), 3500);
+      }
+    }
+    return () => clearTimeout(timeout);
+  }, [text, isDeleting, textToType]);
 
   return (
     <span className="ml-3 text-[10px] text-cyan-400/80 font-normal border-l border-slate-700 pl-3">
