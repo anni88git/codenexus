@@ -69,7 +69,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-70b-versatile', // Valid Groq model ID
+      model: 'llama-3.1-8b-instant', // Guaranteed active Groq model
       max_tokens: 4000,
     });
 
