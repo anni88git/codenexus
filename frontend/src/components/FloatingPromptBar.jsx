@@ -108,10 +108,10 @@ export default function FloatingPromptBar({
 
       {/* ── Main Bar Container ─────────────────────────────────────── */}
       <div
-        className="relative flex items-center gap-2.5 p-2 rounded-2xl transition-all duration-300"
+        className="relative flex items-center gap-2.5 p-2 rounded-2xl transition-all duration-300 shadow-xl"
         style={{
-          background: '#2f2f2f',
-          border: error ? '1px solid #ef4444' : '1px solid #424242',
+          background: '#1a1a1a',
+          border: error ? '1px solid #ef4444' : focused ? '1px solid #fff' : '1px solid #424242',
         }}
       >
 
