@@ -168,10 +168,10 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
 
           <FeatureTypingTerminal />
 
-          <div className="mt-8 flex justify-end">
+          <div className="mt-10 flex justify-center">
             <button
               onClick={onGetStarted}
-              className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105"
+              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold tracking-wider flex items-center gap-2 transition-all shadow-[0_0_30px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)] hover:scale-105 border border-white/10"
             >
               Let's get started <ChevronRight className="w-5 h-5" />
             </button>
