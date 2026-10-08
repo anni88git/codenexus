@@ -61,11 +61,11 @@ export default function PatchingWorkspace({
     <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
       {/* LEFT: Code Diff Viewer (7 cols) */}
       <div className="col-span-7 flex flex-col gap-4 min-h-0">
-        <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
-          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-[#111111]/40">
+        <div className="flex-1 bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col min-h-0">
+          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-[#1a1a1a]">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 bg-slate-800/60 border border-slate-700/40 px-3 py-1.5 rounded-xl">
-                <FileCode className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <FileCode className="w-3.5 h-3.5 text-slate-100 shrink-0" />
                 <span className="text-xs font-mono font-semibold text-slate-200">{activeRun?.fileName || scenario?.filename || 'solution.src'}</span>
               </div>
               {showDiff && (
@@ -79,7 +79,7 @@ export default function PatchingWorkspace({
               <button onClick={onOpenPR} disabled={!pipelineComplete}
                 className={`flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border transition-all ${
                   pipelineComplete 
-                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 shadow-[0_0_15px_rgba(52,211,153,0.15)]'
+                    ? 'bg-white text-black hover:bg-slate-200 border-transparent shadow-sm'
                     : 'bg-slate-800/20 border-slate-700/30 text-slate-500 cursor-not-allowed'
                 }`}>
                 <GitPullRequest className="w-3.5 h-3.5" /> Auto-Push to Git
@@ -88,7 +88,7 @@ export default function PatchingWorkspace({
                 {[['split','Split',Columns], ['unified','Unified',AlignJustify]].map(([m, lbl, Icon]) => (
                   <button key={m} onClick={() => setViewMode(m)}
                     className={`flex items-center gap-1.5 text-[10px] font-mono px-3 py-1 rounded-lg transition-all ${
-                      viewMode === m ? 'bg-cyan-600/20 text-cyan-200 border border-cyan-500/20' : 'text-slate-500 hover:text-slate-300'
+                      viewMode === m ? 'bg-[#2a2a2a] text-white border border-[#444]' : 'text-slate-500 hover:text-slate-300'
                     }`}>
                     <Icon className="w-3 h-3" /> {lbl}
                   </button>
@@ -99,8 +99,8 @@ export default function PatchingWorkspace({
 
           {!showDiff ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-5 p-8">
-              <div className="w-16 h-16 rounded-2xl bg-cyan-950/20 border border-cyan-500/10 flex items-center justify-center">
-                <Code className="w-7 h-7 text-cyan-400/25" />
+              <div className="w-16 h-16 rounded-2xl bg-[#1e1e1e] border border-transparent flex items-center justify-center">
+                <Code className="w-7 h-7 text-slate-500" />
               </div>
               <div className="text-center">
                 <div className="text-sm font-semibold text-slate-600 mb-1">No Diff Generated Yet</div>
@@ -138,7 +138,7 @@ export default function PatchingWorkspace({
 
         <AnimatePresence>
           {pipelineComplete && activeRun?.explanation && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="shrink-0 p-4 bg-purple-950/25 border border-purple-500/15 rounded-2xl">
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="shrink-0 p-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl">
               <div className="flex items-start gap-3">
                 <BookOpen className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                 <div>
@@ -171,9 +171,9 @@ export default function PatchingWorkspace({
           {rightTab === 'pipeline' ? (
             <motion.div key="pipeline" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               className="flex-1 flex flex-col gap-4 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 pb-4">
-              <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+              <div className="shrink-0 bg-[#111111] border border-[#2a2a2a] rounded-xl p-4">
                 <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider mb-3">
-                  <Activity className="w-3 h-3 text-cyan-400" /> Execution Pipeline
+                  <Activity className="w-3 h-3 text-slate-100" /> Execution Pipeline
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
                   {pipelineSteps.map(s => {
@@ -193,7 +193,7 @@ export default function PatchingWorkspace({
                           {isDone ? <CheckCircle2 className="w-4 h-4" /> : isActive ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : `0${s.node}`}
                         </div>
                         <div className={`text-[9px] font-semibold ${isActive ? 'text-cyan-200' : isDone ? 'text-slate-300' : 'text-slate-600'}`}>{s.name}</div>
-                        <div className={`text-[8px] mt-0.5 ${isActive ? 'text-cyan-500/60' : isDone ? 'text-slate-600' : 'text-slate-700'}`}>{s.desc}</div>
+                        <div className={`text-[8px] mt-0.5 ${isActive ? 'text-slate-300/60' : isDone ? 'text-slate-600' : 'text-slate-700'}`}>{s.desc}</div>
                       </div>
                     );
                   })}
@@ -221,17 +221,17 @@ export default function PatchingWorkspace({
               <button onClick={onReport} disabled={!pipelineComplete}
                 className={`shrink-0 flex items-center justify-center gap-2 text-[11px] font-mono font-bold py-3.5 rounded-xl border transition-all ${
                   pipelineComplete 
-                    ? 'bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border-cyan-500/40 text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:border-cyan-400/60 hover:from-cyan-900 hover:to-blue-900' 
+                    ? 'bg-white border-transparent text-black shadow-sm  hover:bg-slate-200' 
                     : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
                 }`}>
-                <FileText className={`w-4 h-4 ${pipelineComplete ? 'text-cyan-400' : ''}`} /> Download Post-Mortem Report
+                <FileText className={`w-4 h-4 ${pipelineComplete ? 'text-slate-100' : ''}`} /> Download Post-Mortem Report
               </button>
 
               {scenario?.rollbackCheckpoints && (
-                <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+                <div className="shrink-0 bg-[#111111] border border-[#2a2a2a] rounded-xl p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider">
-                      <Layers className="w-3 h-3 text-cyan-400" /> Rollback Checkpoints
+                      <Layers className="w-3 h-3 text-slate-100" /> Rollback Checkpoints
                     </div>
                     {pipelineComplete && (
                       <button onClick={onRollback}
@@ -259,9 +259,9 @@ export default function PatchingWorkspace({
             <motion.div key="logs" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
               {scenario?.owasp && (
-                <div className="shrink-0 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-4 shadow-xl">
+                <div className="shrink-0 bg-[#111111] border border-[#2a2a2a] rounded-xl p-4">
                   <div className="flex items-center gap-1.5 text-[8px] font-mono text-slate-600 uppercase tracking-wider mb-3">
-                    <Shield className="w-3 h-3 text-cyan-400" /> OWASP Security Scorecard
+                    <Shield className="w-3 h-3 text-slate-100" /> OWASP Security Scorecard
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/25 border border-red-500/15">
@@ -281,7 +281,7 @@ export default function PatchingWorkspace({
                 </div>
               )}
 
-              <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+              <div className="flex-1 bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col min-h-0">
                 <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-slate-800/50">
                   <Terminal className="w-3.5 h-3.5 text-pink-400" />
                   <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">Stdout Log Stream</span>
@@ -353,7 +353,7 @@ function LogBox({ logs }) {
     <div ref={ref} className="flex-1 min-h-0 overflow-y-auto font-mono text-xs bg-black text-emerald-400 p-4 border-t border-slate-800/40 shadow-inner">
       {logs.map(l => (
         <div key={l.id} className="flex gap-2 leading-relaxed min-h-[18px]">
-          <span className="text-cyan-900 select-none shrink-0">❯</span>
+          <span className="text-slate-700 select-none shrink-0">❯</span>
           <span className={l.isError ? 'text-red-400' : 'text-emerald-400/80'}>{l.text}</span>
         </div>
       ))}
@@ -413,15 +413,15 @@ function ChatBox({ activeRun, onApplyCode }) {
   };
 
   return (
-    <div className="flex-1 bg-[#111111]/60 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col shadow-xl min-h-0">
+    <div className="flex-1 bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col min-h-0">
       <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-slate-800/50">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <Sparkles className="w-3.5 h-3.5 text-slate-100" />
           <span className="text-[9px] font-mono text-slate-600 uppercase tracking-wider">AI Code Chat</span>
         </div>
         <div className="flex items-center gap-2">
           {!showSuggestions && (
-            <button onClick={() => setShowSuggestions(true)} className="text-slate-500 hover:text-cyan-400 transition-colors" title="Show Suggestions">
+            <button onClick={() => setShowSuggestions(true)} className="text-slate-500 hover:text-slate-100 transition-colors" title="Show Suggestions">
               <Sparkles className="w-3.5 h-3.5" />
             </button>
           )}
@@ -464,7 +464,7 @@ function ChatBox({ activeRun, onApplyCode }) {
                               </button>
                               <button 
                                 onClick={() => onApplyCode?.(String(children).replace(/\n$/, ''))} 
-                                className="text-cyan-400 hover:text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 px-2 py-0.5 rounded transition-all flex items-center gap-1 font-bold">
+                                className="text-slate-100 hover:text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 px-2 py-0.5 rounded transition-all flex items-center gap-1 font-bold">
                                 <Code className="w-3 h-3" /> Apply to Canvas
                               </button>
                             </div>
@@ -519,7 +519,7 @@ function ChatBox({ activeRun, onApplyCode }) {
         </div>
       )}
 
-      <div className="p-2 border-t border-slate-800/50 bg-[#111111]/40">
+      <div className="p-2 border-t border-slate-800/50 bg-[#1a1a1a]">
         <input type="text" value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           placeholder="Ask AI about this patch..."
@@ -529,4 +529,5 @@ function ChatBox({ activeRun, onApplyCode }) {
     </div>
   );
 }
+
 

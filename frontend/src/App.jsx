@@ -105,9 +105,9 @@ function HeaderTypingText({ activeTab }) {
   }, [text, isDeleting, textToType]);
 
   return (
-    <span className="ml-3 text-[10px] text-cyan-400/80 font-normal border-l border-slate-700 pl-3">
+    <span className="ml-3 text-[10px] text-slate-400 font-normal border-l border-slate-700 pl-3">
       {text}
-      <span className="w-1.5 h-2.5 bg-cyan-400/80 inline-block ml-1 animate-pulse align-middle" />
+      <span className="w-1.5 h-2.5 bg-slate-400 inline-block ml-1 animate-pulse align-middle" />
     </span>
   );
 }
@@ -739,3 +739,4 @@ function ScenarioSelector({ scenario, onSelect, isFixing }) {
     </div>
   );
 }
+
