@@ -69,7 +69,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'openai/gpt-oss-120b', // Reverted to the original working model
+      model: 'anthropic/claude-3.5-sonnet', // Upgraded to the best coding model for public use
       max_tokens: 4000,
     });
 
@@ -104,11 +104,6 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
         explanation: 'Patch generated (JSON parsing failed due to length).',
         nodes: []
       };
-    }
-
-    // DEMO HACK: Force fix the 'Systen' typo since the proxy model is ignoring the prompt
-    if (parsedData.code) {
-      parsedData.code = parsedData.code.replace(/Systen/g, 'System');
     }
 
     const tokens = response.usage
