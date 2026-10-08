@@ -21,14 +21,14 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
       {/* ─── Brand ─────────────────────────────────────────────────────────── */}
       <div className="shrink-0 px-5 pt-6 pb-5 border-b border-slate-800/60">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)] shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#111111] border border-slate-800 flex items-center justify-center shrink-0">
             <Network className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
-            <div className="text-[11px] font-extrabold tracking-[0.14em] bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight">
+            <div className="text-xs font-semibold text-slate-100 leading-tight tracking-wide">
               The Weave
             </div>
-            <div className="text-[8px] font-mono text-slate-600 tracking-[0.2em] mt-0.5">AUTONOMOUS FABRIC</div>
+            <div className="text-[9px] font-mono text-slate-500 mt-0.5">Autonomous Fabric</div>
           </div>
         </div>
 
@@ -54,8 +54,8 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
               whileTap={{ scale: 0.97 }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 group relative ${
                 isActive
-                  ? 'bg-cyan-950/50 border border-cyan-500/25 shadow-[0_0_12px_rgba(6,182,212,0.1)]'
-                  : 'border border-transparent hover:bg-slate-800/50 hover:border-slate-700/40'
+                  ? 'bg-[#1e1e1e] border-transparent'
+                  : 'border border-transparent hover:bg-[#151515]'
               }`}
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
@@ -65,25 +65,23 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
               {isActive && (
                 <motion.div
                   layoutId="sidebarActiveBar"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-r-full"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-white rounded-r-full"
                 />
               )}
 
               {/* Icon */}
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
-                isActive
-                  ? 'bg-gradient-to-tr from-cyan-600/30 to-purple-600/20 border border-cyan-500/25'
-                  : 'bg-slate-800/60 border border-slate-700/30 group-hover:border-slate-600/50'
+                isActive ? 'bg-transparent' : 'bg-transparent'
               }`}>
-                <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-cyan-300' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
               </div>
 
               {/* Labels */}
               <div className="flex-1 min-w-0">
-                <div className={`text-xs font-semibold leading-tight truncate transition-colors ${isActive ? 'text-cyan-100' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                <div className={`text-xs font-medium leading-tight truncate transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
                   {item.label}
                 </div>
-                <div className="text-[9px] font-mono text-slate-600 truncate mt-0.5">{item.sub}</div>
+                <div className="text-[9px] text-slate-500 truncate mt-0.5">{item.sub}</div>
               </div>
 
               {/* Chevron */}

@@ -90,23 +90,11 @@ export default function FloatingPromptBar({
         )}
       </AnimatePresence>
 
-      {/* ── Outer Glow Halo ────────────────────────────────────────── */}
-      <div
-        className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-500"
-        style={{
-          background: focused
-            ? 'radial-gradient(ellipse at 50% 100%, rgba(6,182,212,0.2) 0%, transparent 70%)'
-            : error
-            ? 'radial-gradient(ellipse at 50% 100%, rgba(239,68,68,0.2) 0%, transparent 70%)'
-            : 'radial-gradient(ellipse at 50% 100%, rgba(6,182,212,0.08) 0%, transparent 70%)',
-        }}
-      />
-
       {/* ── Top-bar Hints ───────────────────────────────────────────── */}
       <div className="absolute -top-7 left-0 right-0 flex items-center justify-between px-2 text-[10px] font-mono">
         <div className="flex items-center gap-2 opacity-60">
-          <span className="text-slate-400"><kbd className="bg-[#111111] border border-slate-700 px-1 rounded text-slate-300">Enter</kbd> run</span>
-          <span className="text-slate-400"><kbd className="bg-[#111111] border border-slate-700 px-1 rounded text-slate-300">Shift+Enter</kbd> new line</span>
+          <span className="text-slate-400"><kbd className="bg-[#1e1e1e] border border-[#2a2a2a] px-1 rounded text-slate-300">Enter</kbd> run</span>
+          <span className="text-slate-400"><kbd className="bg-[#1e1e1e] border border-[#2a2a2a] px-1 rounded text-slate-300">Shift+Enter</kbd> new line</span>
         </div>
         {(customCode?.trim() || activeEditorCode?.trim()) && (
           <div className="flex items-center gap-3">
@@ -122,14 +110,8 @@ export default function FloatingPromptBar({
       <div
         className="relative flex items-center gap-2.5 p-2 rounded-2xl transition-all duration-300"
         style={{
-          background: 'rgba(6, 10, 22, 0.95)',
-          border: error
-            ? '1px solid rgba(239,68,68,0.5)'
-            : focused
-            ? '1px solid rgba(6,182,212,0.55)'
-            : '1px solid rgba(6,182,212,0.28)',
-          backdropFilter: 'blur(24px)',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(6,182,212,0.12)',
+          background: '#2f2f2f',
+          border: error ? '1px solid #ef4444' : '1px solid #424242',
         }}
       >
 
@@ -191,20 +173,13 @@ export default function FloatingPromptBar({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isFixing}
-          className="shrink-0 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-xs tracking-wider shadow-lg shadow-cyan-500/20 disabled:opacity-50 transition-all flex items-center gap-2"
+          disabled={isFixing || (!prompt.trim() && !customCode?.trim() && !activeEditorCode?.trim())}
+          className="shrink-0 w-9 h-9 rounded-xl bg-white hover:bg-slate-200 text-black disabled:bg-[#424242] disabled:text-slate-500 transition-all flex items-center justify-center"
         >
           {isFixing ? (
-            <>
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              <span>RUNNING…</span>
-            </>
+            <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
-            <>
-              <Play className="w-3.5 h-3.5 fill-white" />
-              <span className="hidden sm:inline">GENERATE AI FIX</span>
-              <span className="sm:hidden">FIX</span>
-            </>
+            <Sparkles className="w-4 h-4" />
           )}
         </button>
       </div>
