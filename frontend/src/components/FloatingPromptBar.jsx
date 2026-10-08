@@ -106,9 +106,6 @@ export default function FloatingPromptBar({
         {(customCode?.trim() || activeEditorCode?.trim()) && (
           <div className="flex items-center gap-3">
             <span className="text-cyan-400 font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Workspace code loaded</span>
-            <span className="text-red-500/80 text-[9px] font-semibold tracking-wide">
-              Press ✕ to clear before pasting new code
-            </span>
           </div>
         )}
       </div>
@@ -180,18 +177,6 @@ export default function FloatingPromptBar({
           >
             <FileCode className="w-4 h-4" />
           </button>
-
-          {(customCode?.trim() || activeEditorCode?.trim()) && (
-            <button
-              type="button"
-              onClick={onClearCustomCode}
-              disabled={isFixing}
-              title="Clear attached code"
-              className="shrink-0 w-6 h-6 rounded-lg bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/60 hover:text-red-300 flex items-center justify-center transition-all"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
         </div>
 
         {/* Action Button */}

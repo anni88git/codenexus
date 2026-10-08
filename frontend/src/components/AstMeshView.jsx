@@ -149,13 +149,11 @@ export default function AstMeshView({ scenario, activeNode, pipelineComplete, ac
             const displayLabel = (n.id || '').length > 10 ? `${(n.id || '').slice(0, 9)}…` : (n.id || '');
 
             return (
-              <motion.g
+              <g
                 key={n.id || idx}
                 onMouseEnter={() => setHoveredNode(n.id)}
                 onMouseLeave={() => setHoveredNode(null)}
-                whileHover={{ scale: 1.15, filter: 'brightness(1.2)' }}
                 className="cursor-pointer"
-                style={{ originX: cx + 'px', originY: cy + 'px' }}
               >
                 {/* Pulse ring on broken/target node */}
                 {isTarget && !pipelineComplete && (
@@ -171,6 +169,7 @@ export default function AstMeshView({ scenario, activeNode, pipelineComplete, ac
                   filter="url(#nodeGlow)"
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.15, fill: 'rgba(6,182,212,0.1)' }}
                   transition={{ delay: idx * 0.08, duration: 0.3 }}
                 />
 
@@ -189,7 +188,7 @@ export default function AstMeshView({ scenario, activeNode, pipelineComplete, ac
                     {displayLabel}
                   </text>
                 )}
-              </motion.g>
+              </g>
             );
           })}
         </svg>
