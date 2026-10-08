@@ -34,6 +34,16 @@ export default function FloatingPromptBar({
     setError(false);
   }, [scenario]);
 
+  // Auto-resize textarea when prompt changes
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = '24px'; // Reset first
+      if (prompt) {
+        inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 150) + 'px';
+      }
+    }
+  }, [prompt]);
+
   const handleSubmit = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (isFixing) return;
@@ -131,7 +141,7 @@ export default function FloatingPromptBar({
             placeholder="Describe bug, paste stack trace, or press Generate (Auto-pushes fix to Git)..."
             disabled={isFixing}
             rows={1}
-            className="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 py-1 disabled:opacity-50 font-mono resize-none overflow-hidden"
+            className="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 py-1 disabled:opacity-50 font-mono resize-none overflow-auto"
             style={{ minHeight: '24px', lineHeight: '24px' }}
           />
 
