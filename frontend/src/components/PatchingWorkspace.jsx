@@ -125,22 +125,22 @@ export default function PatchingWorkspace({
           ) : viewMode === 'split' ? (
             <div className="flex-1 overflow-auto bg-[#111111] min-h-0">
               <div className="grid grid-cols-2 divide-x divide-slate-800/60 min-h-full">
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0">
                   <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-[#222] bg-[#1a1a1a] backdrop-blur-sm z-10">
                     <FileCode className="w-3 h-3 text-slate-400" />
                     <span className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">Original (Broken)</span>
                   </div>
-                  <div className="flex-1">
-                    <pre className="p-4 text-xs font-mono text-slate-300"><code>{activeRun?.originalCode}</code></pre>
+                  <div className="flex-1 overflow-x-auto">
+                    <pre className="p-4 text-xs font-mono text-slate-300 w-max"><code>{activeRun?.originalCode}</code></pre>
                   </div>
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0">
                   <div className="shrink-0 sticky top-0 flex items-center gap-2 px-3 py-2 border-b border-[#222] bg-[#1a1a1a] backdrop-blur-sm z-10">
                     <FileCode className="w-3 h-3 text-slate-400" />
                     <span className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">Patched (Fixed)</span>
                   </div>
-                  <div className="flex-1">
-                    <pre className="p-4 text-xs font-mono text-slate-300"><code>{activeRun?.patchedCode}</code></pre>
+                  <div className="flex-1 overflow-x-auto">
+                    <pre className="p-4 text-xs font-mono text-slate-300 w-max"><code>{activeRun?.patchedCode}</code></pre>
                   </div>
                 </div>
               </div>
