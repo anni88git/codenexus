@@ -23,6 +23,8 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
   try {
     const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language === 'Auto' ? 'source' : language} code.
 
+CRITICAL WARNING: The code provided may contain intentional typos (like 'Systen' instead of 'System', or misspelled variables). You MUST scan the code and correct ALL typos and spelling errors before doing anything else.
+
 USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
 ${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}
 
@@ -33,7 +35,7 @@ Broken Code:
 ${brokenCode}
 
 Instructions:
-1. Identify the root cause of the error and fix it. CRITICAL: Pay extreme attention to spelling mistakes and typos (e.g., 'Systen' -> 'System'). Fix ALL syntax errors.
+1. Identify the root cause of the error and fix it.
 2. Analyze the dependencies of this code (e.g., what services, databases, or external modules it uses).
 3. Return a JSON object with EXACTLY the following structure:
 {
@@ -69,7 +71,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'anthropic/claude-3.5-sonnet', // Upgraded to the best coding model for public use
+      model: 'openai/gpt-oss-120b', // The only confirmed working model on this API key
       max_tokens: 4000,
     });
 
