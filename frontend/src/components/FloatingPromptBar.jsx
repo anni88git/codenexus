@@ -97,6 +97,22 @@ export default function FloatingPromptBar({
         }}
       />
 
+      {/* ── Top-bar Hints ───────────────────────────────────────────── */}
+      <div className="absolute -top-7 left-0 right-0 flex items-center justify-between px-2 text-[10px] font-mono">
+        <div className="flex items-center gap-2 opacity-60">
+          <span className="text-slate-400"><kbd className="bg-[#111111] border border-slate-700 px-1 rounded text-slate-300">Enter</kbd> run</span>
+          <span className="text-slate-400"><kbd className="bg-[#111111] border border-slate-700 px-1 rounded text-slate-300">Shift+Enter</kbd> new line</span>
+        </div>
+        {(customCode?.trim() || activeEditorCode?.trim()) && (
+          <div className="flex items-center gap-2">
+            <span className="text-cyan-400 font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Workspace code loaded</span>
+            <span className="bg-red-500/20 text-red-300 font-bold px-2 py-0.5 rounded border border-red-500/30 animate-pulse">
+              Click red ✕ to clear before pasting new code
+            </span>
+          </div>
+        )}
+      </div>
+
       {/* ── Main Bar Container ─────────────────────────────────────── */}
       <div
         className="relative flex items-center gap-2.5 p-2 rounded-2xl transition-all duration-300"
@@ -125,7 +141,7 @@ export default function FloatingPromptBar({
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder="Describe bug, paste stack trace, or press Generate..."
+            placeholder="Describe bug, paste stack trace, or press Generate (Auto-pushes fix to Git)..."
             disabled={isFixing}
             rows={1}
             className="w-full bg-transparent text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none px-2 py-1 disabled:opacity-50 font-mono resize-none overflow-hidden"
@@ -200,21 +216,7 @@ export default function FloatingPromptBar({
         </button>
       </div>
 
-      {/* Sub-bar Hints */}
-      <div className="flex items-center justify-center gap-3 mt-1.5">
-        <span className="text-[9px] font-mono text-slate-500">
-          <kbd className="bg-[#111111] border border-slate-800 px-1 py-0.5 rounded text-slate-400">Enter</kbd> run ·{' '}
-          <kbd className="bg-[#111111] border border-slate-800 px-1 py-0.5 rounded text-slate-400">Shift+Enter</kbd> new line
-          {(customCode?.trim() || activeEditorCode?.trim()) && (
-            <span className="ml-2 inline-flex items-center gap-1.5">
-              <span className="text-cyan-400 font-semibold">✓ Workspace code ready</span>
-              <span className="bg-red-950/50 border border-red-500/30 text-red-300 font-bold px-1.5 py-0.5 rounded text-[9px] ml-1">
-                Press the red ✕ to clear before adding new code
-              </span>
-            </span>
-          )}
-        </span>
-      </div>
+      {/* Removed old sub-bar hints to fix overflow issues */}
     </div>
   );
 }

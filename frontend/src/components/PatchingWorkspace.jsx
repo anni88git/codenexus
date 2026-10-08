@@ -82,7 +82,7 @@ export default function PatchingWorkspace({
                     ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 shadow-[0_0_15px_rgba(52,211,153,0.15)]'
                     : 'bg-slate-800/20 border-slate-700/30 text-slate-500 cursor-not-allowed'
                 }`}>
-                <GitPullRequest className="w-3.5 h-3.5" /> Push Code
+                <GitPullRequest className="w-3.5 h-3.5" /> Auto-Push to Git
               </button>
               <div className="flex items-center gap-1 bg-slate-800/60 rounded-xl p-1 border border-slate-700/40">
                 {[['split','Split',Columns], ['unified','Unified',AlignJustify]].map(([m, lbl, Icon]) => (
@@ -529,3 +529,4 @@ function ChatBox({ activeRun, onApplyCode }) {
     </div>
   );
 }
+
