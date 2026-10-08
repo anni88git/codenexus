@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Zap, GitPullRequest, Activity, ChevronRight, Play, Code } from 'lucide-react';
+import { Shield, Zap, GitPullRequest, Activity, ChevronRight, Play, Network } from 'lucide-react';
 
 const SCENARIO_CARDS = [
   {
@@ -83,11 +83,11 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-              <Code className="w-5 h-5 text-white" />
+              <Network className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="text-xl font-black bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent">
-                The Window Studio
+                The Weave
               </div>
               <div className="text-[10px] font-mono text-slate-600 tracking-widest">AUTONOMOUS CODE SWARM v2</div>
             </div>

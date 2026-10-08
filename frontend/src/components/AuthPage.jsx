@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Cpu, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, MessageSquare, Zap,
+  Cpu, Network, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, MessageSquare, Zap,
 } from 'lucide-react';
 
 // Inline GitHub SVG (lucide-react dropped this export in v0.300+)
@@ -124,13 +124,10 @@ export default function AuthPage({ onAuthenticated }) {
       <div className="relative hidden lg:block" style={{ width: '60%' }}>
         {/* Background video */}
         <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          autoPlay loop muted playsInline preload="auto"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         >
-          <source
-            src="https://assets.codepen.io/3364143/7btrrd.mp4"
-            type="video/mp4"
-          />
+          <source src="/bg.mp4" type="video/mp4" />
         </video>
 
         {/* Gradient overlays */}
@@ -149,11 +146,11 @@ export default function AuthPage({ onAuthenticated }) {
         {/* Top logo badge */}
         <div className="absolute top-8 left-8 z-10 flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.5)]">
-            <Cpu className="w-4.5 h-4.5 text-white" />
+            <Network className="w-4.5 h-4.5 text-white" />
           </div>
           <div>
-            <div className="text-xs font-extrabold tracking-[0.2em] text-white">The Window</div>
-            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AUTONOMOUS CODE SWARM</div>
+            <div className="text-xs font-extrabold tracking-[0.2em] text-white">The Weave</div>
+            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AUTONOMOUS MULTI-AGENT FABRIC</div>
           </div>
         </div>
 
@@ -178,10 +175,10 @@ export default function AuthPage({ onAuthenticated }) {
             <span className="text-[10px] font-mono text-cyan-400/80 tracking-widest uppercase">Autonomous Engine</span>
           </div>
           <h1 className="text-4xl font-black leading-tight bg-gradient-to-br from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent mb-3">
-            The Window<br />Code Swarm
+            The Weave
           </h1>
           <p className="text-sm text-slate-300/70 leading-relaxed">
-            Multi-Agent Neural Development Engine.<br />
+            Multi-Agent Neural Development Fabric.<br />
             Let the Synthetic Team find, patch, and ship fixes — you review.
           </p>
 
@@ -211,9 +208,9 @@ export default function AuthPage({ onAuthenticated }) {
           {/* Mobile logo (shown only on small screens) */}
           <div className="flex lg:hidden items-center gap-2 mb-8">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center">
-              <Cpu className="w-4 h-4 text-white" />
+              <Network className="w-4 h-4 text-white" />
             </div>
-            <span className="text-sm font-extrabold tracking-widest text-white">The Window STUDIO</span>
+            <span className="text-sm font-extrabold tracking-widest text-white">The Weave STUDIO</span>
           </div>
 
           {/* Auth Card */}
@@ -221,7 +218,7 @@ export default function AuthPage({ onAuthenticated }) {
 
             {/* Card header */}
             <div>
-              <h2 className="text-2xl font-bold text-slate-100">Welcome to The Window</h2>
+              <h2 className="text-2xl font-bold text-slate-100">Welcome to The Weave</h2>
               <p className="text-sm text-slate-400 mt-1">Sign in to access the autonomous patching dashboard.</p>
             </div>
 
@@ -324,7 +321,7 @@ export default function AuthPage({ onAuthenticated }) {
 
             {/* Footer */}
             <p className="text-center text-[10px] text-slate-600 font-mono leading-relaxed">
-              By continuing you agree to the The Window{' '}
+              By continuing you agree to The Weave{' '}
               <button className="text-cyan-500/70 hover:text-cyan-400 underline">Terms of Service</button>
               {' '}and{' '}
               <button className="text-cyan-500/70 hover:text-cyan-400 underline">Privacy Policy</button>.
