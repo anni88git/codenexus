@@ -208,8 +208,8 @@ export default function FloatingPromptBar({
           {(customCode?.trim() || activeEditorCode?.trim()) && (
             <span className="ml-2 inline-flex items-center gap-1.5">
               <span className="text-cyan-400 font-semibold">✓ Workspace code ready</span>
-              <span className="text-amber-500/80 font-normal">
-                (Press the red ✕ to clear before adding new code)
+              <span className="bg-red-950/50 border border-red-500/30 text-red-300 font-bold px-1.5 py-0.5 rounded text-[9px] ml-1">
+                Press the red ✕ to clear before adding new code
               </span>
             </span>
           )}
