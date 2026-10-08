@@ -10,7 +10,7 @@ SyntaxHighlighter.registerLanguage('jsx', jsx);
 const AGENTS = [
   { id: 'Frontend Dev', role: 'an expert Frontend Developer focusing on UI/UX, React, state management, and aesthetics', color: 'from-pink-500 to-rose-500', icon: Code },
   { id: 'Backend Dev', role: 'an expert Backend Developer focusing on APIs, performance, database queries, and clean architecture', color: 'from-emerald-500 to-teal-500', icon: Network },
-  { id: 'Cybersecurity', role: 'an expert Cybersecurity Penetration Tester focusing on securing inputs, preventing XSS/SQLi, and safety', color: 'from-amber-500 to-orange-500', icon: Shield },
+  { id: 'System Architect', role: 'an expert System Architect focusing on clean architecture, scalability, maintainability, and design patterns', color: 'from-amber-500 to-orange-500', icon: BrainCircuit },
   { id: 'QA Engineer', role: 'an expert QA Engineer focusing on edge cases, testability, and bulletproof reliability', color: 'from-indigo-500 to-violet-500', icon: CheckCircle2 }
 ];
 
