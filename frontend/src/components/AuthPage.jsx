@@ -179,13 +179,17 @@ export default function AuthPage({ onAuthenticated }) {
           </h1>
           <div className="text-sm font-bold text-cyan-400 mb-2 font-mono h-5 flex items-center">
             <style>{`
-              @keyframes typing { from { width: 0 } to { width: 100% } }
+              @keyframes typing { 
+                0%, 10% { width: 0 } 
+                40%, 80% { width: 100% } 
+                100% { width: 0 } 
+              }
               @keyframes blink { 50% { border-color: transparent } }
               .typing-effect {
                 overflow: hidden;
                 white-space: nowrap;
                 border-right: 3px solid #22d3ee;
-                animation: typing 2.5s steps(30, end) forwards, blink 0.75s step-end infinite;
+                animation: typing 6s steps(30, end) infinite, blink 0.75s step-end infinite;
                 display: inline-block;
                 max-width: fit-content;
               }
@@ -201,7 +205,7 @@ export default function AuthPage({ onAuthenticated }) {
 
           {/* Stat row */}
           <div className="flex items-center gap-6 mt-6">
-            {[['98.6%', 'Patch Accuracy'], ['< 2s', 'Avg Latency'], ['4-Node', 'AI Pipeline']].map(([val, lbl]) => (
+            {[['99.9%', 'Consensus Rate'], ['< 800ms', 'Swarm Latency'], ['5-Node', 'Neural Mesh']].map(([val, lbl]) => (
               <div key={lbl}>
                 <div className="text-lg font-bold text-cyan-300 font-mono">{val}</div>
                 <div className="text-[10px] text-slate-500 font-mono">{lbl}</div>
