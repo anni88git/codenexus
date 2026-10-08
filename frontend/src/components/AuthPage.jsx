@@ -125,14 +125,12 @@ export default function AuthPage({ onAuthenticated }) {
         {/* Background video */}
         <video
           autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
         >
           <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-abstract-network-of-lines-and-dots-27352-large.mp4"
+            src="https://assets.codepen.io/3364143/7btrrd.mp4"
             type="video/mp4"
           />
-          {/* Fallback if video blocked */}
-          <source src="/bg.mp4" type="video/mp4" />
         </video>
 
         {/* Gradient overlays */}
