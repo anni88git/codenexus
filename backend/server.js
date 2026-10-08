@@ -283,7 +283,7 @@ ${code}`;
 
     const completion = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       temperature: 0.1
     });
 
@@ -336,7 +336,7 @@ You MUST respond in STRICT JSON format with exactly two keys: "message" (your co
 
     const completion = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-70b-versatile', 
+      model: 'openai/gpt-oss-120b', 
       temperature: 0.3,
       response_format: { type: "json_object" }
     });
@@ -401,7 +401,7 @@ IMPORTANT INSTRUCTIONS:
 
     const response = await ai.chat.completions.create({
       messages: formattedMessages,
-      model: 'llama-3.1-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       max_tokens: 2000,
     });
 
