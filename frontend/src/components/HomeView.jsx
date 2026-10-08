@@ -107,7 +107,7 @@ const severityStyle = {
   MEDIUM:   'bg-yellow-950/40 text-yellow-300 border-yellow-500/25',
 };
 
-export default function HomeView({ scenarios, activeScenario, onSelect, onTrigger }) {
+export default function HomeView({ scenarios, activeScenario, onSelect, onTrigger, onGetStarted }) {
   const displayScenarios = scenarios?.length ? scenarios : SCENARIO_CARDS.map(c => ({
     ...c,
     shortLabel: c.title,
@@ -167,6 +167,15 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
           </div>
 
           <FeatureTypingTerminal />
+
+          <div className="mt-8 flex justify-end">
+            <button
+              onClick={onGetStarted}
+              className="px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105"
+            >
+              Let's get started <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
 

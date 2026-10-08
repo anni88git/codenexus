@@ -16,7 +16,7 @@ const NAV_ITEMS = [
 
 export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSignOut }) {
   return (
-    <aside className="shrink-0 w-64 h-full flex flex-col bg-slate-950/90 border-r border-slate-800/80 overflow-hidden">
+    <aside className="shrink-0 w-64 h-full flex flex-col bg-black/90 border-r border-slate-800/80 overflow-hidden">
 
       {/* ─── Brand ─────────────────────────────────────────────────────────── */}
       <div className="shrink-0 px-5 pt-6 pb-5 border-b border-slate-800/60">

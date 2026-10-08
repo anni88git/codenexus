@@ -136,7 +136,7 @@ export default function App() {
 }
 
 function Dashboard({ user, onSignOut }) {
-  const [activeTab, setActiveTab]       = useState('workspace');
+  const [activeTab, setActiveTab]       = useState('home');
   const [scenario, setScenario]         = useState(null);
   const [language, setLanguage]         = useState(LANGUAGES[0]);
   const [logs, setLogs]                 = useState([{ id: Date.now(), text: `System ready. Welcome, ${user.name}.` }]);
@@ -461,7 +461,7 @@ function Dashboard({ user, onSignOut }) {
   ];
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-slate-950 text-slate-100 flex relative font-sans">
+    <div className="w-screen h-screen overflow-hidden bg-black text-slate-100 flex relative font-sans">
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -471,7 +471,7 @@ function Dashboard({ user, onSignOut }) {
       />
 
       <div className="flex-1 h-full flex flex-col overflow-hidden relative min-w-0">
-        <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-sm z-10">
+        <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-black/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-3">
             <div className="text-xs font-semibold text-slate-400 font-mono">
               {activeTab === 'home'      && '/ Home'}
@@ -523,6 +523,7 @@ function Dashboard({ user, onSignOut }) {
                   activeScenario={scenario}
                   onSelect={switchScenario}
                   onTrigger={() => { setActiveTab('workspace'); trigger(); }}
+                  onGetStarted={() => setActiveTab('workspace')}
                 />
               </motion.div>
             )}
