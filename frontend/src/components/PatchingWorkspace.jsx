@@ -62,27 +62,27 @@ export default function PatchingWorkspace({
       {/* LEFT: Code Diff Viewer (7 cols) */}
       <div className="col-span-7 flex flex-col gap-4 min-h-0">
         <div className="flex-1 bg-[#111111] border border-[#2a2a2a] rounded-xl overflow-hidden flex flex-col min-h-0">
-          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-[#1a1a1a]">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-slate-800/60 border border-slate-700/40 px-3 py-1.5 rounded-xl">
+          <div className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-[#1a1a1a] gap-4">
+            <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 bg-slate-800/60 border border-slate-700/40 px-3 py-1.5 rounded-xl min-w-0">
                 <FileCode className="w-3.5 h-3.5 text-slate-100 shrink-0" />
-                <span className="text-xs font-mono font-semibold text-slate-200">{activeRun?.fileName || scenario?.filename || 'solution.src'}</span>
+                <span className="text-xs font-mono font-semibold text-slate-200 truncate">{activeRun?.fileName || scenario?.filename || 'solution.src'}</span>
               </div>
               {showDiff && (
-                <>
+                <div className="flex items-center gap-1 shrink-0">
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-950/50 border border-red-500/20 text-red-300">−{removed}</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950/50 border border-emerald-500/20 text-emerald-300">+{added}</span>
-                </>
+                </div>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button onClick={onOpenPR} disabled={!pipelineComplete}
-                className={`flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border transition-all ${
+                className={`shrink-0 whitespace-nowrap flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border transition-all ${
                   pipelineComplete 
                     ? 'bg-white text-black hover:bg-slate-200 border-transparent shadow-sm'
                     : 'bg-slate-800/20 border-slate-700/30 text-slate-500 cursor-not-allowed'
                 }`}>
-                <GitPullRequest className="w-3.5 h-3.5" /> Auto-Push to Git
+                <GitPullRequest className="w-3.5 h-3.5 shrink-0" /> Auto-Push to Git
               </button>
               <div className="flex items-center gap-1 bg-slate-800/60 rounded-xl p-1 border border-slate-700/40">
                 {[['split','Split',Columns], ['unified','Unified',AlignJustify]].map(([m, lbl, Icon]) => (
