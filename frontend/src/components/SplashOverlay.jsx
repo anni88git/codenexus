@@ -25,97 +25,69 @@ function HexGrid() {
   );
 }
 
-// ── Hammer + shield animated SVG ───────────────────────────────────────────────
-function ShieldHammer() {
+// ── Digital Loom Animated SVG ──────────────────────────────────────────────────
+function DigitalLoom() {
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Outer ring pulse */}
+    <div className="relative flex items-center justify-center w-48 h-48">
+      {/* Outer rings */}
       <motion.div
-        className="absolute w-36 h-36 rounded-full border-2 border-cyan-500/30"
-        animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+        className="absolute w-40 h-40 rounded-full border-[1.5px] border-cyan-500/20"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute w-36 h-36 rounded-full border border-purple-500/20"
-        animate={{ scale: [1, 1.9, 1], opacity: [0.4, 0, 0.4] }}
-        transition={{ duration: 1.8, delay: 0.4, repeat: Infinity, ease: 'easeOut' }}
+        className="absolute w-32 h-32 rounded-full border border-purple-500/30 border-dashed"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />
-
-      {/* Glass shield */}
-      <motion.div
-        className="relative w-28 h-28 flex items-center justify-center rounded-2xl"
-        style={{
-          background: 'linear-gradient(135deg, rgba(6,182,212,0.18) 0%, rgba(168,85,247,0.10) 100%)',
-          border: '1.5px solid rgba(6,182,212,0.35)',
-          boxShadow: '0 0 40px rgba(6,182,212,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(12px)',
-        }}
-        initial={{ scale: 0.5, opacity: 0, rotateY: -30 }}
-        animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-        transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-      >
-        {/* Shield SVG */}
-        <svg width="48" height="56" viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <motion.path
-            d="M24 2L4 10V28C4 40 24 54 24 54C24 54 44 40 44 28V10L24 2Z"
-            stroke="url(#shieldGrad)" strokeWidth="2.5" fill="rgba(6,182,212,0.08)"
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: 'easeInOut' }}
-          />
-          <defs>
-            <linearGradient id="shieldGrad" x1="4" y1="2" x2="44" y2="54" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#06b6d4" />
-              <stop offset="1" stopColor="#a855f7" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        {/* Hammer overlay — impact animation */}
-        <motion.div
-          className="absolute"
-          initial={{ rotate: -40, x: 12, y: -12, opacity: 0 }}
-          animate={{ rotate: [-40, -40, 0, -15, 0], x: [12, 12, 0, 4, 0], y: [-12, -12, 0, -4, 0], opacity: [0, 1, 1, 1, 1] }}
-          transition={{ duration: 0.7, delay: 0.8, times: [0, 0.1, 0.5, 0.75, 1], ease: 'easeInOut' }}
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <motion.path
-              d="M15.5 4.5L8 12l-4 8 8-4 7.5-7.5-4-4zM2 22l4-8"
-              stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            />
-            <motion.rect
-              x="13" y="2" width="8" height="6" rx="1.5"
-              fill="url(#hammerGrad)" stroke="#a855f7" strokeWidth="1"
-              transform="rotate(45 17 5)"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
-            />
-            <defs>
-              <linearGradient id="hammerGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop stopColor="#06b6d4" />
-                <stop offset="1" stopColor="#a855f7" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </motion.div>
-
-        {/* Neon impact sparks */}
-        {[0, 60, 120, 180, 240, 300].map((deg, i) => (
+      
+      {/* Weaving Grid Core */}
+      <div className="relative w-20 h-20 overflow-hidden rounded-xl border border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.25)] bg-slate-950/60 backdrop-blur-md">
+        {/* Vertical Threads (Warp) */}
+        {[15, 32.5, 50, 67.5, 85].map((pos, i) => (
+          <div key={`v-${i}`} className="absolute top-0 bottom-0 w-[1px] bg-cyan-500/30" style={{ left: `${pos}%` }} />
+        ))}
+        
+        {/* Horizontal Shuttles (Weft) */}
+        {[20, 40, 60, 80].map((pos, i) => (
           <motion.div
-            key={i}
-            className="absolute w-0.5 rounded-full"
-            style={{
-              height: '12px',
-              background: i % 2 === 0 ? '#06b6d4' : '#a855f7',
-              transformOrigin: 'bottom center',
-              rotate: `${deg}deg`,
-              left: '50%', top: '50%',
-              marginLeft: '-1px',
+            key={`h-${i}`}
+            className="absolute h-[2px] rounded-full shadow-[0_0_8px_#a855f7]"
+            style={{ 
+              top: `${pos}%`, 
+              background: 'linear-gradient(90deg, transparent, #a855f7, #06b6d4, transparent)',
+              width: '60px',
+              left: '-60px'
             }}
-            initial={{ scaleY: 0, opacity: 0 }}
-            animate={{ scaleY: [0, 1.5, 0], opacity: [0, 1, 0] }}
-            transition={{ duration: 0.5, delay: 1.1 + i * 0.04 }}
+            animate={{ left: ['-60px', '100%'] }}
+            transition={{ 
+              duration: 0.9, 
+              delay: i * 0.22, 
+              repeat: Infinity, 
+              ease: 'linear' 
+            }}
           />
         ))}
-      </motion.div>
+
+        {/* Central Pulse */}
+        <motion.div
+          className="absolute inset-0 bg-cyan-400/10 mix-blend-screen"
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </div>
+
+      {/* Orbiting data nodes */}
+      {[0, 120, 240].map((deg, i) => (
+        <motion.div
+          key={`orb-${i}`}
+          className="absolute w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4]"
+          style={{ originX: 0, originY: 0, left: '50%', top: '50%' }}
+          initial={{ rotate: deg, x: 75 }}
+          animate={{ rotate: deg + 360 }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+        />
+      ))}
     </div>
   );
 }
@@ -125,6 +97,42 @@ function ShieldHammer() {
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function SplashOverlay({ onComplete }) {
   useEffect(() => {
+    // 1. Play pure Web Audio API synthesis startup sound (no external files needed)
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Sweep up sound
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(150, ctx.currentTime);
+      osc1.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.4);
+      gain1.gain.setValueAtTime(0, ctx.currentTime);
+      gain1.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.1);
+      gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start();
+      osc1.stop(ctx.currentTime + 0.5);
+
+      // Tech beep confirmation
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(1200, ctx.currentTime + 0.4);
+      osc2.frequency.setValueAtTime(1600, ctx.currentTime + 0.5);
+      gain2.gain.setValueAtTime(0, ctx.currentTime);
+      gain2.gain.setValueAtTime(0.03, ctx.currentTime + 0.4);
+      gain2.gain.setValueAtTime(0, ctx.currentTime + 0.6);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(ctx.currentTime + 0.4);
+      osc2.stop(ctx.currentTime + 0.6);
+    } catch (e) {
+      console.log('Audio playback prevented by browser policy');
+    }
+
+    // 2. Unmount overlay after 3 seconds
     const t = setTimeout(onComplete, 3000);
     return () => clearTimeout(t);
   }, [onComplete]);
@@ -164,11 +172,11 @@ export default function SplashOverlay({ onComplete }) {
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
-          <div className="text-[11px] font-extrabold tracking-[0.25em] text-white">The Window STUDIO</div>
+          <div className="text-[11px] font-extrabold tracking-[0.25em] text-white">The Weave STUDIO</div>
         </motion.div>
 
-        {/* Animated shield + hammer */}
-        <ShieldHammer />
+        {/* Animated Digital Loom */}
+        <DigitalLoom />
 
         {/* Glowing title — letter by letter */}
         <div className="flex items-center gap-0 overflow-hidden">
@@ -195,7 +203,7 @@ export default function SplashOverlay({ onComplete }) {
           className="text-[11px] font-mono text-slate-500 tracking-widest text-center max-w-xs leading-loose"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 0.5 }}
         >
-          Initializing Codestral Engine & AST Graph Mesh...
+          Initializing Neural Weave & AST Graph Mesh...
         </motion.p>
 
         {/* Progress bar */}
