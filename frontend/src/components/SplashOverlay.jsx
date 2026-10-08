@@ -132,8 +132,8 @@ export default function SplashOverlay({ onComplete }) {
       console.log('Audio playback prevented by browser policy');
     }
 
-    // 2. Unmount overlay after 3 seconds
-    const t = setTimeout(onComplete, 3000);
+    // 2. Unmount overlay after 4 seconds to allow typing animation to finish
+    const t = setTimeout(onComplete, 4000);
     return () => clearTimeout(t);
   }, [onComplete]);
 
@@ -207,17 +207,15 @@ export default function SplashOverlay({ onComplete }) {
               overflow: hidden;
               white-space: nowrap;
               border-right: 2px solid #22d3ee;
-              animation: splashTyping 1.8s steps(40, end) forwards, splashBlink 0.5s step-end infinite;
+              width: 0;
+              animation: splashTyping 2s steps(40, end) 0.5s forwards, splashBlink 0.5s step-end infinite;
               display: inline-block;
               max-width: fit-content;
             }
           `}</style>
-          <motion.div 
-            className="splash-typing-effect text-[9px] font-mono text-cyan-500/80 tracking-widest uppercase"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}
-          >
+          <div className="splash-typing-effect text-[9px] font-mono text-cyan-500/80 tracking-widest uppercase">
             Init: Swarm Council • AST Healing • Git Auto-Push...
-          </motion.div>
+          </div>
         </div>
 
         {/* Progress bar */}
