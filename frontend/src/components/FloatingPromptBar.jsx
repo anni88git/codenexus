@@ -206,7 +206,12 @@ export default function FloatingPromptBar({
           <kbd className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-slate-400">Enter</kbd> run ·{' '}
           <kbd className="bg-slate-900 border border-slate-800 px-1 py-0.5 rounded text-slate-400">Shift+Enter</kbd> new line
           {(customCode?.trim() || activeEditorCode?.trim()) && (
-            <span className="ml-2 text-cyan-400 font-semibold">✓ Workspace code ready</span>
+            <span className="ml-2 inline-flex items-center gap-1.5">
+              <span className="text-cyan-400 font-semibold">✓ Workspace code ready</span>
+              <span className="text-amber-500/80 font-normal">
+                (Press the red ✕ to clear before adding new code)
+              </span>
+            </span>
           )}
         </span>
       </div>
