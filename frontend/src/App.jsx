@@ -117,6 +117,7 @@ function HeaderTypingText({ activeTab }) {
 export default function App() {
   const [user, setUser]           = useState(null);
   const [showSplash, setShowSplash] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleAuthenticated = useCallback((u) => {
     setUser(u);
@@ -516,6 +517,8 @@ function Dashboard({ user, onSignOut }) {
         user={user}
         onSettings={() => setShowSettingsModal(true)}
         onSignOut={onSignOut}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       <div className="flex-1 h-full flex flex-col overflow-hidden relative min-w-0">

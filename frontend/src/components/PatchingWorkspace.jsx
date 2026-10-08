@@ -64,6 +64,16 @@ export default function PatchingWorkspace({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const [reportState, setReportState] = useState('');
+  const handleReportClick = () => {
+    if (!activeRun?.originalCode && !activeRun?.patchedCode) {
+      setReportState('No Code Selected');
+      setTimeout(() => setReportState(''), 2000);
+      return;
+    }
+    if (onReport) onReport();
+  };
+
   return (
     <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
       {/* LEFT: Code Diff Viewer (7 cols) */}
@@ -234,13 +244,15 @@ export default function PatchingWorkspace({
                 </button>
               </div>
 
-              <button onClick={onReport} disabled={!pipelineComplete}
+              <button onClick={handleReportClick}
                 className={`shrink-0 flex items-center justify-center gap-2 text-[11px] font-mono font-bold py-3.5 rounded-xl border transition-all ${
+                  reportState === 'No Code Selected' ? 'bg-[#1a1a1a] border-red-500/30 text-red-400' :
                   pipelineComplete 
                     ? 'bg-white border-transparent text-black shadow-sm  hover:bg-slate-200' 
-                    : 'bg-slate-800/25 border-slate-700/25 text-slate-700 cursor-not-allowed'
+                    : 'bg-slate-800/25 border-slate-700/25 text-slate-700'
                 }`}>
-                <FileText className={`w-4 h-4 ${pipelineComplete ? 'text-black' : ''}`} /> Download Post-Mortem Report
+                <FileText className={`w-4 h-4 ${pipelineComplete && !reportState ? 'text-black' : ''}`} /> 
+                {reportState || 'Download Post-Mortem Report'}
               </button>
 
               {scenario?.rollbackCheckpoints && (

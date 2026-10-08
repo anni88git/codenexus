@@ -10,8 +10,8 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
       <div className="flex flex-col items-center justify-center h-full space-y-6">
         <div className="relative w-24 h-24 flex items-center justify-center">
           <div className="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-t-purple-500 border-r-purple-500 rounded-full animate-spin"></div>
-          <Shield className="w-8 h-8 text-purple-400 animate-pulse" />
+          <div className="absolute inset-0 border-4 border-t-slate-400 border-r-slate-400 rounded-full animate-spin"></div>
+          <Shield className="w-8 h-8 text-slate-400 animate-pulse" />
         </div>
         <div className="text-sm font-mono text-slate-400 animate-pulse">Running Deep Security Audit...</div>
       </div>
@@ -29,8 +29,8 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4 border-b border-slate-800/60 pb-4">
-        <div className="w-12 h-12 rounded-2xl bg-purple-950/40 border border-purple-500/20 flex items-center justify-center">
-          <ShieldAlert className="w-6 h-6 text-purple-400" />
+        <div className="w-12 h-12 rounded-2xl bg-[#1a1a1a] border border-[#333] flex items-center justify-center">
+          <ShieldAlert className="w-6 h-6 text-slate-400" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-slate-100 tracking-tight">Security Audit Report</h2>
@@ -45,10 +45,10 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
       </div>
 
       {suggestions.length === 0 ? (
-        <motion.div initial={{ opacity:0, y: 10 }} animate={{ opacity:1, y: 0 }} className="p-8 rounded-2xl border border-emerald-500/20 bg-emerald-950/10 flex flex-col items-center justify-center space-y-4 text-center">
-          <ShieldCheck className="w-12 h-12 text-emerald-400" />
+        <motion.div initial={{ opacity:0, y: 10 }} animate={{ opacity:1, y: 0 }} className="p-8 rounded-2xl border border-[#333] bg-[#1a1a1a] flex flex-col items-center justify-center space-y-4 text-center">
+          <ShieldCheck className="w-12 h-12 text-slate-400" />
           <div>
-            <div className="text-lg font-bold text-emerald-400">No Critical Vulnerabilities Found</div>
+            <div className="text-lg font-bold text-slate-300">No Critical Vulnerabilities Found</div>
             <div className="text-xs text-slate-400 mt-1 max-w-md">The agent analyzed the file and did not find any obvious SQL injection, XSS, memory leaks, or common CWE vectors.</div>
           </div>
         </motion.div>
@@ -57,9 +57,9 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
           <AnimatePresence>
             {suggestions.map((s, i) => {
               const isHigh = s.severity === 'high' || s.severity === 'critical';
-              const colorClass = isHigh ? 'text-red-400' : 'text-amber-400';
-              const bgClass = isHigh ? 'bg-red-950/20' : 'bg-amber-950/20';
-              const borderClass = isHigh ? 'border-red-500/30' : 'border-amber-500/30';
+              const colorClass = 'text-slate-300';
+              const bgClass = 'bg-[#1a1a1a]';
+              const borderClass = 'border-[#333]';
 
               return (
                 <motion.div
@@ -83,8 +83,8 @@ export default function SecurityView({ activeRun, isFixing, pipelineComplete }) 
                       {s.description}
                     </p>
                     {s.fix && (
-                      <div className="mt-2 bg-[#0a0a0a]/50 border border-slate-800 rounded-lg p-3">
-                        <div className="text-[10px] font-mono text-emerald-400 mb-1.5 flex items-center gap-1.5">
+                      <div className="mt-2 bg-[#0a0a0a]/50 border border-[#333] rounded-lg p-3">
+                        <div className="text-[10px] font-mono text-slate-400 mb-1.5 flex items-center gap-1.5">
                           <CheckCircle2 className="w-3 h-3" /> Recommended Fix Implemented
                         </div>
                         <code className="text-[11px] font-mono text-slate-300">{s.fix}</code>
