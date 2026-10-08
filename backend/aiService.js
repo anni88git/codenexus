@@ -33,7 +33,7 @@ Broken Code:
 ${brokenCode}
 
 Instructions:
-1. Identify the root cause of the error and fix it.
+1. Identify the root cause of the error and fix it. CRITICAL: Pay extreme attention to spelling mistakes and typos (e.g., 'Systen' -> 'System'). Fix ALL syntax errors.
 2. Analyze the dependencies of this code (e.g., what services, databases, or external modules it uses).
 3. Return a JSON object with EXACTLY the following structure:
 {
@@ -69,7 +69,7 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
 
     const response = await ai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'openai/gpt-oss-120b',
+      model: 'llama3-70b-8192', // Upgraded to a smarter Groq model
       max_tokens: 4000,
     });
 
