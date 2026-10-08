@@ -174,7 +174,7 @@ export default function FloatingPromptBar({
           type="button"
           onClick={handleSubmit}
           disabled={isFixing || (!prompt.trim() && !customCode?.trim() && !activeEditorCode?.trim())}
-          className="shrink-0 w-9 h-9 rounded-xl bg-white hover:bg-slate-200 text-black disabled:bg-[#424242] disabled:text-slate-500 transition-all flex items-center justify-center"
+          className="shrink-0 w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-500 text-white disabled:bg-[#424242] disabled:text-slate-500 transition-all flex items-center justify-center"
         >
           {isFixing ? (
             <RefreshCw className="w-4 h-4 animate-spin" />

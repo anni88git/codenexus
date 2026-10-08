@@ -163,7 +163,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
           <div className="mt-10 flex justify-center">
             <button
               onClick={onGetStarted}
-              className="px-5 py-2.5 rounded-lg bg-white hover:bg-slate-200 text-black font-semibold text-xs flex items-center gap-2 transition-all"
+              className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center gap-2 transition-all"
             >
               Click to get started <ChevronRight className="w-3.5 h-3.5" />
             </button>

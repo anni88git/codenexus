@@ -523,13 +523,13 @@ function Dashboard({ user, onSignOut }) {
           <div className="flex items-center gap-3">
             <div className="text-xs font-semibold text-slate-400 font-mono flex items-center">
               <span>
-                {activeTab === 'home'      && '/ Home'}
-                {activeTab === 'workspace' && '/ Patching Workspace'}
-                {activeTab === 'swarm'     && '/ Swarm Council'}
-                {activeTab === 'ast'       && '/ AST Graph Mesh — Node 02'}
-                {activeTab === 'security'  && '/ Security Audit — Node 04'}
-                {activeTab === 'sandbox'   && '/ Sandbox & DevOps — Node 05'}
-                {activeTab === 'git'       && '/ Git Repository'}
+                {activeTab === 'home'      && 'Home'}
+                {activeTab === 'workspace' && 'Patching Workspace'}
+                {activeTab === 'swarm'     && 'Swarm Council'}
+                {activeTab === 'ast'       && 'AST Graph Mesh'}
+                {activeTab === 'security'  && 'Security Audit'}
+                {activeTab === 'sandbox'   && 'Sandbox & DevOps'}
+                {activeTab === 'git'       && 'Git Repository'}
               </span>
               <HeaderTypingText activeTab={activeTab} />
             </div>
@@ -739,4 +739,5 @@ function ScenarioSelector({ scenario, onSelect, isFixing }) {
     </div>
   );
 }
+
 

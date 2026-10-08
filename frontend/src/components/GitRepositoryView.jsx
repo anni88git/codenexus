@@ -169,7 +169,7 @@ export default function GitRepositoryView({ onSelectFile }) {
                     )}
 
                     <button type="submit" disabled={isLoading}
-                      className="w-full mt-2 flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-black text-xs font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                      className="w-full mt-2 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                       {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Connect & Index Repository</>}
                     </button>
                   </form>
