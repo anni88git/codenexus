@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Cpu, Network, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, MessageSquare, Zap,
@@ -62,6 +62,11 @@ export default function AuthPage({ onAuthenticated }) {
   const [error, setError]         = useState('');
 
   const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com').replace(/\/$/, '');
+
+  // Ping the backend on mount to wake up Render free tier instances
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/`).catch(() => {});
+  }, [BACKEND_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
