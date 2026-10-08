@@ -108,6 +108,10 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
       };
     }
 
+    if (typeof parsedData.code === 'string') {
+      parsedData.code = parsedData.code.replace(/\\"/g, '"');
+    }
+
     const tokens = response.usage
       ? {
         prompt: response.usage.prompt_tokens || 0,
