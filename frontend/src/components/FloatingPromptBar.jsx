@@ -71,7 +71,7 @@ export default function FloatingPromptBar({
   };
 
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 px-2 select-none">
+    <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 w-[95%] max-w-3xl z-50 px-2 transition-all duration-300 ease-out ${focused || prompt.trim() || customCode?.trim() || activeEditorCode?.trim() ? 'scale-[1.04] -translate-y-2' : 'hover:scale-[1.02] hover:-translate-y-1'}`}>
       {/* ── Error Toast ───────────────────────────────────────────── */}
       <AnimatePresence>
         {error && (
@@ -110,7 +110,7 @@ export default function FloatingPromptBar({
       <div
         className="relative flex items-center gap-2.5 p-2 rounded-2xl transition-all duration-300 shadow-xl"
         style={{
-          background: '#1a1a1a',
+          background: focused ? '#2a2a2a' : '#1a1a1a',
           border: error ? '1px solid #ef4444' : focused ? '1px solid #fff' : '1px solid #424242',
         }}
       >
