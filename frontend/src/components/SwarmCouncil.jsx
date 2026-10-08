@@ -135,7 +135,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           <p className="text-xs text-slate-500 mt-1">Multi-round parallel debate and consensus protocol.</p>
         </div>
         {!isRunning && !finalCode && (
-          <button onClick={startSwarm} className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+          <button onClick={startSwarm} className="bg-[#1a1a1a] border border-[#333] hover:bg-[#222] text-slate-200 text-xs font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
             <BrainCircuit className="w-4 h-4" /> Commence Parallel Swarm
           </button>
         )}
@@ -185,7 +185,19 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               </div>
               <div className="p-4 bg-[#0a0a0a]">
                  <SyntaxHighlighter
-                    children={finalCode ? finalCode.replace(/\\n/g, '\n') : ''}
+                    children={(() => {
+                      let code = finalCode || '';
+                      if (code.startsWith('"') && code.endsWith('"')) {
+                        try { code = JSON.parse(code); } catch(e) {}
+                      }
+                      code = code.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+                      try {
+                        const parsed = JSON.parse(code);
+                        return JSON.stringify(parsed, null, 2);
+                      } catch(e) {
+                        return code;
+                      }
+                    })()}
                     style={vscDarkPlus}
                     language={activeRun?.language || 'javascript'}
                     PreTag="div"
@@ -197,7 +209,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               <div className="p-4 border-t border-slate-800 flex flex-col items-center gap-3 bg-[#111111]">
                 <button 
                   onClick={() => onApplyCode?.(finalCode)}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                  className="bg-[#1a1a1a] border border-[#333] hover:bg-[#222] text-slate-200 font-semibold text-xs px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
                   <Code className="w-4 h-4" /> Apply to Canvas
                 </button>
                 <div className="text-[10px] text-slate-500">
