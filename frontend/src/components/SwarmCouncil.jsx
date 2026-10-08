@@ -126,16 +126,16 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
     <div className="flex-1 flex flex-col h-full bg-[#0a0a0a] p-6 overflow-hidden">
       
       {/* Header */}
-      <div className="shrink-0 mb-6 bg-[#111111]/60 border border-slate-800/60 rounded-2xl p-6 shadow-xl flex items-center justify-between">
+      <div className="shrink-0 mb-6 bg-[#111111] border border-[#2a2a2a] rounded-2xl p-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            <Users className="w-6 h-6 text-cyan-400" />
+            <Users className="w-6 h-6 text-slate-300" />
             Parallel Swarm Council
           </h1>
           <p className="text-xs text-slate-500 mt-1">Multi-round parallel debate and consensus protocol.</p>
         </div>
         {!isRunning && !finalCode && (
-          <button onClick={startSwarm} className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all flex items-center gap-2">
+          <button onClick={startSwarm} className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
             <BrainCircuit className="w-4 h-4" /> Commence Parallel Swarm
           </button>
         )}
@@ -151,8 +151,8 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               const Icon = agentDef?.icon || Bot;
               
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#111111]/40 border border-slate-800/50 rounded-2xl overflow-hidden shadow-lg">
-                  <div className={`px-4 py-2 bg-gradient-to-r ${agentDef?.color || 'from-slate-700 to-slate-600'} flex items-center gap-2 opacity-90`}>
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#171717] border border-[#2a2a2a] rounded-xl overflow-hidden">
+                  <div className="px-4 py-2 bg-[#262626] border-b border-[#333] flex items-center gap-2">
                     <Icon className="w-4 h-4 text-white" />
                     <span className="text-[10px] font-bold text-white uppercase tracking-wider">{turn.agent} (Round {turn.round})</span>
                   </div>
@@ -174,10 +174,10 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
           )}
 
           {finalCode && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 border-2 border-emerald-500/30 rounded-2xl overflow-hidden bg-[#111111]/80 shadow-[0_0_30px_rgba(16,185,129,0.15)] relative">
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay pointer-events-none" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 border border-[#2a2a2a] rounded-2xl overflow-hidden bg-[#111111] relative">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 mix-blend-overlay pointer-events-none" />
               <div className="p-6 text-center border-b border-slate-800">
-                <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-500/30">
+                <div className="w-12 h-12 bg-[#222] text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 border border-[#333]">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-100 mb-1">Consensus Reached</h2>
@@ -197,11 +197,11 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
               <div className="p-4 border-t border-slate-800 flex flex-col items-center gap-3 bg-[#111111]">
                 <button 
                   onClick={() => onApplyCode?.(finalCode)}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2">
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-6 py-2.5 rounded-xl transition-all flex items-center gap-2">
                   <Code className="w-4 h-4" /> Apply to Canvas
                 </button>
                 <div className="text-[10px] text-slate-500">
-                  Need more help? <button onClick={() => updateState({ isRunning: false, turns: [], finalCode: null, statusText: '' })} className="text-cyan-400 hover:underline cursor-pointer">Start a new session</button>
+                  Need more help? <button onClick={() => updateState({ isRunning: false, turns: [], finalCode: null, statusText: '' })} className="text-blue-400 hover:underline cursor-pointer">Start a new session</button>
                 </div>
               </div>
             </motion.div>
