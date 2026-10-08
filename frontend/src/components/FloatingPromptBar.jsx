@@ -40,6 +40,9 @@ export default function FloatingPromptBar({
       inputRef.current.style.height = '24px'; // Reset first
       if (prompt) {
         inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 150) + 'px';
+      } else {
+        inputRef.current.scrollLeft = 0;
+        inputRef.current.scrollTop = 0;
       }
     }
   }, [prompt]);
