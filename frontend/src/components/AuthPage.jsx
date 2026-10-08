@@ -118,17 +118,17 @@ export default function AuthPage({ onAuthenticated }) {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden flex bg-slate-950">
+    <div className="w-screen h-screen overflow-hidden flex bg-black">
 
       {/* ═══ LEFT PANEL — 60% Video Showcase ════════════════════════════════ */}
       <div className="relative hidden lg:block" style={{ width: '60%' }}>
         {/* Background video */}
         <video
           autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
         >
           <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-code-41539-large.mp4"
+            src="https://assets.mixkit.co/videos/preview/mixkit-abstract-network-of-lines-and-dots-27352-large.mp4"
             type="video/mp4"
           />
           {/* Fallback if video blocked */}
@@ -155,17 +155,17 @@ export default function AuthPage({ onAuthenticated }) {
           </div>
           <div>
             <div className="text-xs font-extrabold tracking-[0.2em] text-white">The Window</div>
-            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AI STUDIO</div>
+            <div className="text-[9px] font-mono text-cyan-400/70 tracking-widest">AUTONOMOUS CODE SWARM</div>
           </div>
         </div>
 
         {/* Live feature pills */}
         <div className="absolute top-8 right-8 z-10 flex flex-col gap-2">
-          {['AST Indexing', 'Codestral AI', 'Auto PR'].map((pill, i) => (
+          {['Multi-Agent Swarm Council', 'AST Code Healing', 'Synthetic Dev Team', 'Automated PRs'].map((pill, i) => (
             <motion.div key={pill} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.15 }}
-              className="flex items-center gap-1.5 bg-slate-900/70 backdrop-blur-md border border-cyan-500/20 px-3 py-1 rounded-full">
+              className="flex items-center gap-2 bg-black/70 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.1)]">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              <span className="text-[10px] font-mono text-cyan-300">{pill}</span>
+              <span className="text-[10px] font-mono text-cyan-300 font-semibold">{pill}</span>
             </motion.div>
           ))}
         </div>
@@ -180,11 +180,11 @@ export default function AuthPage({ onAuthenticated }) {
             <span className="text-[10px] font-mono text-cyan-400/80 tracking-widest uppercase">Autonomous Engine</span>
           </div>
           <h1 className="text-4xl font-black leading-tight bg-gradient-to-br from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent mb-3">
-            The Window<br />AI Studio
+            The Window<br />Code Swarm
           </h1>
           <p className="text-sm text-slate-300/70 leading-relaxed">
-            Autonomous Code Healing & AST Analysis.<br />
-            Let the AI find, patch, and ship fixes — you review.
+            Multi-Agent Neural Development Engine.<br />
+            Let the Synthetic Team find, patch, and ship fixes — you review.
           </p>
 
           {/* Stat row */}
@@ -200,7 +200,7 @@ export default function AuthPage({ onAuthenticated }) {
       </div>
 
       {/* ═══ RIGHT PANEL — 40% Auth Form ════════════════════════════════════ */}
-      <div className="flex-1 lg:w-[40%] flex flex-col justify-center items-center p-8 lg:p-12 bg-slate-950 relative overflow-y-auto">
+      <div className="flex-1 lg:w-[40%] flex flex-col justify-center items-center p-8 lg:p-12 bg-black relative overflow-y-auto">
 
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full pointer-events-none"

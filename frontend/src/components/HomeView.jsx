@@ -75,7 +75,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
     <div className="min-h-full space-y-8 p-6 pb-36">
 
       {/* ── Hero banner ──────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden mb-8 p-8 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur-md shadow-2xl">
+      <div className="relative overflow-hidden mb-8 p-8 bg-black/80 border border-slate-800 rounded-2xl backdrop-blur-md shadow-2xl">
         {/* Ambient orbs */}
         <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(#06b6d4, transparent)' }} />
         <div className="absolute -bottom-12 -right-12 w-56 h-56 rounded-full opacity-8 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(#a855f7, transparent)' }} />
@@ -89,7 +89,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
               <div className="text-xl font-black bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent">
                 The Window Studio
               </div>
-              <div className="text-[10px] font-mono text-slate-600 tracking-widest">AUTONOMOUS AI PATCHING ENGINE v2</div>
+              <div className="text-[10px] font-mono text-slate-600 tracking-widest">AUTONOMOUS CODE SWARM v2</div>
             </div>
             <div className="ml-auto flex items-center gap-2 bg-emerald-950/30 border border-emerald-500/20 rounded-xl px-3 py-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -98,7 +98,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
           </div>
 
           <p className="text-sm text-slate-400 max-w-xl leading-relaxed mb-6">
-            Select a bug scenario below, paste your code into the prompt bar, and let the 4-node AI pipeline triage, patch, and verify your code — automatically.
+            Select a bug scenario below, paste your code into the prompt bar, and let the Multi-Agent Swarm Council triage, patch, and verify your code — automatically.
           </p>
 
           {/* How it works steps */}
