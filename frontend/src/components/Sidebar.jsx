@@ -22,13 +22,13 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
       <div className="shrink-0 px-5 pt-6 pb-5 border-b border-slate-800/60">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-500 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)] shrink-0">
-            <Cpu className="w-4 h-4 text-white" />
+            <Network className="w-4 h-4 text-white" />
           </div>
           <div className="min-w-0">
             <div className="text-[11px] font-extrabold tracking-[0.14em] bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent leading-tight">
-              The Window
+              The Weave
             </div>
-            <div className="text-[8px] font-mono text-slate-600 tracking-[0.2em] mt-0.5">AI STUDIO v2</div>
+            <div className="text-[8px] font-mono text-slate-600 tracking-[0.2em] mt-0.5">AUTONOMOUS FABRIC</div>
           </div>
         </div>
 

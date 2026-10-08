@@ -198,13 +198,27 @@ export default function SplashOverlay({ onComplete }) {
           ))}
         </div>
 
-        {/* Subtext */}
-        <motion.p
-          className="text-[11px] font-mono text-slate-500 tracking-widest text-center max-w-xs leading-loose"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 0.5 }}
-        >
-          Initializing Neural Weave & AST Graph Mesh...
-        </motion.p>
+        {/* Typing subtext for features */}
+        <div className="mt-4 flex items-center justify-center h-4">
+          <style>{`
+            @keyframes splashTyping { from { width: 0 } to { width: 100% } }
+            @keyframes splashBlink { 50% { border-color: transparent } }
+            .splash-typing-effect {
+              overflow: hidden;
+              white-space: nowrap;
+              border-right: 2px solid #22d3ee;
+              animation: splashTyping 1.8s steps(40, end) forwards, splashBlink 0.5s step-end infinite;
+              display: inline-block;
+              max-width: fit-content;
+            }
+          `}</style>
+          <motion.div 
+            className="splash-typing-effect text-[9px] font-mono text-cyan-500/80 tracking-widest uppercase"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}
+          >
+            Init: Swarm Council • AST Healing • Git Auto-Push...
+          </motion.div>
+        </div>
 
         {/* Progress bar */}
         <motion.div

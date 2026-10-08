@@ -161,7 +161,7 @@ export default function AuthPage({ onAuthenticated }) {
 
         {/* Live feature pills */}
         <div className="absolute top-8 right-8 z-10 flex flex-col gap-2">
-          {['Multi-Agent Swarm Council', 'AST Code Healing', 'Synthetic Dev Team', 'Automated PRs'].map((pill, i) => (
+          {['Multi-Agent Swarm Council', 'AST Code Healing', 'Synthetic Dev Team', 'Git Auto-Push & PRs'].map((pill, i) => (
             <motion.div key={pill} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.15 }}
               className="flex items-center gap-2 bg-black/70 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.1)]">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
