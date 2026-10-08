@@ -117,7 +117,6 @@ function HeaderTypingText({ activeTab }) {
 export default function App() {
   const [user, setUser]           = useState(null);
   const [showSplash, setShowSplash] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleAuthenticated = useCallback((u) => {
     setUser(u);
@@ -197,6 +196,7 @@ function Dashboard({ user, onSignOut }) {
   const [rollbackStep, setRollbackStep] = useState(0);
   const [patchedTokens, setPatchedTokens] = useState(0);
   const [patchedLatency, setPatchedLatency] = useState(0);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const [showPRModal, setShowPRModal]               = useState(false);
   const [showExplainDrawer, setShowExplainDrawer]   = useState(false);
