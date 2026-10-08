@@ -132,8 +132,8 @@ export default function SplashOverlay({ onComplete }) {
       console.log('Audio playback prevented by browser policy');
     }
 
-    // 2. Unmount overlay after 4 seconds to allow typing animation to finish
-    const t = setTimeout(onComplete, 4000);
+    // 2. Unmount overlay after 2.5 seconds (reduced latency)
+    const t = setTimeout(onComplete, 2500);
     return () => clearTimeout(t);
   }, [onComplete]);
 
@@ -201,16 +201,15 @@ export default function SplashOverlay({ onComplete }) {
         {/* Typing subtext for features */}
         <div className="mt-4 flex items-center justify-center h-4">
           <style>{`
-            @keyframes splashTyping { from { width: 0 } to { width: 100% } }
+            @keyframes splashTyping { from { max-width: 0 } to { max-width: 600px } }
             @keyframes splashBlink { 50% { border-color: transparent } }
             .splash-typing-effect {
               overflow: hidden;
               white-space: nowrap;
               border-right: 2px solid #22d3ee;
-              width: 0;
-              animation: splashTyping 2s steps(40, end) 0.5s forwards, splashBlink 0.5s step-end infinite;
+              max-width: 0;
+              animation: splashTyping 1.2s steps(40, end) 0.3s forwards, splashBlink 0.5s step-end infinite;
               display: inline-block;
-              max-width: fit-content;
             }
           `}</style>
           <div className="splash-typing-effect text-[9px] font-mono text-cyan-500/80 tracking-widest uppercase">

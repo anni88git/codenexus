@@ -185,9 +185,9 @@ export default function AuthPage({ onAuthenticated }) {
           <div className="text-sm font-bold text-cyan-400 mb-2 font-mono h-5 flex items-center">
             <style>{`
               @keyframes typing { 
-                0%, 10% { width: 0 } 
-                40%, 80% { width: 100% } 
-                100% { width: 0 } 
+                0%, 10% { max-width: 0 } 
+                40%, 80% { max-width: 600px } 
+                100% { max-width: 0 } 
               }
               @keyframes blink { 50% { border-color: transparent } }
               .typing-effect {
@@ -196,7 +196,6 @@ export default function AuthPage({ onAuthenticated }) {
                 border-right: 3px solid #22d3ee;
                 animation: typing 6s steps(30, end) infinite, blink 0.75s step-end infinite;
                 display: inline-block;
-                max-width: fit-content;
               }
             `}</style>
             <div className="typing-effect">
