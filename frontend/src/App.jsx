@@ -327,7 +327,7 @@ function Dashboard({ user, onSignOut }) {
       (finalLanguage === 'Rust'   ? 'main.rs'          :
       finalLanguage === 'Python' ? 'analytics.py'     :
       finalLanguage === 'C++'    ? 'vector_bounds.cpp':
-      finalLanguage === 'Node.js'? 'userController.js': 'user_handler.go');
+      finalLanguage === 'Node.js'? 'userController.js': 'solution.src');
 
     setActiveRun({
       fileName: optimisticFileName,
