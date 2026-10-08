@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Code, FileCode, Columns, AlignJustify, GitPullRequest,
   BookOpen, Bell, RotateCcw, Layers, Activity, CheckCircle2,
-  RefreshCw, Shield, ChevronRight, Terminal, Network, Sparkles, FileText
+  RefreshCw, Shield, ChevronRight, Terminal, Network, Sparkles, FileText, Copy, Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -57,6 +57,13 @@ export default function PatchingWorkspace({
   const added = diff.filter(d => d.type === 'added').length;
   const removed = diff.filter(d => d.type === 'removed').length;
 
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(activeRun?.patchedCode || '');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
       {/* LEFT: Code Diff Viewer (7 cols) */}
@@ -76,6 +83,13 @@ export default function PatchingWorkspace({
               )}
             </div>
             <div className="flex items-center gap-2 shrink-0">
+              {showDiff && (
+                <button onClick={handleCopy}
+                  className="shrink-0 whitespace-nowrap flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border border-[#333] bg-[#222] text-slate-300 hover:bg-[#333] transition-all">
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0" />}
+                  {copied ? 'Copied!' : 'Copy Code'}
+                </button>
+              )}
               <button onClick={onOpenPR} disabled={!pipelineComplete}
                 className={`shrink-0 whitespace-nowrap flex items-center gap-1.5 text-[10px] font-mono font-bold px-3 py-1.5 rounded-xl border transition-all ${
                   pipelineComplete 
