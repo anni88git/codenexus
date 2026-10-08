@@ -23,7 +23,7 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
   try {
     const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language === 'Auto' ? 'source' : language} code.
 
-CRITICAL WARNING: The code provided may contain intentional typos (like 'Systen' instead of 'System', or misspelled variables). You MUST scan the code and correct ALL typos and spelling errors before doing anything else.
+CRITICAL WARNING: The code provided contains subtle spelling errors and typos in variable names, methods, or class names. You MUST scan the code and correct ALL typos and spelling errors. Do NOT hallucinate or change the code's purpose. Return the EXACT SAME code provided, but with the bugs and typos fixed.
 
 USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
 ${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}
