@@ -98,6 +98,7 @@ export default function AuthPage({ onAuthenticated }) {
 
   const handleOAuth = async (provider) => {
     if (provider === 'GitHub') {
+      setLoading(true);
       window.location.href = `${BACKEND_URL}/api/auth/github`;
       return;
     }
@@ -259,11 +260,22 @@ export default function AuthPage({ onAuthenticated }) {
               ))}
             </div>
 
-            {/* OAuth buttons */}
             <div className="grid grid-cols-1 gap-3">
-              <button onClick={() => handleOAuth('GitHub')}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-700/70 bg-slate-800/50 text-slate-300 text-xs font-mono hover:border-slate-600 hover:bg-slate-800 transition-all active:scale-[0.97]">
-                <GithubIcon className="w-3.5 h-3.5" /> GitHub
+              <button onClick={() => handleOAuth('GitHub')} disabled={loading}
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-700/70 bg-slate-800/50 text-slate-300 text-xs font-mono hover:border-slate-600 hover:bg-slate-800 transition-all active:scale-[0.97] disabled:opacity-75 disabled:cursor-wait">
+                {loading ? (
+                  <>
+                    <svg className="w-3.5 h-3.5 animate-spin text-cyan-400" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Waking up Swarm (takes ~45s)...
+                  </>
+                ) : (
+                  <>
+                    <GithubIcon className="w-3.5 h-3.5" /> GitHub
+                  </>
+                )}
               </button>
             </div>
 

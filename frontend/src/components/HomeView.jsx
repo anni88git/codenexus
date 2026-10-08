@@ -1,6 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Zap, GitPullRequest, Activity, ChevronRight, Play, Network } from 'lucide-react';
+
+function FeatureTypingTerminal() {
+  const features = [
+    "Initializing Neural Weave...",
+    "Routing payload to Swarm Council...",
+    "Building AST Graph Mesh...",
+    "Running Security & Sandbox tests...",
+    "Triggering 1-Click Git Auto-Push...",
+    "Many minds, one solution."
+  ];
+  
+  const [idx, setIdx] = useState(0);
+  const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  useEffect(() => {
+    const current = features[idx];
+    let timeout;
+    
+    if (isDeleting) {
+      if (text.length > 0) {
+        timeout = setTimeout(() => setText(current.substring(0, text.length - 1)), 25);
+      } else {
+        setIsDeleting(false);
+        setIdx((idx + 1) % features.length);
+      }
+    } else {
+      if (text.length < current.length) {
+        timeout = setTimeout(() => setText(current.substring(0, text.length + 1)), 60);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(true), 2500);
+      }
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [text, isDeleting, idx]);
+  
+  return (
+    <div className="mt-8 flex items-center gap-3 p-4 bg-slate-950/80 border border-slate-800/80 rounded-xl font-mono text-xs shadow-inner">
+      <span className="text-slate-600 font-bold shrink-0">agent@weave:~$</span>
+      <span className="text-cyan-400">{text}</span>
+      <span className="w-1.5 h-3 bg-cyan-400 animate-pulse shrink-0" />
+    </div>
+  );
+}
 
 const SCENARIO_CARDS = [
   {
@@ -107,7 +152,7 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
               { n: '01', label: 'Triage',    desc: 'Error classified & priority routed', color: '#06b6d4' },
               { n: '02', label: 'AST Index', desc: 'Dependency graph built & indexed',    color: '#a855f7' },
               { n: '03', label: 'AI Patch',  desc: 'Codestral streams patch diff to disk', color: '#34d399' },
-              { n: '04', label: 'Verify',    desc: 'Sandbox tests run & PR auto-created', color: '#f59e0b' },
+              { n: '04', label: 'Auto-Push', desc: 'Sandbox tests run & PR auto-created', color: '#f59e0b' },
             ].map((s, i) => (
               <motion.div key={s.n}
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -120,6 +165,8 @@ export default function HomeView({ scenarios, activeScenario, onSelect, onTrigge
               </motion.div>
             ))}
           </div>
+
+          <FeatureTypingTerminal />
         </div>
       </div>
 
