@@ -115,7 +115,7 @@ export default function PatchingWorkspace({
                   <FileCode className="w-3 h-3 text-red-400" />
                   <span className="text-[9px] font-mono text-red-300/60 uppercase tracking-wider">Original (Broken)</span>
                 </div>
-                <div className="flex-1 overflow-auto bg-slate-950/50">
+                <div className="flex-1 overflow-auto bg-black">
                   <pre className="p-4 text-xs font-mono text-slate-300"><code>{activeRun?.originalCode}</code></pre>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function PatchingWorkspace({
                   <FileCode className="w-3 h-3 text-emerald-400" />
                   <span className="text-[9px] font-mono text-emerald-300/60 uppercase tracking-wider">Patched (Fixed)</span>
                 </div>
-                <div className="flex-1 overflow-auto bg-slate-950/50">
+                <div className="flex-1 overflow-auto bg-black">
                   <pre className="p-4 text-xs font-mono text-emerald-400"><code>{activeRun?.patchedCode}</code></pre>
                 </div>
               </div>
@@ -350,7 +350,7 @@ function LogBox({ logs }) {
   const ref = useRef(null);
   useEffect(() => { if (ref.current) ref.current.scrollTop = ref.current.scrollHeight; }, [logs]);
   return (
-    <div ref={ref} className="flex-1 min-h-0 overflow-y-auto font-mono text-xs bg-slate-950 text-emerald-400 p-4 border-t border-slate-800/40">
+    <div ref={ref} className="flex-1 min-h-0 overflow-y-auto font-mono text-xs bg-black text-emerald-400 p-4 border-t border-slate-800/40 shadow-inner">
       {logs.map(l => (
         <div key={l.id} className="flex gap-2 leading-relaxed min-h-[18px]">
           <span className="text-cyan-900 select-none shrink-0">❯</span>
@@ -475,7 +475,7 @@ function ChatBox({ activeRun, onApplyCode }) {
                             style={vscDarkPlus}
                             language={match[1]}
                             PreTag="div"
-                            customStyle={{ margin: 0, padding: '12px', background: '#0f172a', fontSize: '10px' }}
+                            customStyle={{ margin: 0, padding: '12px', background: '#000000', fontSize: '10px' }}
                           />
                         </div>
                       ) : (
