@@ -10,12 +10,22 @@ import path from 'path';
 import { simpleGit } from 'simple-git';
 import { rimraf } from 'rimraf';
 import { Octokit } from '@octokit/rest';
-import { generateCodePatch } from './aiService.js';
+import { generateCodePatch, generateChatResponse, generateChatStream } from './aiService.js';
+import { indexFiles, searchRAG, initRAG } from './ragService.js';
 
 dotenv.config();
 
-// In-memory mock database
-const users = [];
+// Persisted mock database
+const DB_FILE = path.join(process.cwd(), 'users.json');
+let users = [];
+try {
+  if (fs.existsSync(DB_FILE)) {
+    users = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+  }
+} catch (e) {
+  console.error("Failed to load users DB:", e);
+}
+const saveUsers = () => fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2));
 const JWT_SECRET = process.env.JWT_SECRET || 'The Window-super-secret-key';
 
 import passport from 'passport';
@@ -23,7 +33,8 @@ import { Strategy as GitHubStrategy } from 'passport-github2';
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -53,6 +64,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
       users.push(user);
     }
     user.githubToken = accessToken; // Save token for Auto-PR feature
+    saveUsers();
     return done(null, user);
   }));
 }
@@ -112,6 +124,7 @@ app.post('/api/auth/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = { id: Date.now().toString(), email, password: hashedPassword, name: name || email.split('@')[0] };
     users.push(newUser);
+    saveUsers();
 
     const token = jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: { name: newUser.name, email: newUser.email, avatar: `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(email)}` } });
@@ -147,6 +160,7 @@ app.post('/api/auth/oauth', (req, res) => {
   if (!user) {
     user = { id: Date.now().toString(), email, name: `${provider} User`, provider };
     users.push(user);
+    saveUsers();
   }
 
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
@@ -358,56 +372,69 @@ You MUST respond in STRICT JSON format with exactly two keys: "message" (your co
   }
 });
 
+// ─── POST /api/index-rag ────────────────────────────────────────────────────────
+app.post('/api/index-rag', async (req, res) => {
+  const { files } = req.body;
+  if (!files || !Array.isArray(files)) return res.status(400).json({ error: 'Missing files array' });
+  
+  const result = await indexFiles(files);
+  if (result.success) {
+    res.json({ success: true, message: 'Files indexed successfully', chunks: result.chunks });
+  } else {
+    res.status(500).json({ success: false, error: result.error });
+  }
+});
+
 // ─── POST /api/chat ───────────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
-  const { messages, contextCode, language, mode } = req.body;
+  const { messages, contextCode, language, mode, stream, model } = req.body;
   
-  const rawKey = process.env.GROQ_API_KEY || '';
-  const apiKey = rawKey.trim();
-  if (!apiKey) return res.status(400).json({ error: 'No GROQ API Key configured.' });
+  let augmentedContext = contextCode || '';
+  try {
+    // Determine the user's latest query
+    const userMessages = messages.filter(m => m.role === 'user');
+    const lastQuery = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : '';
+    
+    // RAG disabled: Frontend already sends full workspace context!
+    // if (lastQuery) {
+    //   const ragResults = await searchRAG(lastQuery, 5);
+    //   if (ragResults.length > 0) { ... }
+    // }
+  } catch(e) {
+    console.error("RAG augmentation failed during chat:", e);
+  }
   
   try {
-    const { default: Groq } = await import('groq-sdk');
-    const ai = new Groq({ apiKey });
-
-    const roleMap = {
-      'QA': 'an expert Quality Assurance (QA) engineer',
-      'ML Engineer': 'an expert Machine Learning (ML) Engineer',
-      'Software Dev': 'an expert Software Developer',
-      'Backend Dev': 'an expert Backend Developer',
-      'Frontend Dev': 'an expert Frontend Developer',
-      'Cybersecurity Expert': 'an expert Cybersecurity Analyst and Penetration Tester'
-    };
-
-    const roleName = roleMap[mode] || 'an expert AI coding assistant';
-
-    const systemPrompt = `You are ${roleName} built into The Window Code Patching Studio.
-The user is currently looking at this ${language || 'source'} code in their workspace:
-
-\`\`\`
-${contextCode || 'No code provided.'}
-\`\`\`
-
-IMPORTANT INSTRUCTIONS:
-1. Do NOT just dump full code solutions immediately. 
-2. BE HIGHLY CONVERSATIONAL AND INTERACTIVE.
-3. Always ask clarifying questions about what the user wants to achieve. Wait for their response and confirmation before writing out the final complete code block.
-4. When you do provide code, always use proper markdown code blocks.`;
-
-    const formattedMessages = [
-      { role: 'system', content: systemPrompt },
-      ...messages
-    ];
-
-    const response = await ai.chat.completions.create({
-      messages: formattedMessages,
-      model: 'openai/gpt-oss-120b',
-      max_tokens: 2000,
-    });
-
-    res.json({ text: response.choices[0]?.message?.content || '' });
+    if (stream) {
+      const chatStream = await generateChatStream(messages, augmentedContext, language, model);
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      
+      for await (const chunk of chatStream) {
+        if (chunk.status) {
+          res.write(`data: ${JSON.stringify({ status: chunk.status })}\n\n`);
+          continue;
+        }
+        const content = chunk.choices?.[0]?.delta?.content || '';
+        if (content) {
+          res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
+        }
+      }
+      res.write('data: [DONE]\n\n');
+      res.end();
+    } else {
+      const aiResult = await generateChatResponse(messages, augmentedContext, language, model);
+      return res.json({ success: true, text: aiResult.text });
+    }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Backend Chat Error:", err);
+    if (!res.headersSent) {
+      return res.status(500).json({ success: false, error: err.message, text: "Error generating chat response." });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
+      res.end();
+    }
   }
 });
 
@@ -481,6 +508,7 @@ app.post('/api/run-agent', async (req, res) => {
       prompt = '', 
       language = 'Auto', 
       customInstructions = '',
+      workspaceContext = [],
       socketId,
       scenarioId,
       fileName: reqFileName
@@ -561,7 +589,7 @@ app.post('/api/run-agent', async (req, res) => {
     } else {
       // Use the Gemini/Groq AI service for real patching
       try {
-        const aiResult = await generateCodePatch(rawInput, rawInput, detectedLang, customInstructions);
+        const aiResult = await generateCodePatch(rawInput, rawInput, detectedLang, customInstructions, workspaceContext);
         patchedCode = aiResult.code;
         explanation = aiResult.explanation || 'Patch generated by AI.';
         testOutput = aiResult.testOutput || [];
@@ -646,6 +674,8 @@ app.post('/api/run-agent', async (req, res) => {
     });
   }
 });
+
+
 
 // ─── POST /api/rollback ───────────────────────────────────────────────────────
 app.post('/api/rollback', async (req, res) => {

@@ -27,7 +27,10 @@ import SwarmCouncil from './components/SwarmCouncil';
 import CustomCodeModal from './components/CustomCodeModal';
 import SettingsModal from './components/SettingsModal';
 import GitRepositoryView from './components/GitRepositoryView';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
+import AntigravityChat from './components/AntigravityChat';
+import AntigravityIDEView from './components/AntigravityIDEView';
+import { get, set } from './idb.js';
+const BACKEND_URL = 'http://localhost:5000';
 const socket = io(BACKEND_URL, {
   autoConnect: true,
   reconnection: true,
@@ -130,6 +133,7 @@ export default function App() {
     if (savedUser) {
       try { setUser(JSON.parse(savedUser)); } catch (e) {}
     }
+    
 
     // Check if we just redirected back from GitHub OAuth
     const params = new URLSearchParams(window.location.search);
@@ -184,7 +188,8 @@ export default function App() {
 }
 
 function Dashboard({ user, onSignOut }) {
-  const [activeTab, setActiveTab]       = useState('home');
+  const [activeTab, setActiveTab]       = useState(() => localStorage.getItem('nexus_activeTab') || 'home');
+  useEffect(() => { localStorage.setItem('nexus_activeTab', activeTab); }, [activeTab]);
   const [scenario, setScenario]         = useState(null);
   const [language, setLanguage]         = useState(LANGUAGES[0]);
   const [logs, setLogs]                 = useState([{ id: Date.now(), text: `System ready. Welcome, ${user.name}.` }]);
@@ -197,6 +202,18 @@ function Dashboard({ user, onSignOut }) {
   const [patchedTokens, setPatchedTokens] = useState(0);
   const [patchedLatency, setPatchedLatency] = useState(0);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState([]);
+  
+  // Restore attached files silently inside Dashboard
+  useEffect(() => {
+    get('workspaceFiles').then(files => {
+       if (files && files.length > 0) {
+          setAttachedFiles(files);
+       }
+    }).catch(() => {});
+  }, []);
+
+  const [showChatPanel, setShowChatPanel] = useState(false);
 
   const [showPRModal, setShowPRModal]               = useState(false);
   const [showExplainDrawer, setShowExplainDrawer]   = useState(false);
@@ -208,8 +225,26 @@ function Dashboard({ user, onSignOut }) {
   const [customInstructions, setCustomInstructions] = useState(() => localStorage.getItem('nexus_agent_rules') || '');
   
   const [activeRun, setActiveRun] = useState(null);
+  const loadedRef = useRef(false);
+  
+  // Persist IDE state so it survives refreshes
+  useEffect(() => {
+     Promise.all([
+       get('nexus_customCode'),
+       get('nexus_activeRun')
+     ]).then(([savedCode, savedRun]) => {
+       if (savedCode) setCustomCode(savedCode);
+       if (savedRun) setActiveRun(savedRun);
+       loadedRef.current = true;
+     }).catch(() => {
+       loadedRef.current = true;
+     });
+  }, []);
+  
+  useEffect(() => { if(loadedRef.current) set('nexus_customCode', customCode).catch(()=>{}); }, [customCode]);
+  useEffect(() => { if(loadedRef.current) set('nexus_activeRun', activeRun).catch(()=>{}); }, [activeRun]);
 
-
+  const [modifiedFiles, setModifiedFiles] = useState(new Set());
   const addLog = useCallback((text, isError = false) => {
     if (!text) return;
     setLogs(p => [...p.slice(-80), { id: Date.now() + Math.random(), text, isError }]);
@@ -255,6 +290,18 @@ function Dashboard({ user, onSignOut }) {
       socket.disconnect();
     };
   }, [addLog]);
+
+  // Sync workspace files with Backend RAG Index
+  useEffect(() => {
+    if (!attachedFiles || attachedFiles.length === 0) {
+       return;
+    }
+    
+    // RAG disabled: Backend embedding model takes too long to initialize.
+    // const syncToRAG = async () => { ... }
+    // syncToRAG();
+  }, [attachedFiles, addLog]);
+
 
   const switchScenario = useCallback((s) => {
     setScenario(s);
@@ -322,6 +369,25 @@ function Dashboard({ user, onSignOut }) {
     setPatchedLatency(0);
     setLogs([{ id: Date.now(), text: `[TRIGGERED] Pipeline initiated: ${finalLanguage}` }]);
 
+    // ── Prepare RAG Workspace Context
+    let workspaceContext = [];
+    if (attachedFiles && attachedFiles.length > 0) {
+      addLog(`📚 [RAG] Indexing ${attachedFiles.length} workspace files...`);
+      const filesToRead = attachedFiles
+        .filter(f => f.name.match(/\.(js|jsx|ts|tsx|py|go|rs|cpp|c|h|java|json|md|txt)$/))
+        .slice(0, 8); // Limit to 8 files for demo RAG
+        
+      for (const file of filesToRead) {
+        try {
+          const text = await file.text();
+          workspaceContext.push({
+            path: file.customRelativePath || file.webkitRelativePath || file.name,
+            content: text.substring(0, 1500) // limit size per file
+          });
+        } catch (e) {}
+      }
+    }
+
     // ── Optimistic UI: immediately show input in the workspace panel
     const optimisticFileName = (isObj && payload.fileName) ? payload.fileName :
       (finalLanguage === 'Rust'   ? 'main.rs'          :
@@ -358,6 +424,7 @@ function Dashboard({ user, onSignOut }) {
           fileName: isObj && payload.fileName ? payload.fileName : undefined,
           prompt: promptText || inputSnippet,
           customInstructions: customInstructions,
+          workspaceContext, // Pass RAG context
           isCustom: !!(finalCustomCode || promptText)
         }),
         signal: controller.signal,
@@ -519,14 +586,82 @@ function Dashboard({ user, onSignOut }) {
         onSignOut={onSignOut}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        attachedFiles={attachedFiles}
+        modifiedFiles={modifiedFiles}
+        onRemoveFolder={async () => {
+          setAttachedFiles([]);
+          setActiveRun(null);
+          setCustomCode('');
+        }}
+        onSelectFile={async (file) => {
+          try {
+            let actualFileHandle = file.handle;
+            
+            // First try to restore global directory permissions since the user just clicked
+            try {
+               const dirHandle = await get('dirHandle');
+               if (dirHandle) {
+                  if (await dirHandle.queryPermission({ mode: 'readwrite' }) !== 'granted') {
+                     await dirHandle.requestPermission({ mode: 'readwrite' });
+                  }
+                  
+                  // If we don't have the file handle (because it was loaded from IDB cache),
+                  // we traverse the dirHandle to find it.
+                  if (!actualFileHandle) {
+                     const path = file.customRelativePath || file.webkitRelativePath || file.name;
+                     const parts = path.split('/');
+                     let current = dirHandle;
+                     if (parts[0] === dirHandle.name) parts.shift();
+                     const targetName = parts.pop();
+                     for (const part of parts) {
+                         current = await current.getDirectoryHandle(part);
+                     }
+                     actualFileHandle = await current.getFileHandle(targetName);
+                  }
+               }
+            } catch (e) {
+               console.error("Failed to restore directory permissions or find file:", e);
+            }
+
+            if (actualFileHandle) {
+              const status = await actualFileHandle.queryPermission({ mode: 'read' });
+              if (status !== 'granted') {
+                 await actualFileHandle.requestPermission({ mode: 'read' });
+              }
+            }
+            
+            const latestFile = actualFileHandle ? await actualFileHandle.getFile() : file;
+            let content = '';
+            if (typeof latestFile.text === 'function') {
+               content = await latestFile.text();
+            } else {
+               throw new Error("Unable to read file content (missing file handle). Please re-attach the workspace.");
+            }
+            
+            setCustomCode(content);
+            setActiveTab('ide');
+            setActiveRun({
+              fileName: file.customRelativePath || file.webkitRelativePath || file.name,
+              language: 'Auto-Detect',
+              originalCode: content,
+              patchedCode: content,
+              explanation: '',
+              nodes: []
+            });
+          } catch (err) {
+            console.error('Failed to read file:', err);
+          }
+        }}
       />
 
-      <div className="flex-1 h-full flex flex-col overflow-hidden relative min-w-0">
-        <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-black/80 backdrop-blur-sm z-10">
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 h-full flex flex-col overflow-hidden relative min-w-0">
+          <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-slate-800/60 bg-black/80 backdrop-blur-sm z-10">
           <div className="flex items-center gap-3">
             <div className="text-xs font-semibold text-slate-400 font-mono flex items-center">
               <span>
                 {activeTab === 'home'      && 'Home'}
+                {activeTab === 'ide'       && 'Prompt & Code Studio'}
                 {activeTab === 'workspace' && 'Patching Workspace'}
                 {activeTab === 'swarm'     && 'Swarm Council'}
                 {activeTab === 'ast'       && 'AST Graph Mesh'}
@@ -560,6 +695,18 @@ function Dashboard({ user, onSignOut }) {
               )}
             </AnimatePresence>
 
+            <button
+              onClick={() => setShowChatPanel(!showChatPanel)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
+                showChatPanel
+                  ? 'bg-cyan-950/40 border-cyan-800 text-cyan-400'
+                  : 'bg-[#1a1a1a] border-[#333] text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <TerminalSquare className="w-3.5 h-3.5" />
+              Chat
+            </button>
+
             <div className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#333] px-2.5 py-1 rounded-lg">
               <Wifi className="w-3 h-3 text-slate-600" />
               <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-slate-300' : 'bg-red-500'}`} />
@@ -579,6 +726,25 @@ function Dashboard({ user, onSignOut }) {
                   onSelect={switchScenario}
                   onTrigger={() => { setActiveTab('workspace'); trigger(); }}
                   onGetStarted={() => setActiveTab('workspace')}
+                />
+              </motion.div>
+            )}
+            {activeTab === 'ide' && (
+              <motion.div key="ide" className="absolute inset-0 flex flex-col min-h-0"
+                initial={{ opacity:0, x:-12 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:12 }} transition={{ duration:0.2 }}>
+                <AntigravityIDEView
+                  customCode={customCode}
+                  setCustomCode={setCustomCode}
+                  language={language}
+                  activeRun={activeRun}
+                  setActiveRun={setActiveRun}
+                  onAttachFolder={(files) => {
+  const f = Array.from(files);
+  setAttachedFiles(f);
+  set('workspaceFiles', f.map(x => ({ name: x.name, customRelativePath: x.customRelativePath, webkitRelativePath: x.webkitRelativePath })));
+}}
+                  workspaceFiles={attachedFiles}
+                  onFileModified={(name) => setModifiedFiles(prev => new Set(prev).add(name))}
                 />
               </motion.div>
             )}
@@ -662,6 +828,11 @@ function Dashboard({ user, onSignOut }) {
             onLanguageChange={setLanguage}
             onTrigger={trigger}
             isFixing={isFixing}
+            onAttachFolder={(files) => {
+  const f = Array.from(files);
+  setAttachedFiles(f);
+  set('workspaceFiles', f.map(x => ({ name: x.name, customRelativePath: x.customRelativePath, webkitRelativePath: x.webkitRelativePath })));
+}}
             onOpenCustomModal={() => setShowCustomModal(true)}
             onClearCustomCode={() => {
               setCustomCode('');
@@ -674,6 +845,25 @@ function Dashboard({ user, onSignOut }) {
             activeEditorCode={activeRun?.originalCode}
           />
         )}
+        </div>
+
+        <AnimatePresence>
+          {showChatPanel && (
+            <AntigravityChat 
+              onClose={() => setShowChatPanel(false)}
+              activeCode={activeRun?.patchedCode || customCode || activeRun?.originalCode}
+              activeFileName={activeRun?.fileName}
+              language={language?.id}
+              onApplyCode={(code) => {
+                if (activeRun) {
+                  setActiveRun(prev => ({ ...prev, patchedCode: code }));
+                } else {
+                  setCustomCode(code);
+                }
+              }}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence>

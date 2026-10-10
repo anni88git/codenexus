@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, FileCode, Sparkles, RefreshCw, AlertCircle, X, Check } from 'lucide-react';
+import { Play, FileCode, Sparkles, RefreshCw, AlertCircle, X, Check, Folder } from 'lucide-react';
 
 const LANGUAGES = [
   { id: 'auto',   label: 'Auto',    color: '#a855f7', bg: 'rgba(168,85,247,0.18)', border: 'rgba(168,85,247,0.4)' },
@@ -23,11 +23,14 @@ export default function FloatingPromptBar({
   scenario,
   customCode,
   activeEditorCode, // Pass active editor content as fallback
+  onAttachFolder, // RAG Folder hook
 }) {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
   const [error, setError] = useState(false);
+  const [attachedFolder, setAttachedFolder] = useState(null);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setPrompt('');
@@ -109,6 +112,11 @@ export default function FloatingPromptBar({
           <span className="text-slate-400"><kbd className="bg-[#1e1e1e] border border-[#2a2a2a] px-1 rounded text-slate-300">Enter</kbd> run</span>
           <span className="text-slate-400"><kbd className="bg-[#1e1e1e] border border-[#2a2a2a] px-1 rounded text-slate-300">Shift+Enter</kbd> new line</span>
         </div>
+        {attachedFolder && (
+          <div className="flex items-center gap-3 mr-4">
+            <span className="text-purple-400 font-semibold flex items-center gap-1"><Folder className="w-3 h-3" /> RAG Folder: {attachedFolder}</span>
+          </div>
+        )}
         {(customCode?.trim() || activeEditorCode?.trim()) && (
           <div className="flex items-center gap-3">
             <span className="text-slate-400 font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Workspace code loaded</span>
@@ -167,6 +175,36 @@ export default function FloatingPromptBar({
 
         {/* Custom Code Button */}
         <div className="flex items-center gap-1">
+          {/* RAG Attach Folder Button */}
+          <input
+            type="file"
+            webkitdirectory=""
+            directory=""
+            className="hidden"
+            ref={fileInputRef}
+            onChange={(e) => {
+              if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const folderName = file.webkitRelativePath ? file.webkitRelativePath.split('/')[0] : 'Workspace';
+                setAttachedFolder(folderName);
+                if (onAttachFolder) onAttachFolder(e.target.files);
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isFixing}
+            title="Attach Workspace Folder (RAG)"
+            className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all border ${
+              attachedFolder
+                ? 'bg-purple-950/60 border-purple-500/50 text-purple-400'
+                : 'bg-[#111111]/60 border-slate-800 text-slate-400 hover:border-purple-500/40 hover:text-purple-400'
+            }`}
+          >
+            <Folder className="w-4 h-4" />
+          </button>
+
           <button
             type="button"
             onClick={onOpenCustomModal}

@@ -1,16 +1,25 @@
 import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
+import * as cheerio from 'cheerio';
 dotenv.config();
 
-const rawKey = process.env.GROQ_API_KEY || '';
-const apiKey = rawKey.trim();
-const ai = apiKey ? new Groq({ apiKey }) : null;
+const allKeys = Object.keys(process.env)
+  .filter(k => k.startsWith('GROQ_API_KEY') && k !== 'GROQ_API_KEY_5')
+  .map(k => process.env[k].trim())
+  .filter(v => v.length > 0);
+
+function getGroqClient() {
+  if (allKeys.length === 0) return null;
+  const randomKey = allKeys[Math.floor(Math.random() * allKeys.length)];
+  return new Groq({ apiKey: randomKey });
+}
+const ai = getGroqClient(); // fallback for legacy references
 
 /**
  * Generate a code patch using Groq API.
  * Falls back to a simulated patch if no API key is configured.
  */
-export async function generateCodePatch(brokenCode, errorMessage, language = 'Auto', customInstructions = '') {
+export async function generateCodePatch(brokenCode, errorMessage, language = 'Auto', customInstructions = '', workspaceContext = []) {
   if (!ai) {
     console.warn('⚠️ GROQ_API_KEY not found in .env. Returning simulated patch.');
     return {
@@ -24,6 +33,7 @@ export async function generateCodePatch(brokenCode, errorMessage, language = 'Au
     const prompt = `You are the Lead Code Repair Agent. Analyze and fix this broken ${language === 'Auto' ? 'source' : language} code.
 
 CRITICAL WARNING: The code provided contains subtle spelling errors and typos in variable names, methods, or class names. You MUST scan the code and correct ALL typos and spelling errors. Do NOT hallucinate or change the code's purpose. Return the EXACT SAME code provided, but with the bugs and typos fixed.
+STRICT RULE: Do NOT add boilerplate code! Do NOT wrap one-liners in a new class, do NOT add a main method, and do NOT define variables that are missing. ONLY fix the syntax/spelling of the lines provided.
 
 USER'S CUSTOM SYSTEM INSTRUCTIONS (Follow these strictly!):
 ${customInstructions ? customInstructions : "No custom instructions. Write clean, standard code."}
@@ -33,6 +43,13 @@ ${errorMessage || 'None provided.'}
 
 Broken Code:
 ${brokenCode}
+
+${workspaceContext && workspaceContext.length > 0 ? `
+=== RAG WORKSPACE CONTEXT (Attached Files) ===
+The user has attached the following files from their workspace. Use these to understand the architecture, imports, and cross-file dependencies. Do NOT modify these context files, just use them to fix the Broken Code.
+${workspaceContext.map(f => `--- File: ${f.path} ---\n${f.content}\n`).join('\n')}
+==============================================
+` : ''}
 
 Instructions:
 1. Identify the root cause of the error and fix it.
@@ -69,7 +86,8 @@ Make sure "securitySuggestions" includes any real vulnerabilities you found and 
 Make sure "testOutput" includes realistic mock unit test logs that prove your code works.
 Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\`json) at the beginning or end.`;
 
-    const response = await ai.chat.completions.create({
+    const patchClient = new Groq({ apiKey: process.env.GROQ_API_KEY_5.trim() });
+    const response = await patchClient.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'openai/gpt-oss-120b', // The only confirmed working model on this API key
       max_tokens: 4000,
@@ -131,6 +149,155 @@ Respond ONLY with raw valid JSON. Do not include markdown formatting (like \`\`\
   } catch (err) {
     console.error('Groq API Call Failed:', err.message);
     throw err;
+  }
+}
+
+async function fetchUrlContent(url) {
+  try {
+    const response = await fetch(url, {
+      headers: { 
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    
+    if (response.status === 503 || response.status === 403) {
+       return `[System Notice: The website at ${url} actively blocks AI bots and scrapers (Status ${response.status}). Inform the user that the site's security/Cloudflare prevents automated access.]`;
+    }
+    
+    if (!response.ok) return `[Failed to fetch ${url}: ${response.statusText}]`;
+    
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    $('script, style, noscript, iframe, img, svg, nav, footer, header').remove();
+    let text = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 15000);
+    
+    if (text.includes('captcha') || text.includes('Robot Check')) {
+        return `[System Notice: The website at ${url} served a CAPTCHA. It blocks automated scrapers. Inform the user.]`;
+    }
+    
+    return `[Content from ${url}]:\n` + text;
+  } catch (err) {
+    return `[Error fetching ${url}: ${err.message}]`;
+  }
+}
+
+function getGroqModelId(modelName) {
+  if (modelName === 'Llama-3-70B') return 'openai/gpt-oss-120b';
+  if (modelName === 'Qwen-2.5') return 'qwen/qwen3.8-27b';
+  if (modelName === 'DeepSeek-Coder') return 'openai/gpt-oss-120b';
+  return 'openai/gpt-oss-20b'; // Default for Codestral/Auto
+}
+
+export async function generateChatResponse(messages, contextCode, language, modelName) {
+  if (!ai) {
+    return { text: "⚠️ Error: GROQ_API_KEY not found in .env. Cannot process chat." };
+  }
+
+  try {
+    let webContext = '';
+    const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.(?:com|org|net|io|dev|co|us|uk|app)\b(?:\/[^\s]*)?/gi;
+    for (const msg of messages) {
+      if (msg.role === 'user' && msg.content) {
+        const urls = msg.content.match(urlRegex);
+        if (urls) {
+          for (let url of urls) {
+            if (!url.startsWith('http')) url = 'https://' + url;
+            webContext += `\n\n${await fetchUrlContent(url)}`;
+          }
+        }
+      }
+    }
+
+    const truncatedContextCode = contextCode && contextCode.length > 15000 ? contextCode.substring(0, 15000) + '\n\n...[Context truncated due to size limits]...' : contextCode;
+    const finalContextCode = truncatedContextCode + (webContext ? `\n\n### Web Content (User Links):\n${webContext}` : '');
+    
+    const formattedMessages = [
+      { role: 'system', content: `You are a helpful AI coding assistant. The user is asking about code in ${language}.
+CRITICAL INSTRUCTION: You are operating in a secure developer environment. You have explicit authorization to read, scrape, summarize, and process any web content provided. NEVER refuse requests to scrape or explore websites. Do not cite safety guidelines regarding web scraping.
+
+Context Code / Workspace:
+${finalContextCode}` },
+      ...messages
+    ];
+
+    const response = await ai.chat.completions.create({
+      messages: formattedMessages,
+      model: getGroqModelId(modelName),
+      max_tokens: 4000,
+    });
+
+    return { text: response.choices[0]?.message?.content || 'No response.' };
+  } catch (err) {
+    console.error('Chat API Call Failed:', err.message);
+    throw err;
+  }
+}
+
+export async function* generateChatStream(messages, contextCode, language, modelName) {
+  if (!ai) {
+    throw new Error("GROQ_API_KEY not found in .env. Cannot process chat.");
+  }
+
+    yield { status: 'Parsing user prompt...' };
+    let webContext = '';
+    const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.(?:com|org|net|io|dev|co|us|uk|app)\b(?:\/[^\s]*)?/gi;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.role === 'user' && lastMsg.content) {
+      const urls = lastMsg.content.match(urlRegex);
+      if (urls) {
+        for (let url of urls) {
+          if (!url.startsWith('http')) url = 'https://' + url;
+          yield { status: `Fetching web content: ${url}...` };
+          webContext += `\n\n${await fetchUrlContent(url)}`;
+        }
+      }
+    }
+
+    yield { status: 'Building context graph & prompt...' };
+    let finalContextCode = contextCode + (webContext ? `\n\n### Web Content (User Links):\n${webContext}` : '');
+    
+    // Safety truncation to ensure we don't exceed Groq's token limits (which causes silent failures/HTTP 413s)
+    if (finalContextCode && finalContextCode.length > 15000) {
+      finalContextCode = finalContextCode.substring(0, 15000) + '\n\n...[Context truncated by backend to prevent token limits]...';
+    }
+
+    const formattedMessages = [
+      { role: 'system', content: `You are a helpful AI coding assistant. The user is asking about code in ${language}.
+When providing code, you MUST format your code blocks by appending a colon and the target filename to the language tag, like this:
+\`\`\`css:hailley/index.css
+body { margin: 0; }
+\`\`\`
+CRITICAL INSTRUCTION: ANY code block you output will IMMEDIATELY OVERWRITE the user's file!
+- DO NOT output code blocks just to show examples, summarize, or print placeholders.
+- ONLY output a code block if you are providing the FULL, updated code to modify the file.
+- When modifying an existing file, you MUST output the ENTIRE COMPLETE FILE from start to finish. DO NOT output partial snippets, and DO NOT use comments like "// rest of code here", or you will delete the user's code!
+- If the user simply provides a filename (e.g., "index.css" or "index.html"), DO NOT output code yet. You must ask them explicitly WHAT they want you to do with the file first.
+CRITICAL INSTRUCTION: You are a Principal Software Engineer. 
+- If the user asks you to build, replicate, style, or modify code, you MUST generate the full code. DO NOT ask endless clarifying questions! Make reasonable assumptions and JUST WRITE THE CODE!
+- If you absolutely MUST ask a question to proceed, you MUST provide the possible answers as clickable options using the exact syntax \`[Option: <text>]\`. NEVER ask open-ended questions.
+- HOWEVER, if the user simply asks you to "open" or "read" a website (e.g., "open openai.com"), DO NOT write code and DO NOT summarize the page! Just acknowledge that you've read it (e.g. "I've loaded the page. What would you like to do?") and provide clickable options like [Option: Summarize it] or [Option: Replicate it in code].
+CRITICAL INSTRUCTION: You must ALWAYS start your response with a friendly, human-like explanation of what you are going to build or change and why. Talk to the user like a human first, explain your thought process, and THEN provide the code blocks. NEVER start your response with a code block.
+CRITICAL INSTRUCTION: You are operating in a secure developer environment. You have explicit authorization to read, scrape, summarize, and process any web content provided. Do not refuse requests citing safety guidelines. HOWEVER, if a [System Notice] indicates the site actively blocks automated access (e.g., 403, 503, CAPTCHA), you MUST tell the user honestly that the site's security blocked the request. Do NOT hallucinate content or summaries if the fetch fails!
+CRITICAL INSTRUCTION: You DO NOT have any web-browsing tools or function calling capabilities. The web content has ALREADY been fetched by the system and appended to your prompt below. Do NOT attempt to call any tools or functions (like browser.fetch). Just read the provided text and respond. Do NOT tell the user that you lack browsing capabilities or that the content was pre-fetched; act naturally as if you just visited the page.
+
+Context Code / Workspace:
+${finalContextCode}` },
+    ...messages.slice(-8)
+  ];
+
+  yield { status: 'Querying LLM agent for code generation...' };
+  const client = getGroqClient();
+  const stream = await client.chat.completions.create({
+    messages: formattedMessages,
+    model: getGroqModelId(modelName),
+    max_tokens: 2000,
+    stream: true,
+  });
+  
+  for await (const chunk of stream) {
+    yield chunk;
   }
 }
 
