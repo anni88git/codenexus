@@ -66,24 +66,33 @@ function parseMessage(text) {
   return parts;
 }
 
-export default function AntigravityChat({ activeCode, activeFileName, language, onApplyCode, onClose, hideClose, selectedModel = 'Codestral', onModelChange, workspaceFiles }) {
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('nexus_chat_messages');
+export default function AntigravityChat({ activeCode, activeFileName, language, onApplyCode, onClose, hideClose, selectedModel = 'Codestral', onModelChange, workspaceFiles, workspaceId = 'default' }) {
+  const storageKey = `nexus_chat_messages_${workspaceId}`;
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try { 
+        setMessages(JSON.parse(saved));
+        return;
+      } catch (e) {}
     }
-    return [
+    setMessages([
       { role: 'assistant', text: `Hello! I'm your ${selectedModel} Assistant. Ask me anything about your code.` }
-    ];
-  });
+    ]);
+  }, [storageKey, selectedModel]);
+
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Generating...');
   const endOfMessagesRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem('nexus_chat_messages', JSON.stringify(messages));
-  }, [messages]);
+    if (messages.length > 0) {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    }
+  }, [messages, storageKey]);
 
   useEffect(() => {
     if (isLoading) {

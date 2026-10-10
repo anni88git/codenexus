@@ -213,6 +213,18 @@ function Dashboard({ user, onSignOut }) {
     }).catch(() => {});
   }, []);
 
+  const workspaceId = useMemo(() => {
+    if (!attachedFiles || attachedFiles.length === 0) return 'default';
+    for (const f of attachedFiles) {
+      const path = f.customRelativePath || f.webkitRelativePath;
+      if (path) {
+        const parts = path.split('/');
+        if (parts.length > 0 && parts[0]) return parts[0];
+      }
+    }
+    return 'default';
+  }, [attachedFiles]);
+
   const [showChatPanel, setShowChatPanel] = useState(false);
 
   const [showPRModal, setShowPRModal]               = useState(false);
@@ -850,10 +862,12 @@ function Dashboard({ user, onSignOut }) {
         <AnimatePresence>
           {showChatPanel && (
             <AntigravityChat 
+              workspaceId={workspaceId}
               onClose={() => setShowChatPanel(false)}
               activeCode={activeRun?.patchedCode || customCode || activeRun?.originalCode}
               activeFileName={activeRun?.fileName}
               language={language?.id}
+              workspaceFiles={attachedFiles}
               onApplyCode={(code) => {
                 if (activeRun) {
                   setActiveRun(prev => ({ ...prev, patchedCode: code }));
