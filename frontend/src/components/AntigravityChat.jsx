@@ -148,6 +148,12 @@ export default function AntigravityChat({ activeCode, activeFileName, language, 
           }
           try {
             if (f.name.match(/\.(png|jpg|jpeg|gif|svg|ico|mp4|webm|zip|tar|gz|pdf|bin|lock)$/i)) continue;
+            
+            if (typeof f.text !== 'function') {
+              workspaceContext += `\n--- File: ${f.customRelativePath || f.name} ---\n[SYSTEM NOTICE: Cannot read this file because the page was refreshed. You MUST explicitly tell the user: "Please click the 'Attach Workspace Folder' button again so I can read your files!"]\n`;
+              continue;
+            }
+            
             if (f.size > 30000) continue;
             
             const text = await f.text();
