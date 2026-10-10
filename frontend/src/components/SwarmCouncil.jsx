@@ -38,7 +38,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
       // Stagger requests by 1000ms each to completely bypass Groq's IP concurrency block
       await new Promise(r => setTimeout(r, index * 1000));
 
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com'}/api/swarm-turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -86,7 +86,7 @@ export default function SwarmCouncil({ activeRun, onApplyCode, swarmState, setSw
       await new Promise(r => setTimeout(r, 2000));
 
       // ROUND 3: Coordinator Consensus
-      const coordRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/swarm-turn`, {
+      const coordRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com'}/api/swarm-turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

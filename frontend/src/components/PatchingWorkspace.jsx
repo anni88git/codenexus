@@ -413,7 +413,7 @@ function ChatBox({ activeRun, onApplyCode }) {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/chat`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com'}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -480,7 +480,7 @@ function ChatBox({ activeRun, onApplyCode }) {
                               <button 
                                 onClick={async () => {
                                   const code = String(children).replace(/\n$/, '');
-                                  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/run-code`, {
+                                  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com'}/api/run-code`, {
                                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ code, language: match[1] })
                                   });

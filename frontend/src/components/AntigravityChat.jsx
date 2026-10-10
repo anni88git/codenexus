@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Send, User, Bot, Check, X, Terminal, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 
 function guessFileName(codeStr, fallbackName, workspaceFiles) {
   if (!codeStr) return fallbackName;

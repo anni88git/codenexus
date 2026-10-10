@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GitBranch, GitPullRequest, Key, FolderOpen, FileCode, CheckCircle2, RefreshCw, Send, GitCommit } from 'lucide-react';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 
 export default function GitRepositoryView({ onSelectFile }) {
   const [repoUrl, setRepoUrl] = useState(localStorage.getItem('nexus_git_url') || '');

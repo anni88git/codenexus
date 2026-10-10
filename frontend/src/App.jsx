@@ -30,7 +30,7 @@ import GitRepositoryView from './components/GitRepositoryView';
 import AntigravityChat from './components/AntigravityChat';
 import AntigravityIDEView from './components/AntigravityIDEView';
 import { get, set } from './idb.js';
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
 const socket = io(BACKEND_URL, {
   autoConnect: true,
   reconnection: true,
