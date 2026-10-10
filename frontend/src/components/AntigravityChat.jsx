@@ -328,7 +328,7 @@ export default function AntigravityChat({ activeCode, activeFileName, language, 
                   {parseMessage(msg.text).map((part, j) => {
                     if (part.type === 'text') {
                       if (!part.content.trim()) return null;
-                      const optionRegex = /\[Option:\s*([^\]]+)\]/g;
+                      const optionRegex = /(?:\*\*|\*|-)?\s*\[Option:\s*([^\]]+)\]/g;
                       const hasTaskExecuted = part.content.includes('[TASK_EXECUTED]') || part.content.includes('✅ **Task Executed!**');
                       let rawText = part.content.replaceAll('[TASK_EXECUTED]', '');
                       rawText = rawText.replaceAll('✅ **Task Executed!**', '');
