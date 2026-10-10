@@ -237,7 +237,11 @@ export default function AntigravityChat({ activeCode, activeFileName, language, 
                   }
                 }
               } else if (data.error) {
-                throw new Error(data.error);
+                setMessages(prev => {
+                  const newMsgs = [...prev];
+                  newMsgs[newMsgs.length - 1].text = `❌ Error: ${data.error}`;
+                  return newMsgs;
+                });
               }
             } catch (e) {}
           }

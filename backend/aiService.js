@@ -225,7 +225,7 @@ ${finalContextCode}` },
     const response = await ai.chat.completions.create({
       messages: formattedMessages,
       model: getGroqModelId(modelName),
-      max_tokens: 4000,
+      max_tokens: 900,
     });
 
     return { text: response.choices[0]?.message?.content || 'No response.' };
@@ -292,7 +292,7 @@ ${finalContextCode}` },
   const stream = await client.chat.completions.create({
     messages: formattedMessages,
     model: getGroqModelId(modelName),
-    max_tokens: 2000,
+    max_tokens: 900,
     stream: true,
   });
   
