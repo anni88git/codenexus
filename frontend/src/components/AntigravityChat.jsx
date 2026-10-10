@@ -111,6 +111,16 @@ export default function AntigravityChat({ activeCode, activeFileName, language, 
     const textToSend = customInput !== null ? customInput : input;
     if (!textToSend.trim() || isLoading) return;
 
+    if (workspaceFiles && workspaceFiles.length > 0 && typeof workspaceFiles[0].text !== 'function') {
+      const newMessages = [...messages, 
+        { role: 'user', text: textToSend.trim() },
+        { role: 'assistant', text: `⚠️ **Browser Security Lock**\n\nI cannot read your files because you refreshed the page. Your browser wiped my permission to access your local hard drive.\n\nPlease click the **Attach Workspace Folder** button above and re-select your folder so I can see your code!` }
+      ];
+      setMessages(newMessages);
+      setInput('');
+      return;
+    }
+
     const newMessages = [...messages, { role: 'user', text: textToSend.trim() }];
     setMessages(newMessages);
     setInput('');
