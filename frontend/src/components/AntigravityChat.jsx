@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, User, Bot, Check, X, Terminal, ChevronDown } from 'lucide-react';
+import { Send, User, Bot, Check, X, Terminal, ChevronDown, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://codenexus-laa2.onrender.com';
@@ -297,11 +297,16 @@ export default function AntigravityChat({ activeCode, activeFileName, language, 
             </div>
           </div>
         </div>
-        {!hideClose && (
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
-            <X className="w-4 h-4" />
+        <div className="flex items-center gap-3">
+          <button onClick={() => { setMessages([{ role: 'assistant', text: `Hello! I'm your ${selectedModel} Assistant. Ask me anything about your code.` }]); localStorage.removeItem(storageKey); }} className="text-slate-500 hover:text-red-400 transition-colors" title="Clear Chat History">
+            <Trash2 className="w-4 h-4" />
           </button>
-        )}
+          {!hideClose && (
+            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
