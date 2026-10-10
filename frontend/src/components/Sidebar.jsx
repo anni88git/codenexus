@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Cpu, LayoutDashboard, Code2, Network, TerminalSquare, LogOut, ChevronRight, Shield, Settings2, GitBranch, Users
 } from 'lucide-react';
+import FileExplorer from './FileExplorer';
 
 const NAV_ITEMS = [
   { id: 'home',      icon: LayoutDashboard, label: 'Home',              sub: 'Banner Showcase' },
@@ -12,9 +13,10 @@ const NAV_ITEMS = [
   { id: 'ast',       icon: Network,         label: 'AST Graph Mesh',    sub: 'Node 02 Visualizer' },
   { id: 'security',  icon: Shield,          label: 'Security Audit',    sub: 'Vuln Prevention' },
   { id: 'sandbox',   icon: TerminalSquare,  label: 'Sandbox & DevOps',  sub: 'Terminal + Alerts' },
+  { id: 'ide',       icon: TerminalSquare,  label: 'Prompt & Code',     sub: 'Studio IDE' },
 ];
 
-export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSignOut, isCollapsed, onToggleCollapse }) {
+export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSignOut, isCollapsed, onToggleCollapse, attachedFiles, onSelectFile, onRemoveFolder, modifiedFiles }) {
   return (
     <motion.aside 
       initial={false}
@@ -39,6 +41,11 @@ export default function Sidebar({ activeTab, onTabChange, user, onSettings, onSi
         </div>
 
       </div>
+
+      {/* ─── RAG Workspace Explorer ────────────────────────────────────────── */}
+      {!isCollapsed && attachedFiles && attachedFiles.length > 0 && (
+        <FileExplorer files={attachedFiles} onSelectFile={onSelectFile} onRemoveFolder={onRemoveFolder} modifiedFiles={modifiedFiles} />
+      )}
 
       {/* ─── Navigation ────────────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-none">
